@@ -1,0 +1,16 @@
+<div class="app-container">
+  <div class="subContainer fondo">
+    <img class="fondoPortada" src="assets/images/LoginFondo.png" alt="Fondo Login">
+  </div>
+  <div class="subContainer login">
+    <div class="card-login">
+      <img src="assets/images/LogoTijeritas.png" class="logo" alt="">
+      <div class="container-inputs">
+        <input type="text" placeholder="Usuario" [(ngModel)]="usuario" class="input" />
+        <input type="password" placeholder="Contraseña" [(ngModel)]="password" class="input" />
+      </div>
+      <button *ngIf="!loading" (click)="login()">INICIAR</button>
+      <mat-spinner *ngIf="loading" class="custom-spinner" [diameter]="50"></mat-spinner>
+    </div>
+  </div>
+</div>

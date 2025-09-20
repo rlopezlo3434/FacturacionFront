@@ -1,0 +1,26 @@
+.header-secuence {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+}
+
+.selected {
+  color: var(--color-submenu);
+  text-decoration: underline;
+  text-underline-offset: 8px;
+  text-decoration-color: var(
+    --color-submenu
+  );
+  font-weight: 500;
+}
+
+.color{
+    color: var(--color-text);
+}
+
+.subTitle{
+    color: var(--color-text);
+    font-size: 1.7rem;
+    padding: 1rem 0;
+}
+

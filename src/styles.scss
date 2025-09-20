@@ -1,0 +1,150 @@
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+
+@use "@angular/material" as mat;
+
+@include mat.core();
+
+// Define the theme object.
+$MasterLogic-theme: mat.define-theme((color: (theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      density: (scale: 0,
+      ),
+    ));
+
+:root {
+  @include mat.all-component-themes($MasterLogic-theme);
+  --color-bg: #ffffff;
+  --color-text: #000000;
+  --color-header-bg: #f0f0f0;
+  --color-shadow: rgba(0, 0, 0, 0.4);
+  --color-icon-header: #3d3d3d;
+  --color-bhover: #ff010114;
+  --color-submenu: #ff0000;
+  --color-primary: #ff0000;
+
+}
+
+.dark-theme {
+  --color-bg: #121212;
+  --color-text: #ffffff;
+  --color-header-bg: #1e1e1e;
+  --color-shadow: rgba(255, 255, 255, 0.15);
+  --color-icon-header: #ffffff;
+  --color-bhover: #ff010114;
+  --color-submenu: #ff0000;
+  --color-primary: #ff0000;
+
+}
+
+button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+
+.input {
+  padding: 0.7rem 0.5rem;
+  border-radius: 0.3rem;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.input:focus {
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+.select {
+  padding: 0.7rem 0.5rem;
+  border-radius: 0.3rem;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+
+
+.input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px rgb(243, 243, 243) inset;
+  transition: background-color 5000s ease-in-out;
+}
+
+.mat-mdc-snack-bar-container.success-snackbar {
+  --mdc-snackbar-container-color: #f0fdf4e0;
+  --mdc-snackbar-supporting-text-color: #388e3c;
+  border: 1px solid #388e3c;
+  font-weight: bold;
+  border-radius: 6px;
+
+}
+
+.mat-mdc-snack-bar-container.error-snackbar {
+  --mdc-snackbar-container-color: #fdf0f0e0;
+  --mdc-snackbar-supporting-text-color: #8e3838;
+  border: 1px solid #f44336;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 6px;
+}
+
+.btn-cancelar {
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  padding: 0.7rem 0.8rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+  border-radius: 8px;
+}
+
+.btn-cancelar:hover {
+  background-color: #e6e6e6;
+  color: #535353;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  border: none;
+  color: #fff;
+  padding: 0.7rem 0.8rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+  border-radius: 8px;
+}
+
+.btn-primary:hover {
+  background-color: #e60000;
+  color: #fff;
+}
+
+.btn-primary:disabled {
+  background-color: #ccc;
+  /* gris */
+  color: #666;
+  /* gris más oscuro para el texto */
+  cursor: not-allowed;
+  /* icono de prohibido */
+}

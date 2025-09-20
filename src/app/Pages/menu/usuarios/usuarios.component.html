@@ -1,0 +1,32 @@
+<div>
+  <div class="header-secuence">
+    <div class="color">Facturas</div>
+    <mat-icon class="color">chevron_right</mat-icon>
+    <div class="selected">Lista de Facturas</div>
+  </div>
+  <div class="subTitle">Lista de Facturas</div>
+  <table
+    mat-table
+    [dataSource]="facturas"
+    class="mat-elevation-z8"
+    style="width: 100%"
+  >
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>Numero de Factura</th>
+      <td mat-cell *matCellDef="let factura">{{ factura.facturaId }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="idFactura">
+      <th mat-header-cell *matHeaderCellDef>Numero de Factura</th>
+      <td mat-cell *matCellDef="let factura">{{ factura.numeroFactura }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="cliente">
+      <th mat-header-cell *matHeaderCellDef>Cliente</th>
+      <td mat-cell *matCellDef="let factura">{{ factura.cliente }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['id','idFactura', 'cliente']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['id','idFactura', 'cliente']"></tr>
+  </table>
+</div>

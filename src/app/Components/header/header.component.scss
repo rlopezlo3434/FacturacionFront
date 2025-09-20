@@ -1,0 +1,51 @@
+.app-header {
+  color: var(--color-icon-header);
+  padding: 0.7rem;
+  box-shadow: 0 2px 2px var(--color-shadow);
+  display: flex;
+  justify-content: space-between;
+  position: sticky;
+  z-index: 1000;
+}
+
+.header-left {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+
+  .icon-menu {
+    display: flex;
+    justify-content: center;
+
+    mat-icon {
+      cursor: pointer
+    }
+  }
+
+  .title-App {
+    color: var(--color-submenu);
+    font-size: 1.8rem;
+  }
+}
+
+.header-right {
+  display: flex;
+  gap: 1.3rem;
+  align-items: center;
+
+  mat-icon {
+    cursor: pointer;
+  }
+
+  .calendar {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+}
+
+.logo {
+  width: 4%;
+  height: auto;
+}

@@ -1,0 +1,16 @@
+<div class="app-header">
+    <div class="header-left">
+        <div class="icon-menu">
+            <mat-icon (click)="openMenu()">menu</mat-icon>
+        </div>
+        <div class="title-App"><strong>TIJE</strong>RITAS</div>
+    </div>
+    <div class="header-right">
+        <div class="calendar">
+            <mat-icon>calendar_month</mat-icon>
+            <span>{{ today }}</span>
+        </div>
+        <mat-icon>notifications</mat-icon>
+        <mat-icon (click)="toggleTheme()">{{ iconName }}</mat-icon>
+    </div>
+</div>

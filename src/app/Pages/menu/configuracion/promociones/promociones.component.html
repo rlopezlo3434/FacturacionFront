@@ -1,0 +1,67 @@
+<div>
+    <div class="header-secuence">
+        <div class="color">Configuración</div>
+        <mat-icon class="color">chevron_right</mat-icon>
+        <div class="selected">Gestión de promociones</div>
+    </div>
+    <div class="subTitle">Lista de promociones</div>
+    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <div class="input-wrapper">
+            <mat-icon class="input-icon">search</mat-icon>
+            <input type="text" placeholder="Buscar por Nombre" class="input" />
+        </div>
+        <!-- <select class="select">
+            <option value="" disabled selected>Estado</option>
+            <option value="Activo">Activo</option>
+            <option value="Suspendido">Suspendido</option>
+        </select> -->
+    </div>
+    <div class="table-container">
+        <div class="table-actions">
+            <div class="table-actions-container">
+                <button class="btn btn-create" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREAR PROMOCIÓN</button>
+            </div>
+            <div class="table-actions-container">
+                <button class="btn btn-remove"><mat-icon>delete</mat-icon> REMOVER FILTROS</button>
+            </div>
+        </div>
+        <div class="table-scroll">
+            <div class="table-body">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Nombre</th>
+                            <th style="text-align: center;">Cantidad</th>
+                            <th style="text-align: center;">Fecha Inicio</th>
+                            <th style="text-align: center;">Fecha Fin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            *ngFor="let prom of promociones | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)" (click)="openEditDialog(prom)">
+                            <td style="text-align: center;">{{ prom.nombre }}</td>
+                            <td style="text-align: center;">{{ prom.nombre }}</td>
+                            <td style="text-align: center;">{{ prom.fecha }}</td>
+                            <td style="text-align: center;">{{ prom.fecha }}</td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pagination">
+            <span>Filas por página: </span>
+            <select class="select" [(ngModel)]="filasPorPagina">
+                <option *ngFor="let size of [5,10,20]" [value]="size">{{ size }}</option>
+            </select>
+            <span>{{(paginaActual-1)*filasPorPagina+1}} -
+                {{paginaActual*filasPorPagina > promociones.length ? promociones.length : paginaActual*filasPorPagina}}
+                de {{promociones.length}}</span>
+            <button class="paginacion-icon" (click)="paginaAnterior()"
+                [disabled]="paginaActual===1"><mat-icon>chevron_left</mat-icon></button>
+            <button class="paginacion-icon" (click)="paginaSiguiente()"
+                [disabled]="paginaActual*filasPorPagina>=promociones.length"><mat-icon>chevron_right</mat-icon></button>
+        </div>
+    </div>
+
+</div>

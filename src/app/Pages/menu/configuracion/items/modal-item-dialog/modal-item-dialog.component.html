@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>
+    {{ data ? 'Editar Item' : 'Crear Nuevo Item' }}
+</h2>
+
+<mat-dialog-content style="display: flex; flex-direction: column; gap: 0.5rem;">
+    <label>Tipo</label>
+    <select class="select" [(ngModel)]="item.tipo">
+        <option value="" disabled selected>Seleccione...</option>
+        <option value="producto">Producto</option>
+        <option value="servicio">Servicio</option>
+    </select>
+
+    <!-- Descripción -->
+    <label>Descripción</label>
+    <input type="text" [(ngModel)]="item.descripcion" placeholder="Ingrese descripción" class="input" />
+
+    <!-- Solo si es PRODUCTO -->
+    <div *ngIf="item.tipo === 'producto'" class="input-modal">
+        <div class="input-modal" >
+            <label>Cantidad Inicial</label>
+            <input type="number" min="0" [(ngModel)]="item.cantidadInicial" class="input" />
+        </div>
+        <div class="input-modal" >
+            <label>Stock Mínimo</label>
+            <input type="number" min="0" [(ngModel)]="item.minStock" class="input" />
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" style="display: flex; gap: 0.5rem;">
+    <button class="btn-cancelar" (click)="cancelar()">CANCELAR</button>
+    <button class="btn-primary" color="primary" 
+    (click)="guardar()" [disabled]="!item.descripcion || !item.tipo">
+        {{ data ? 'ACTUALIZAR' : 'CREAR' }}
+    </button>
+</mat-dialog-actions>
