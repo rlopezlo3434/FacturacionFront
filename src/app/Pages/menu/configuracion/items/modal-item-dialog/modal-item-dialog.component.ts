@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ItemsService } from '../../../../../../services/items.service';
 
 @Component({
   selector: 'app-modal-item-dialog',
@@ -10,13 +11,14 @@ export class ModalItemDialogComponent {
   item = {
     tipo: '',       // 👈 vacío para que aparezca "Seleccione..."
     descripcion: '',
-    cantidadInicial: null,
-    minStock: null
+    cantidadInicial: 0,
+    minStock: 0
   };
 
   constructor(
     public dialogRef: MatDialogRef<ModalItemDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private itemsService: ItemsService
   ) {
     // Si recibimos data, estamos editando
     if (data) {
@@ -24,7 +26,32 @@ export class ModalItemDialogComponent {
     }
   }
 
+
+  postItems() {
+    const userString = localStorage.getItem('user');
+    const user = userString ? JSON.parse(userString) : null;
+    console.log(user)
+
+    const params = {
+      Item: this.item.tipo,
+      Description: this.item.descripcion,
+      EstablishmentId: user?.establishment.id,
+      InitialQuantity: this.item.cantidadInicial,
+      MinStock: this.item.minStock
+    }
+
+    this.itemsService.postItems(params).subscribe(response => {
+      console.log('Items enviados con éxito', response);
+    }, error => {
+      console.error('Error al enviar los items', error);
+    });
+
+  }
+
+
+
   guardar() {
+    this.postItems();
     this.dialogRef.close(this.item);
   }
 

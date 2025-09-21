@@ -12,4 +12,9 @@ export class AuthService {
     return this.http.post<any>(`${environment.apiBase}/Auth/login`, params);
   }
 
+  setToken(token: string) {
+    localStorage.setItem('auth_token', token);
+  }
+
+  
 }

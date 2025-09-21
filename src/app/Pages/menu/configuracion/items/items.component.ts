@@ -1,34 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalItemDialogComponent } from './modal-item-dialog/modal-item-dialog.component';
+import { ItemsService } from '../../../../../services/items.service';
+import { Item } from '../../../../Models/Item';
 
 @Component({
   selector: 'app-items',
   templateUrl: './items.component.html',
   styleUrl: './items.component.scss'
 })
-export class ItemsComponent {
+export class ItemsComponent implements OnInit {
 
-  items = [
-    { tipo: 'servicio', descripcion: 'Corte de Cabello', estado: 'Suspendido', fecha: '2025-09-17' },
-    { tipo: 'servicio', descripcion: 'Lavado de Cabello', estado: 'Activo', fecha: '2025-09-16' },
-    { tipo: 'producto', descripcion: 'Shampoo', estado: 'Suspendido', fecha: '2025-09-15' },
-    { tipo: 'servicio', descripcion: 'Peinado', estado: 'Activo', fecha: '2025-09-14' },
-    { tipo: 'producto', descripcion: 'Acondicionador', estado: 'Suspendido', fecha: '2025-09-13' },
-    { tipo: 'servicio', descripcion: 'Lavado de Cabello', estado: 'Activo', fecha: '2025-09-16' },
-    { tipo: 'producto', descripcion: 'Shampoo', estado: 'Suspendido', fecha: '2025-09-15' },
-    { tipo: 'servicio', descripcion: 'Peinado', estado: 'Activo', fecha: '2025-09-14' },
-    { tipo: 'producto', descripcion: 'Acondicionador', estado: 'Suspendido', fecha: '2025-09-13' },
-    { tipo: 'servicio', descripcion: 'Lavado de Cabello', estado: 'Activo', fecha: '2025-09-16' },
-    { tipo: 'producto', descripcion: 'Shampoo', estado: 'Suspendido', fecha: '2025-09-15' },
-    { tipo: 'servicio', descripcion: 'Peinado', estado: 'Activo', fecha: '2025-09-14' },
-    { tipo: 'producto', descripcion: 'Acondicionador', estado: 'Suspendido', fecha: '2025-09-13' },
-  ];
+  items: Item[] = [];
 
   paginaActual = 1;
   filasPorPagina = 5;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog, private itemsService: ItemsService) { }
+
+  ngOnInit(): void {
+    this.getItemsByEstablishment();
+  }
+
 
   paginaAnterior() {
     if (this.paginaActual > 1) this.paginaActual--;
@@ -44,8 +37,9 @@ export class ItemsComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      console.log('El diálogo se cerró', result);
       if (result) {
-        this.items.push(result);
+        this.getItemsByEstablishment();
       }
     });
   }
@@ -60,6 +54,15 @@ export class ItemsComponent {
       if (result) {
         // this.items[index] = result; // reemplaza el item editado
       }
+    });
+  }
+
+  getItemsByEstablishment() {
+    this.itemsService.getItemsByEstablishment().subscribe(response => {
+      this.items = response;
+      console.log('Items obtenidos con éxito', response);
+    }, error => {
+      console.error('Error al obtener los items', error);
     });
   }
 }

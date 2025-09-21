@@ -20,12 +20,16 @@ export class LoginComponent {
     this.authService.login({ username: this.usuario, password: this.password }).subscribe({
       next: (res) => {
         this.loading = false;
+        
         this.snackBar.open('Login exitoso', '', {
           duration: 3000,
           horizontalPosition: 'right',
           verticalPosition: 'top',
           panelClass: ['success-snackbar'] 
         });
+
+        this.authService.setToken(res.token);
+        localStorage.setItem('user', JSON.stringify(res.user));
         this.router.navigate(['/home']);
       },
       error: (err) => {
