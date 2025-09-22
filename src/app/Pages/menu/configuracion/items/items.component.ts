@@ -14,7 +14,7 @@ export class ItemsComponent implements OnInit {
   items: Item[] = [];
 
   paginaActual = 1;
-  filasPorPagina = 5;
+  filasPorPagina = 10;
 
   constructor(private dialog: MatDialog, private itemsService: ItemsService) { }
 

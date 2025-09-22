@@ -61,7 +61,7 @@
         <div class="pagination">
             <span>Filas por página: </span>
             <select class="select" [(ngModel)]="filasPorPagina">
-                <option *ngFor="let size of [5,10,20]" [value]="size">{{ size }}</option>
+                <option *ngFor="let size of [10,20,30]" [value]="size">{{ size }}</option>
             </select>
             <span>{{(paginaActual-1)*filasPorPagina+1}} -
                 {{paginaActual*filasPorPagina > items.length ? items.length : paginaActual*filasPorPagina}}
