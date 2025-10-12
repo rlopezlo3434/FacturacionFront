@@ -7,11 +7,11 @@ import { environment } from '../environments/environment';
 })
 export class ClienteService {
 
-  constructor(private http: HttpClient) {}
-  
-    getFacturas() {
-      return this.http.get<any>(`${environment.apiBase}/Cliente/listFacturas`);
-    }
-  
+  constructor(private http: HttpClient) { }
+
+  getFacturas() {
+    return this.http.get<any>(`${environment.apiBase}/Cliente/listFacturas`);
+  }
+
 
 }

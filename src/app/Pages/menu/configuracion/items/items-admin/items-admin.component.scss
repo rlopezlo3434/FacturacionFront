@@ -84,7 +84,7 @@
 .custom-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 1200px;
+    min-width: 800px;
 
 
 }
@@ -133,26 +133,24 @@
 }
 
 .paginacion-icon {
-    background: none;
-    border: none;
-    padding: 4px;
-    margin: 0 2px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background: none;
+  border: none;
+  padding: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .paginacion-icon:disabled {
-    cursor: not-allowed;
-    opacity: 0.4;
-    /* se ve apagado cuando está deshabilitado */
+  cursor: not-allowed;
+  opacity: 0.4; 
 }
 
 .paginacion-icon mat-icon {
-    font-size: 24px;
-    color: var(--color-text);
-    /* color del icono */
+  font-size: 24px;
+  color: var(--color-text); 
 }
 
 .select {
@@ -168,37 +166,23 @@
 }
 
 .input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    min-width: 50vw;
-    width: 20vw;
-
-    input {
-        width: 100%;
-
-    }
-}
-
-.filtersContainer {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 10px;
+  position: relative;
+  display: inline-block;
 }
 
 .input {
-    padding: 0.7rem 0.7rem 0.7rem 32px;
-
+  padding: 0.7rem 0.7rem 0.7rem 32px;
 }
 
 .input-icon {
-    position: absolute;
-    left: 8px;
-    top: 55%;
-    transform: translateY(-50%);
-    font-size: 20px;
-    color: gray;
+  position: absolute;
+  left: 8px;
+  top: 55%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: gray;
 }
+
 
 @media (max-width: 1200px) {
     // .table-actions-container {

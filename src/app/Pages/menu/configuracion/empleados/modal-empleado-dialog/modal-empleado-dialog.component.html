@@ -5,48 +5,42 @@
 <mat-dialog-content>
     <div class="subTitle">Información Personal</div>
     <div class="form-grid">
-        <input type="text" class="input" placeholder="Nombres(s) *">
-        <input type="text" class="input" placeholder="Apellidos(s) *">
-        <select class="select" [(ngModel)]="emp.tipo">
+        <input type="text" class="input" placeholder="Nombres(s) *" [(ngModel)]="emp.name">
+        <input type="text" class="input" placeholder="Apellidos(s) *" [(ngModel)]="emp.lastName">
+        <select class="select" [(ngModel)]="emp.typeGender">
             <option value="" disabled selected>Género *</option>
             <option value="M">Hombre</option>
             <option value="F">Mujer</option>
         </select>
-        <select class="select" [(ngModel)]="emp.tipo">
+        <select class="select" [(ngModel)]="emp.documentIdentificationType">
             <option value="" disabled selected>Tipo de Documento *</option>
             <option value="RUC">RUC</option>
             <option value="DNI">DNI</option>
             <option value="CARNET_EXTRANJERIA">Carnet Extranjeria</option>
         </select>
-        <input type="text" class="input" placeholder="Numero de Identificación *">
-        <input type="text" class="input" placeholder="Correo Electrónico *">
+        <input type="text" class="input" placeholder="Numero de Identificación *" [(ngModel)]="emp.documentNumber">
+        <input type="text" class="input" placeholder="Correo Electrónico *" [(ngModel)]="emp.email">
     </div>
     <div class="subTitle">Información de Creación</div>
     <div class="form-grid">
-        <input type="text" class="input" placeholder="Usuario">
-        <select class="select" [(ngModel)]="emp.tipo">
+        <input type="text" class="input" placeholder="Usuario" [disabled]="data ? true : false"
+            [(ngModel)]="emp.username">
+        <select class="select" [disabled]="roleCode === 'COLLAB'" [(ngModel)]="emp.roleCode">
             <option value="" disabled selected>Rol *</option>
-            <option value="OWNER">Dueño</option>
-            <option value="ADMIN">Administrador</option>
-            <option value="COLLAB">Colaborador</option>
+            <option *ngIf="roleCode == 'OWNER'" value="OWNER">Dueño</option>
+            <option *ngIf="roleCode == 'ADMIN' || roleCode == 'OWNER'" value="ADMIN">Administrador</option>
+            <option *ngIf="roleCode == 'COLLAB' || roleCode == 'ADMIN' || roleCode == 'OWNER'" value="COLLAB">
+                Colaborador</option>
         </select>
-        <input class="input" [type]="hide ? 'password' : 'text'" [(ngModel)]="password"
-            placeholder="Contraseña *">
-
-
-        <select class="select" [(ngModel)]="emp.tipo">
-            <option value="" disabled selected>Local *</option>
-            <option value="RUC">RUC</option>
-            <option value="DNI">DNI</option>
-            <option value="CARNET_EXTRANJERIA">Carnet Extranjeria</option>
-        </select>
-
+        <input *ngIf="roleCode == 'ADMIN' || roleCode == 'OWNER'" class="input" [type]="hide ? 'password' : 'text'"
+            [(ngModel)]="password" placeholder="Nueva Contraseña *">
     </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" style="display: flex; gap: 0.5rem;">
     <button class="btn-cancelar" (click)="cancelar()">CANCELAR</button>
-    <button class="btn-primary" color="primary" (click)="guardar()" [disabled]="!emp.descripcion || !emp.tipo">
+    <button class="btn-primary" color="primary" (click)="guardar()"
+        [disabled]="!emp.name || !emp.lastName || !emp.email || !emp.username || !emp.documentIdentificationType || !emp.documentNumber ">
         {{ data ? 'ACTUALIZAR' : 'CREAR' }}
     </button>
 </mat-dialog-actions>

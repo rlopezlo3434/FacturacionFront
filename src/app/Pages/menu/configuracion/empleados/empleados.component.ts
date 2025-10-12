@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { ModalEmpleadoDialogComponent } from './modal-empleado-dialog/modal-empleado-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-
+import { EmpleadosService } from '../../../../../services/empleados.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-empleados',
   templateUrl: './empleados.component.html',
@@ -9,23 +10,60 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class EmpleadosComponent {
 
-  empleados = [
-    { nroDocumento: 'Servicio', nombre: 'Corte de Cabello', estado: 'Suspendido', fecha: '2025-09-17' },
-    { nroDocumento: 'Servicio', nombre: 'Lavado de Cabello', estado: 'Activo', fecha: '2025-09-16' },
-    { nroDocumento: 'Producto', nombre: 'Shampoo', estado: 'Suspendido', fecha: '2025-09-15' },
-    { nroDocumento: 'Servicio', nombre: 'Peinado', estado: 'Activo', fecha: '2025-09-14' },
-    { nroDocumento: 'Producto', nombre: 'Acondicionador', estado: 'Suspendido', fecha: '2025-09-13' },
-    { nroDocumento: 'Servicio', nombre: 'Lavado de Cabello', estado: 'Activo', fecha: '2025-09-16' },
-    { nroDocumento: 'Producto', nombre: 'Shampoo', estado: 'Suspendido', fecha: '2025-09-15' },
-    { nroDocumento: 'Servicio', nombre: 'Peinado', estado: 'Activo', fecha: '2025-09-14' },
-    { nroDocumento: 'Producto', nombre: 'Acondicionador', estado: 'Suspendido', fecha: '2025-09-13' },
-  ];
+  empleados: any[] = [];
+
+  filtroTexto: string = '';
+  filtroEstado: string = '';
 
   paginaActual = 1;
   filasPorPagina = 5;
 
-  constructor(private dialog: MatDialog) { }
-  
+  roleCode: string | null = null;
+
+  constructor(private dialog: MatDialog, private empleadosService: EmpleadosService, private snackBar: MatSnackBar) {
+    const userString = localStorage.getItem('user');
+    const user = userString ? JSON.parse(userString) : null;
+    this.roleCode = user?.roleCode;
+  }
+
+  ngOnInit() {
+    this.loadEmpleados();
+  }
+
+  loadEmpleados() {
+    this.empleadosService.getEmpleadosByEstablishment().subscribe(data => {
+      this.empleados = data;
+    });
+  }
+
+  updateEstado(empleado: any) {
+    this.empleadosService.updateStateEmpleado(empleado.id, empleado.isActive).subscribe({
+      next: (response) => {
+        this.snackBar.open('Estado actualizado', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+        this.loadEmpleados();
+
+      },
+      error: (error) => {
+        this.snackBar.open('Error al actualizar estado', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  removerFiltros() {
+    this.filtroTexto = '';
+    this.filtroEstado = '';
+  }
+
   paginaAnterior() {
     if (this.paginaActual > 1) this.paginaActual--;
   }
@@ -35,29 +73,29 @@ export class EmpleadosComponent {
   }
 
   openCreateDialog() {
-      const dialogRef = this.dialog.open(ModalEmpleadoDialogComponent, {
-        width: '1500px',
-        panelClass: 'full-modal'
-      });
-  
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.empleados.push(result);
-        }
-      });
-    }
-  
-    openEditDialog(item: any) {
-      const dialogRef = this.dialog.open(ModalEmpleadoDialogComponent, {
-        width: '1500px',
-        data: item
-      });
-  
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          // this.items[index] = result; // reemplaza el item editado
-        }
-      });
-    }
+    const dialogRef = this.dialog.open(ModalEmpleadoDialogComponent, {
+      width: '1500px',
+      panelClass: 'full-modal'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadEmpleados();
+      }
+    });
+  }
+
+  openEditDialog(item: any) {
+    const dialogRef = this.dialog.open(ModalEmpleadoDialogComponent, {
+      width: '1500px',
+      data: item
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadEmpleados();
+      }
+    });
+  }
 
 }

@@ -15,11 +15,11 @@ import { LoginComponent } from './Pages/login/login.component';
 import { Router, RouterModule } from '@angular/router';
 import { routes } from './app.routes';
 import { LayoutComponent } from './Components/layout/layout.component';
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatListModule} from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 import { UsuariosComponent } from './Pages/menu/usuarios/usuarios.component';
 import { MatTableModule } from '@angular/material/table';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -31,8 +31,29 @@ import { ModalItemDialogComponent } from './Pages/menu/configuracion/items/modal
 import { ModalEmpleadoDialogComponent } from './Pages/menu/configuracion/empleados/modal-empleado-dialog/modal-empleado-dialog.component';
 import { ModalClientesDialogComponent } from './Pages/menu/configuracion/clientes/modal-clientes-dialog/modal-clientes-dialog.component';
 import { ModalPromocionesDialogComponent } from './Pages/menu/configuracion/promociones/modal-promociones-dialog/modal-promociones-dialog.component';
+import { ItemsAdminComponent } from './Pages/menu/configuracion/items/items-admin/items-admin.component';
+
+//pipes
+import { FiltroEmpleadoPipe } from './pipes/filtro-empleado.pipe';
+
+
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, HomeComponent, LoginComponent, LayoutComponent, UsuariosComponent, ItemsComponent, PromocionesComponent, EmpleadosComponent, ClientesComponent, ModalItemDialogComponent, ModalEmpleadoDialogComponent, ModalClientesDialogComponent, ModalPromocionesDialogComponent],
+  declarations: [AppComponent,
+    HeaderComponent,
+    HomeComponent,
+    LoginComponent,
+    LayoutComponent,
+    UsuariosComponent,
+    ItemsComponent,
+    PromocionesComponent,
+    EmpleadosComponent,
+    ClientesComponent,
+    ModalItemDialogComponent,
+    ModalEmpleadoDialogComponent,
+    ModalClientesDialogComponent,
+    ModalPromocionesDialogComponent,
+    ItemsAdminComponent,
+    FiltroEmpleadoPipe],
   imports: [
     BrowserModule,
     MatProgressBarModule,
@@ -47,11 +68,11 @@ import { ModalPromocionesDialogComponent } from './Pages/menu/configuracion/prom
     MatSnackBarModule,
     MatProgressSpinnerModule,
     MatDialogModule,
-    
+
     HttpClientModule,
     RouterModule.forRoot(routes)
   ],
   providers: [provideAnimationsAsync()],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

@@ -5,16 +5,18 @@
         <div class="selected">Gestión de empleados</div>
     </div>
     <div class="subTitle">Lista de empleados</div>
-    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+    <div class="filtersContainer">
         <div class="input-wrapper">
             <mat-icon class="input-icon">search</mat-icon>
-            <input type="text" placeholder="Buscar por Nombre, Apellido o DNI..." class="input" />
+            <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Nombre, Apellido o DNI..." class="input" />
         </div>
-        <select class="select">
-            <option value="" disabled selected>Estado</option>
-            <option value="Activo">Activo</option>
-            <option value="Suspendido">Suspendido</option>
-        </select>
+        <div>
+            <select class="select" [(ngModel)]="filtroEstado">
+                <option value="" disabled selected>Estado</option>
+                <option [value]="true">Activo</option>
+                <option [value]="false">Suspendido</option>
+            </select>
+        </div>
     </div>
     <div class="table-container">
         <div class="table-actions">
@@ -22,7 +24,7 @@
                 <button class="btn btn-create" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREAR EMPLEADO</button>
             </div>
             <div class="table-actions-container">
-                <button class="btn btn-remove"><mat-icon>delete</mat-icon> REMOVER FILTROS</button>
+                <button (click)="removerFiltros()" class="btn btn-remove"><mat-icon>delete</mat-icon> REMOVER FILTROS</button>
             </div>
         </div>
         <div class="table-scroll">
@@ -41,16 +43,20 @@
                     </thead>
                     <tbody>
                         <tr
-                            *ngFor="let emp of empleados | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)" (click)="openEditDialog(emp)">
-                            <td style="text-align: center;">{{ emp.nroDocumento }}</td>
-                            <td style="text-align: center;">{{ emp.nombre }}</td>
+                            *ngFor="let emp of empleados | filtroEmpleado:filtroTexto:filtroEstado | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)" (click)="openEditDialog(emp)">
+                            <td style="text-align: center;">{{ emp.documentNumber }}</td>
+                            <td style="text-align: center;">{{ emp.username }}</td>
+                            <td style="text-align: center;">{{ emp.name }}</td>
+                            <td style="text-align: center;">{{ emp.lastName }}</td>
+                            <td style="text-align: center;">{{ emp.gender }}</td>
+                            <td style="text-align: center;">{{ emp.email }}</td>
                             <td style="text-align: center;">
-                                <select class="select" [(ngModel)]="emp.estado">
-                                    <option value="Activo">Activo</option>
-                                    <option value="Suspendido">Suspendido</option>
+                                <select class="select" [disabled]="roleCode === 'COLLAB'" [(ngModel)]="emp.isActive" 
+                                (click)="$event.stopPropagation()" (change)="updateEstado(emp)">
+                                    <option [ngValue]="true">Activo</option>
+                                    <option [ngValue]="false">Suspendido</option>
                                 </select>
                             </td>
-                            <td style="text-align: center;">{{ emp.fecha }}</td>
                         </tr>
                     </tbody>
                 </table>

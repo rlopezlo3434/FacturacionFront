@@ -2,6 +2,12 @@
 <mat-sidenav-container>
   <mat-sidenav #sidenav mode="side">
     <mat-nav-list>
+      <select class="select">
+        <option value="" disabled selected>Seleccionar Tienda</option>
+        <option value="Empresa 1">Tienda 1</option>
+        <option value="Empresa 2">Tienda 2</option>
+        <option value="Empresa 3">Tienda 3</option>
+      </select>
       <div *ngFor="let item of menuItems">
         <div class="menu" (click)="toggleMenu(item)">
           <div class="margin-item-left">

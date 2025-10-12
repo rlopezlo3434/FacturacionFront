@@ -15,8 +15,12 @@ export class ItemsComponent implements OnInit {
 
   paginaActual = 1;
   filasPorPagina = 10;
-
-  constructor(private dialog: MatDialog, private itemsService: ItemsService) { }
+  roleCode: string = '';
+  constructor(private dialog: MatDialog, private itemsService: ItemsService) {
+    const userString = localStorage.getItem('user');
+    const user = userString ? JSON.parse(userString) : null;
+    this.roleCode = user?.roleCode || '';
+  }
 
   ngOnInit(): void {
     this.getItemsByEstablishment();
