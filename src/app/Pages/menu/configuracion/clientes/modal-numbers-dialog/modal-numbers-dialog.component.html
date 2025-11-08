@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Números del Cliente</h2>
+
+<mat-dialog-content>
+    <div *ngIf="numbers.length === 0" class="text-muted">
+        No hay números registrados.
+    </div>
+
+    <ul>
+        <li *ngFor="let num of numbers; let i = index" style="display: flex; align-items: center;">
+            {{ num }}
+
+            <button class="btn-icon delete" (click)="removeNumber(i)" type="button">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </li>
+    </ul>
+
+    <div style="display: flex; gap: 1px; margin-top: 10px; align-items: center;">
+        <input placeholder="Nuevo número" [(ngModel)]="newNumber" class="input" />
+        <div style="display: flex; align-items: center; cursor: pointer; gap: 1rem;">
+            <mat-icon class="btn-icon add" (click)="addNumber()">add_circle</mat-icon>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button class="btn-cancelar" (click)="cancel()">Cancelar</button>
+    <button class="btn-primary" color="primary" (click)="save()">Guardar</button>
+</mat-dialog-actions>

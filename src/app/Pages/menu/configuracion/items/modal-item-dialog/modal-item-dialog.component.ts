@@ -1,6 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ItemsService } from '../../../../../../services/items.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TiendaService } from '../../../../../../services/tienda.service';
 
 @Component({
   selector: 'app-modal-item-dialog',
@@ -8,51 +10,70 @@ import { ItemsService } from '../../../../../../services/items.service';
   styleUrl: './modal-item-dialog.component.scss'
 })
 export class ModalItemDialogComponent {
-  item = {
-    tipo: '',       // 👈 vacío para que aparezca "Seleccione..."
-    descripcion: '',
-    cantidadInicial: 0,
-    minStock: 0
-  };
+  item: any = {};
 
   constructor(
     public dialogRef: MatDialogRef<ModalItemDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private itemsService: ItemsService
+    private itemsService: ItemsService,
+    private snackBar: MatSnackBar
   ) {
     // Si recibimos data, estamos editando
     if (data) {
       this.item = { ...data };
+      console.log('Editando item:', this.item);
     }
-  }
 
+    this.item.item == "Servicio" ? this.item.item = "servicio" : this.item.item == "Producto" ? this.item.item = "producto" : this.item.item = "";
+  }
 
   postItems() {
     const userString = localStorage.getItem('user');
     const user = userString ? JSON.parse(userString) : null;
-    console.log(user)
 
     const params = {
-      Item: this.item.tipo,
-      Description: this.item.descripcion,
+      Item: this.item.item,
+      Description: this.item.description,
       EstablishmentId: user?.establishment.id,
       InitialQuantity: this.item.cantidadInicial,
-      MinStock: this.item.minStock
+      Value: this.item.value,
+      MinStock: this.item.minStock,
+      Code: this.item.code || ''
     }
 
-    this.itemsService.postItems(params).subscribe(response => {
-      console.log('Items enviados con éxito', response);
-    }, error => {
-      console.error('Error al enviar los items', error);
+    const action = this.data
+      ? this.itemsService.updateItem(params)
+      : this.itemsService.postItems(params);
+
+    action.subscribe({
+      next: (response: any) => {
+        const success = response?.success;
+        const message = response?.message;
+
+        this.snackBar.open(message, '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: [success ? 'success-snackbar' : 'error-snackbar']
+        });
+
+        if (success) this.dialogRef.close(true);
+
+      },
+      error: (error) => {
+        this.snackBar.open(error.error?.message, '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
     });
 
   }
 
-
-
   guardar() {
     this.postItems();
-    this.dialogRef.close(this.item);
   }
 
   cancelar() {

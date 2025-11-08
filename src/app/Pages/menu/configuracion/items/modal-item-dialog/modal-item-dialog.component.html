@@ -4,7 +4,7 @@
 
 <mat-dialog-content style="display: flex; flex-direction: column; gap: 0.5rem;">
     <label>Tipo</label>
-    <select class="select" [(ngModel)]="item.tipo">
+    <select class="select" [(ngModel)]="item.item">
         <option value="" disabled selected>Seleccione...</option>
         <option value="producto">Producto</option>
         <option value="servicio">Servicio</option>
@@ -12,10 +12,12 @@
 
     <!-- Descripción -->
     <label>Descripción</label>
-    <input type="text" [(ngModel)]="item.descripcion" placeholder="Ingrese descripción" class="input" />
+    <input type="text" [(ngModel)]="item.description" placeholder="Ingrese descripción" class="input" />
 
+    <label>Precio</label>
+    <input type="number" [(ngModel)]="item.value" min="0" placeholder="Ingrese precio" class="input" />
     <!-- Solo si es PRODUCTO -->
-    <div *ngIf="item.tipo === 'producto'" class="input-modal">
+    <div *ngIf="item.item === 'producto'" class="input-modal">
         <div class="input-modal" >
             <label>Cantidad Inicial</label>
             <input type="number" min="0" [(ngModel)]="item.cantidadInicial" class="input" />
@@ -30,7 +32,7 @@
 <mat-dialog-actions align="end" style="display: flex; gap: 0.5rem;">
     <button class="btn-cancelar" (click)="cancelar()">CANCELAR</button>
     <button class="btn-primary" color="primary" 
-    (click)="guardar()" [disabled]="!item.descripcion || !item.tipo">
+    (click)="guardar()" [disabled]="!item.description || !item.item || item.value <= 0">
         {{ data ? 'ACTUALIZAR' : 'CREAR' }}
     </button>
 </mat-dialog-actions>

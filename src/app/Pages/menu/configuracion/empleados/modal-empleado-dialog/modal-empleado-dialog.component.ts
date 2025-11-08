@@ -42,50 +42,50 @@ export class ModalEmpleadoDialogComponent {
   }
 
   guardar() {
-  const empleado = {
-    firstName: this.emp.name,
-    lastName: this.emp.lastName,
-    documentIdentificationNumber: this.emp.documentNumber,
-    documentIdentificationType: this.emp.documentIdentificationType,
-    gender: this.emp.typeGender,
-    email: this.emp.email,
-    roleCode: this.emp.roleCode,
-    password: this.password || undefined, 
-    username: !this.data ? this.emp.username : undefined 
-  };
+    const empleado = {
+      firstName: this.emp.name,
+      lastName: this.emp.lastName,
+      documentIdentificationNumber: this.emp.documentNumber,
+      documentIdentificationType: this.emp.documentIdentificationType,
+      gender: this.emp.typeGender,
+      email: this.emp.email,
+      roleCode: this.emp.roleCode,
+      password: this.password || undefined,
+      username: !this.data ? this.emp.username : undefined
+    };
 
-  // creación o edición
-  const accion = this.data
-    ? this.empleadosService.updateEmpleado(this.emp.id, empleado)
-    : this.empleadosService.createEmpleado(empleado);
+    // creación o edición
+    const accion = this.data
+      ? this.empleadosService.updateEmpleado(this.emp.id, empleado)
+      : this.empleadosService.createEmpleado(empleado);
 
-  const mensajeAccion = this.data ? 'actualizado' : 'creado';
+    const mensajeAccion = this.data ? 'actualizado' : 'creado';
 
-  accion.subscribe({
-    next: (response: any) => {
-      const success = response?.success;
-      const message = response?.message || `Empleado ${mensajeAccion} correctamente`;
+    accion.subscribe({
+      next: (response: any) => {
+        const success = response?.success;
+        const message = response?.message || `Empleado ${mensajeAccion} correctamente`;
 
-      this.snackBar.open(message, '', {
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top',
-        panelClass: [success ? 'success-snackbar' : 'error-snackbar']
-      });
+        this.snackBar.open(message, '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: [success ? 'success-snackbar' : 'error-snackbar']
+        });
 
-      if (success) this.dialogRef.close(true);
-    },
-    error: (error) => {
-      console.error(`Error al ${mensajeAccion} empleado:`, error);
-      this.snackBar.open(error.error?.message || `Error al ${mensajeAccion} empleado`, '', {
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top',
-        panelClass: ['error-snackbar']
-      });
-    }
-  });
-}
+        if (success) this.dialogRef.close(true);
+      },
+      error: (error) => {
+        console.error(`Error al ${mensajeAccion} empleado:`, error);
+        this.snackBar.open(error.error?.message || `Error al ${mensajeAccion} empleado`, '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
 
   cancelar() {
     this.dialogRef.close();

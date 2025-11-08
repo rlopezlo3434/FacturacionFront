@@ -35,8 +35,15 @@ import { ItemsAdminComponent } from './Pages/menu/configuracion/items/items-admi
 
 //pipes
 import { FiltroEmpleadoPipe } from './pipes/filtro-empleado.pipe';
+import { FiltroItemPipe } from './pipes/filtro-item.pipe';
+import { FiltroClientePipe } from './pipes/filtro-cliente.pipe';
+import { FiltroPromocioPipe } from './pipes/filtro-promocio.pipe';
 
-
+import { ModalNumbersDialogComponent } from './Pages/menu/configuracion/clientes/modal-numbers-dialog/modal-numbers-dialog.component';
+import { ModalHijosDialogComponent } from './Pages/menu/configuracion/clientes/modal-hijos-dialog/modal-hijos-dialog.component';
+import { FacturacionComponent } from './Pages/menu/facturacion/facturacion.component';
+import { KardexComponent } from './Pages/menu/configuracion/kardex/kardex.component';
+import { KardexModalComponent } from './Pages/menu/configuracion/kardex/kardex-modal/kardex-modal.component';
 @NgModule({
   declarations: [AppComponent,
     HeaderComponent,
@@ -53,7 +60,17 @@ import { FiltroEmpleadoPipe } from './pipes/filtro-empleado.pipe';
     ModalClientesDialogComponent,
     ModalPromocionesDialogComponent,
     ItemsAdminComponent,
-    FiltroEmpleadoPipe],
+    FiltroEmpleadoPipe,
+    FiltroItemPipe,
+    FiltroClientePipe,
+    FiltroPromocioPipe,
+    ModalNumbersDialogComponent,
+    ModalHijosDialogComponent,
+    FacturacionComponent,
+    KardexComponent,
+    KardexModalComponent
+
+  ],
   imports: [
     BrowserModule,
     MatProgressBarModule,
@@ -68,7 +85,6 @@ import { FiltroEmpleadoPipe } from './pipes/filtro-empleado.pipe';
     MatSnackBarModule,
     MatProgressSpinnerModule,
     MatDialogModule,
-
     HttpClientModule,
     RouterModule.forRoot(routes)
   ],

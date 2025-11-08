@@ -1,75 +1,27 @@
-<div>
-    <div class="header-secuence">
-        <div class="color">Configuración</div>
-        <mat-icon class="color">chevron_right</mat-icon>
-        <div class="selected">Gestión de Items</div>
-    </div>
-    <div class="subTitle">Lista de Items</div>
-    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-        <div class="input-wrapper">
-            <mat-icon class="input-icon">search</mat-icon>
-            <input type="text" placeholder="Buscar por Descripción..." class="input" />
-        </div>
-        <select class="select">
-            <option value="" disabled selected>Estado</option>
-            <option value="Activo">Activo</option>
-            <option value="Suspendido">Suspendido</option>
-        </select>
-        <select class="select">
-            <option value="" disabled selected>Tipo</option>
-            <option value="Activo">Servicio</option>
-            <option value="Suspendido">Producto</option>
-        </select>
-    </div>
-    <div class="table-container">
-        <div class="table-actions">
-            <div class="table-actions-container">
-                <button class="btn btn-create" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREAR ITEM</button>
-            </div>
-            <div class="table-actions-container">
-                <button class="btn btn-remove"><mat-icon>delete</mat-icon> REMOVER FILTROS</button>
-            </div>
-        </div>
-        <div class="table-scroll">
-            <div class="table-body">
-                <table class="custom-table">
-                    <thead>
-                        <tr>
-                            <th style="text-align: center;">Tipo</th>
-                            <th style="text-align: center;">Descripción</th>
-                            <th style="text-align: center;">Estado</th>
-                            <th style="text-align: center;">Fecha Creación</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let it of items | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
-                            (click)="openEditDialog(it)">
-                            <td style="text-align: center;">{{ it.item }}</td>
-                            <td style="text-align: center;">{{ it.description }}</td>
-                            <td style="text-align: center;" sttop>
-                                <select class="select" [(ngModel)]="it.isActive" (click)="$event.stopPropagation()">
-                                    <option value="true">Activo</option>
-                                    <option value="false">Suspendido</option>
-                                </select>
-                            </td>
-                            <td style="text-align: center;">{{ it.createdAt }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="pagination">
-            <span>Filas por página: </span>
-            <select class="select" [(ngModel)]="filasPorPagina">
-                <option *ngFor="let size of [10,20,30]" [value]="size">{{ size }}</option>
-            </select>
-            <span>{{(paginaActual-1)*filasPorPagina+1}} -
-                {{paginaActual*filasPorPagina > items.length ? items.length : paginaActual*filasPorPagina}}
-                de {{items.length}}</span>
-            <button class="paginacion-icon" (click)="paginaAnterior()"
-                [disabled]="paginaActual===1"><mat-icon>chevron_left</mat-icon></button>
-            <button class="paginacion-icon" (click)="paginaSiguiente()"
-                [disabled]="paginaActual*filasPorPagina>=items.length"><mat-icon>chevron_right</mat-icon></button>
-        </div>
-    </div>
-</div>
+<h2 mat-dialog-title>
+    Agregar Item a Tienda
+</h2>
+
+<mat-dialog-content style="display: flex; flex-direction: column; gap: 0.5rem;">
+    <div style="font-size: 1rem; font-weight: 500;">Descripcion: {{ item.description }}</div>
+    <label>Tienda</label>
+    <select class="select" [(ngModel)]="tiendaSeleccionada">
+        <option value="" disabled selected>Seleccione...</option>
+        <option *ngFor="let tienda of tiendas" [value]="tienda.id">
+            {{ tienda.name }}
+        </option>
+    </select>
+
+    <label>Precio</label>
+    <input type="number" [(ngModel)]="item.precio" min="0" placeholder="Ingrese precio" class="input" />
+    
+    
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" style="display: flex; gap: 0.5rem;">
+    <button class="btn-cancelar" (click)="cancelar()">CANCELAR</button>
+    <button class="btn-primary" color="primary" (click)="guardar()"
+        [disabled]="!tiendaSeleccionada || item.precio <= 0">
+        Agregar
+    </button>
+</mat-dialog-actions>

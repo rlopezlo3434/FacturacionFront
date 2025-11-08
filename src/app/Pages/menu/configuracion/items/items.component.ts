@@ -3,6 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ModalItemDialogComponent } from './modal-item-dialog/modal-item-dialog.component';
 import { ItemsService } from '../../../../../services/items.service';
 import { Item } from '../../../../Models/Item';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ItemsAdminComponent } from './items-admin/items-admin.component';
 
 @Component({
   selector: 'app-items',
@@ -12,11 +14,13 @@ import { Item } from '../../../../Models/Item';
 export class ItemsComponent implements OnInit {
 
   items: Item[] = [];
-
+  filtroTexto: string = '';
+  filtroEstado: string = '';
+  filtroTipo: string = '';
   paginaActual = 1;
   filasPorPagina = 10;
   roleCode: string = '';
-  constructor(private dialog: MatDialog, private itemsService: ItemsService) {
+  constructor(private dialog: MatDialog, private itemsService: ItemsService, private snackBar: MatSnackBar) {
     const userString = localStorage.getItem('user');
     const user = userString ? JSON.parse(userString) : null;
     this.roleCode = user?.roleCode || '';
@@ -41,9 +45,8 @@ export class ItemsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('El diálogo se cerró', result);
       if (result) {
-        this.getItemsByEstablishment();
+        setTimeout(() => this.getItemsByEstablishment(), 300);
       }
     });
   }
@@ -56,7 +59,21 @@ export class ItemsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // this.items[index] = result; // reemplaza el item editado
+        this.getItemsByEstablishment();
+
+      }
+    });
+  }
+
+  openAddTienda(item: any) {
+    const dialogRef = this.dialog.open(ItemsAdminComponent, {
+      width: '400px',
+      data: { ...item, cantidadInicial: 0 } // pasar el item con cantidadInicial en 0
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getItemsByEstablishment();
       }
     });
   }
@@ -64,9 +81,37 @@ export class ItemsComponent implements OnInit {
   getItemsByEstablishment() {
     this.itemsService.getItemsByEstablishment().subscribe(response => {
       this.items = response;
-      console.log('Items obtenidos con éxito', response);
     }, error => {
       console.error('Error al obtener los items', error);
+    });
+  }
+
+  removerFiltros() {
+    this.filtroTexto = '';
+    this.filtroEstado = '';
+    this.filtroTipo = '';
+  }
+
+  updateEstado(item: any) {
+    this.itemsService.updateStateItem(item.id, item.isActive).subscribe({
+      next: (response) => {
+        this.snackBar.open('Estado actualizado', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+        this.getItemsByEstablishment();
+
+      },
+      error: (error) => {
+        this.snackBar.open('Error al actualizar estado', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
     });
   }
 }

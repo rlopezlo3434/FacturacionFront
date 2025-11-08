@@ -14,10 +14,7 @@ export class UsuariosComponent implements OnInit {
   }
 
   ngOnInit(): void {
-      this.clienteSerivce.getFacturas().subscribe(response => {
-        console.log(response)
-        this.facturas = response;
-      })
+      
   }
 
  

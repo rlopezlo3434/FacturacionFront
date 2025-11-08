@@ -1,0 +1,49 @@
+<table class="custom-table">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th style="text-align: center;">Cantidad</th>
+            <th style="text-align: center;">Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let p of products" (click)="viewMovements(p)" class="fila-producto">
+            <td>{{ p.code }}</td>
+            <td>{{ p.description }}</td>
+            <td style="text-align: center;">{{ p.quantity || 0 }}</td>
+            <td style="display: flex; justify-content: center;"><button class="btn-ver">Ver Movimientos</button></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Movimientos -->
+<div *ngIf="productoSeleccionado" class="movimientos">
+    <div class="movimientos-header">
+        <h3>Movimientos de {{ productoSeleccionado.code }}</h3>
+        <div>
+            <button class="btn-agregar" (click)="agregarMovimiento()">AGREGAR</button>
+        </div>
+    </div>
+
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Cantidad</th>
+                <th>Notas</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let m of movimientos">
+                <td>{{ m.date }}</td>
+                <td [ngClass]="{'entrada': m.movementType === 'Entrada', 'salida': m.movementType === 'Salida'}">
+                    {{ m.movementType }}
+                </td>
+                <td>{{ m.quantity }}</td>
+                <td>{{ m.notes || '-' }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

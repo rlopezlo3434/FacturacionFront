@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class FiltroEmpleadoPipe implements PipeTransform {
 
-   transform(empleados: any[], texto: string, estado: string): any[] {
+  transform(empleados: any[], texto: string, estado: string): any[] {
     if (!empleados) return [];
 
     let resultado = empleados;
@@ -24,7 +24,7 @@ export class FiltroEmpleadoPipe implements PipeTransform {
 
     //  Filtro por estado (activo/suspendido)
     if (estado !== '' && estado != null) {
-      const estadoBool = (estado === 'true'); 
+      const estadoBool = (estado === 'true');
       resultado = resultado.filter(emp => emp.isActive === estadoBool);
     }
 

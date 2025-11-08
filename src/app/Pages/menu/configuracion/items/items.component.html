@@ -9,17 +9,17 @@
     <div style="display: flex; gap: 10px; margin-bottom: 10px;">
         <div class="input-wrapper">
             <mat-icon class="input-icon">search</mat-icon>
-            <input type="text" placeholder="Buscar por Descripción..." class="input" />
+            <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Descripción..." class="input" />
         </div>
-        <select class="select">
-            <option value="" disabled selected>Estado</option>
-            <option value="Activo">Activo</option>
-            <option value="Suspendido">Suspendido</option>
+        <select class="select" [(ngModel)]="filtroEstado">
+             <option value="" disabled selected>Estado</option>
+                <option [value]="true">Activo</option>
+                <option [value]="false">Suspendido</option>
         </select>
-        <select class="select">
-            <option value="" disabled selected>Tipo</option>
-            <option value="Activo">Servicio</option>
-            <option value="Suspendido">Producto</option>
+        <select class="select" [(ngModel)]="filtroTipo">
+             <option value="" disabled selected>Tipo</option>
+                <option value="Producto">Producto</option>
+                <option value="Servicio">Servicio</option>
         </select>
     </div>
     <div class="table-container">
@@ -28,7 +28,7 @@
                 <button class="btn btn-create" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREAR ITEM</button>
             </div>
             <div class="table-actions-container">
-                <button class="btn btn-remove"><mat-icon>delete</mat-icon> REMOVER FILTROS</button>
+                <button class="btn btn-remove" (click)="removerFiltros()"><mat-icon>delete</mat-icon> REMOVER FILTROS</button>
             </div>
         </div>
         <div class="table-scroll">
@@ -40,22 +40,24 @@
                             <th style="text-align: center;">Descripción</th>
                             <th style="text-align: center;">Estado</th>
                             <th *ngIf="roleCode === 'ADMIN' || roleCode === 'OWNER'" style="text-align: center;">Tiendas</th>
+                            <th style="text-align: center;">Precio</th>
                             <th style="text-align: center;">Fecha Creación</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let it of items | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
+                        <tr *ngFor="let it of items | filtroItem:filtroTexto:filtroEstado:filtroTipo | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
                             (click)="openEditDialog(it)">
                             <td style="text-align: center;">{{ it.item }}</td>
                             <td style="text-align: center;">{{ it.description }}</td>
-                            <td style="text-align: center;" sttop>
-                                <select class="select" [(ngModel)]="it.isActive" (click)="$event.stopPropagation()">
-                                    <option value="true">Activo</option>
-                                    <option value="false">Suspendido</option>
+                            <td style="text-align: center;">
+                                <select class="select" [(ngModel)]="it.isActive" (click)="$event.stopPropagation()" (change)="updateEstado(it)">
+                                    <option [ngValue]="true">Activo</option>
+                                    <option [ngValue]="false">Suspendido</option>
                                 </select>
                             </td>
                             <td *ngIf="roleCode === 'ADMIN' || roleCode === 'OWNER'" style="text-align: center;">
-                            </td>
+                            <mat-icon style="cursor: pointer;" (click)="openAddTienda(it); $event.stopPropagation()">add_circle</mat-icon></td>
+                            <td style="text-align: center;">S/.{{ it.value }}</td>
                             <td style="text-align: center;">{{ it.createdAt }}</td>
                         </tr>
                     </tbody>

@@ -8,13 +8,9 @@
     <div style="display: flex; gap: 10px; margin-bottom: 10px;">
         <div class="input-wrapper">
             <mat-icon class="input-icon">search</mat-icon>
-            <input type="text" placeholder="Buscar por Nombre" class="input" />
+            <input type="text" placeholder="Buscar por Nombre" class="input" [(ngModel)]="filtroTexto" />
         </div>
-        <!-- <select class="select">
-            <option value="" disabled selected>Estado</option>
-            <option value="Activo">Activo</option>
-            <option value="Suspendido">Suspendido</option>
-        </select> -->
+    
     </div>
     <div class="table-container">
         <div class="table-actions">
@@ -31,18 +27,18 @@
                     <thead>
                         <tr>
                             <th style="text-align: center;">Nombre</th>
-                            <th style="text-align: center;">Cantidad</th>
+                            <th style="text-align: center;">Valor</th>
                             <th style="text-align: center;">Fecha Inicio</th>
                             <th style="text-align: center;">Fecha Fin</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr
-                            *ngFor="let prom of promociones | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)" (click)="openEditDialog(prom)">
-                            <td style="text-align: center;">{{ prom.nombre }}</td>
-                            <td style="text-align: center;">{{ prom.nombre }}</td>
-                            <td style="text-align: center;">{{ prom.fecha }}</td>
-                            <td style="text-align: center;">{{ prom.fecha }}</td>
+                            *ngFor="let prom of promociones | filtroPromocio:filtroTexto | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)" (click)="openEditDialog(prom)">
+                            <td style="text-align: center;">{{ prom.name }}</td>
+                            <td style="text-align: center;">{{ prom.type == "FixedAmount" ? 'S/.' + prom.value : prom.value + '%' }}</td>
+                            <td style="text-align: center;">{{ prom.startDate | date: 'dd-MM-yyyy' }}</td>
+                            <td style="text-align: center;">{{ prom.endDate | date: 'dd-MM-yyyy' }}</td>
 
                         </tr>
                     </tbody>

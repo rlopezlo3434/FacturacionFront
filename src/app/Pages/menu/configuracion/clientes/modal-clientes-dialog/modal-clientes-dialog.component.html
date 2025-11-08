@@ -1,1 +1,63 @@
-<p>modal-clientes-dialog works!</p>
+<h2 mat-dialog-title>
+    {{ data ? 'Editar Cliente' : 'Crear Cliente' }}
+</h2>
+
+<mat-dialog-content>
+    <div class="subTitle">Información Personal</div>
+    <div class="form-grid">
+        <!-- Nombre -->
+        <input type="text" class="input" placeholder="Nombre(s) *" [(ngModel)]="cli.firstName" />
+
+        <!-- Apellido -->
+        <input type="text" class="input" placeholder="Apellido(s) *" [(ngModel)]="cli.lastName" />
+
+        <!-- Género -->
+        <select class="select" [(ngModel)]="cli.gender">
+            <option value="" disabled selected>Género *</option>
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+        </select>
+
+        <!-- Tipo de Documento -->
+        <select class="select" [(ngModel)]="cli.documentIdentificationType">
+            <option value="" disabled selected>Tipo de Documento *</option>
+            <option value="DNI">DNI</option>
+            <option value="RUC">RUC</option>
+            <option value="CARNET_EXTRANJERIA">Carnet de Extranjería</option>
+        </select>
+
+        <!-- Número de Documento -->
+        <input type="text" class="input" placeholder="Número de Identificación *"
+            [(ngModel)]="cli.documentIdentificationNumber" />
+
+        <!-- Correo -->
+        <input type="email" class="input" placeholder="Correo Electrónico" [(ngModel)]="cli.email" />
+
+        <div class="phone-list">
+            <div *ngFor="let num of cli.numbers; let i = index" class="phone-item">
+                <input type="text" class="input" placeholder="Número de teléfono" [(ngModel)]="cli.numbers[i]" />
+                <button class="btn-icon delete" (click)="removeNumber(i)" type="button">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+
+            <button class="btn-icon add" (click)="addNumber()" type="button">
+                <mat-icon>add_circle</mat-icon> Agregar número
+            </button>
+        </div>
+
+        <!-- Checkbox Marketing -->
+        <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="cli.acceptsMarketing" />
+            Promociones
+        </label>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" style="display: flex; gap: 0.5rem;">
+    <button class="btn-cancelar" (click)="cancelar()">CANCELAR</button>
+    <button class="btn-primary" color="primary" (click)="guardar()"
+        [disabled]="!cli.firstName || !cli.lastName || !cli.email|| !cli.documentIdentificationType || !cli.documentIdentificationNumber ">
+        {{ data ? 'ACTUALIZAR' : 'CREAR' }}
+    </button>
+</mat-dialog-actions>

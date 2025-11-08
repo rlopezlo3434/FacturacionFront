@@ -30,4 +30,20 @@ export class ItemsService {
     });
   }
 
+  updateStateItem(id: number, data: boolean) {
+    return this.http.post(`${environment.apiBase}/Item/updateState/${id}`, { isActive: data }, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      }
+    });
+  }
+
+  updateItem(data: any) {
+    return this.http.post(`${environment.apiBase}/Item/updateItem`, data, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      }
+    });
+  }
+
 }

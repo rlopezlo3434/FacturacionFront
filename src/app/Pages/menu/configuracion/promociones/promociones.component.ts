@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalPromocionesDialogComponent } from './modal-promociones-dialog/modal-promociones-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { PromocionesService } from '../../../../../services/promociones.service';
 
 @Component({
   selector: 'app-promociones',
@@ -8,24 +10,26 @@ import { ModalPromocionesDialogComponent } from './modal-promociones-dialog/moda
   styleUrl: './promociones.component.scss'
 })
 export class PromocionesComponent {
-  
-  promociones = [
-    { nroDocumento: 'Servicio', nombre: 'Corte de Cabello', estado: 'Suspendido', fecha: '2025-09-17' },
-    { nroDocumento: 'Servicio', nombre: 'Lavado de Cabello', estado: 'Activo', fecha: '2025-09-16' },
-    { nroDocumento: 'Producto', nombre: 'Shampoo', estado: 'Suspendido', fecha: '2025-09-15' },
-    { nroDocumento: 'Servicio', nombre: 'Peinado', estado: 'Activo', fecha: '2025-09-14' },
-    { nroDocumento: 'Producto', nombre: 'Acondicionador', estado: 'Suspendido', fecha: '2025-09-13' },
-    { nroDocumento: 'Servicio', nombre: 'Lavado de Cabello', estado: 'Activo', fecha: '2025-09-16' },
-    { nroDocumento: 'Producto', nombre: 'Shampoo', estado: 'Suspendido', fecha: '2025-09-15' },
-    { nroDocumento: 'Servicio', nombre: 'Peinado', estado: 'Activo', fecha: '2025-09-14' },
-    { nroDocumento: 'Producto', nombre: 'Acondicionador', estado: 'Suspendido', fecha: '2025-09-13' },
-  ];
 
+  promociones: any[] = [];
+  filtroTexto: string = '';
 
   paginaActual = 1;
   filasPorPagina = 5;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog, private snackBar: MatSnackBar, private promocionService: PromocionesService) { }
+
+  ngOnInit(): void {
+    this.loadPromociones();
+  }
+
+  loadPromociones() {
+    this.promocionService.getPromociones().subscribe({
+      next: (data) => {
+        this.promociones = data;
+      }
+    });
+  }
 
   
   paginaAnterior() {
@@ -37,28 +41,40 @@ export class PromocionesComponent {
   }
 
   openCreateDialog() {
-        const dialogRef = this.dialog.open(ModalPromocionesDialogComponent, {
-          width: '1500px',
-          panelClass: 'full-modal'
+    const dialogRef = this.dialog.open(ModalPromocionesDialogComponent, {
+      width: '1500px',
+      panelClass: 'full-modal'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+         this.snackBar.open(result.message, '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
         });
-    
-        dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            this.promociones.push(result);
-          }
-        });
+        this.loadPromociones();
       }
-    
-      openEditDialog(item: any) {
-        const dialogRef = this.dialog.open(ModalPromocionesDialogComponent, {
-          width: '1500px',
-          data: item
+    });
+  }
+
+  openEditDialog(item: any) {
+    const dialogRef = this.dialog.open(ModalPromocionesDialogComponent, {
+      width: '1500px',
+      data: item
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.snackBar.open(result.message, '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
         });
-    
-        dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            // this.items[index] = result; // reemplaza el item editado
-          }
-        });
+        this.loadPromociones();
       }
+    });
+  }
 }

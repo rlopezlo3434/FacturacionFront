@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { SidebarService } from '../../../services/sidebar.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MenuItem } from '../../Models/MenuItem';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-layout',
@@ -12,7 +13,7 @@ export class LayoutComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
   usuariosOpen = false;
   menuItems: MenuItem[] = [];
-  constructor(private sidebarService: SidebarService) { }
+  constructor(private sidebarService: SidebarService, private router: Router) { }
 
   ngOnInit() {
     this.sidebarService.toggleSidenav$.subscribe(() => {
@@ -21,11 +22,17 @@ export class LayoutComponent {
 
 
     this.menuItems = [
+      // {
+      //   label: 'Ventas',
+      //   name: 'ventas',
+      //   icon: 'file_copy',
+      //   children: [{ label: 'Lista de Ventas', route: '/home/ventas' }],
+      // },
       {
-        label: 'Facturas',
-        name: 'usuarios',
-        icon: 'file_copy',
-        children: [{ label: 'Lista de Facturas', route: '/home/facturas' }],
+        label: 'Facturación',
+        name: 'facturacion',
+        icon: 'receipt_long',
+        children: [{ label: 'Generar Venta', route: '/facturacion/venta' }],
       },
       {
         label: 'Configuración',
@@ -35,12 +42,21 @@ export class LayoutComponent {
           { label: 'Gestion de Cliente', route: '/configuracion/Clientes' },
           { label: 'Gestion de Items', route: '/configuracion/Items' },
           { label: 'Gestion de Empleados', route: '/configuracion/Empleados' },
-          { label: 'Gestion de Promociones', route: '/configuracion/Promociones' }],
-      },
+          { label: 'Gestion de Descuentos', route: '/configuracion/Descuentos' },
+          // { label: 'Gestion de Almacén', route: '/configuracion/Almacen' }
+        ],
 
+      },
+      {
+        label: 'Alamacén',
+        name: 'almacen',
+        icon: 'house_siding',
+        children: [
+          { label: 'Kardex', route: '/configuracion/Almacen' }],
+
+      },
     ];
 
-    console.log(this.menuItems)
   }
 
   toggleUsuarios() {
@@ -49,5 +65,9 @@ export class LayoutComponent {
 
   toggleMenu(item: MenuItem) {
     item.open = !item.open;
+  }
+
+  navigateTo(route: string) {
+    this.router.navigate([route]);
   }
 }

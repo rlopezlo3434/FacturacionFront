@@ -1,0 +1,95 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #f4f4f4;
+  padding: 10px;
+  text-align: left;
+}
+
+.table td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.fila-producto:hover {
+  background: #f8f9fa;
+  cursor: pointer;
+}
+
+.btn-ver {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 0.5rem;
+}
+
+.movimientos {
+  margin-top: 20px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.entrada {
+  color: green !important;
+  font-weight: bold;
+}
+
+.btn-agregar {
+  background: black;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.salida {
+  color: red !important;
+  font-weight: bold;
+}
+
+.movimientos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.custom-table th,
+.custom-table td {
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.custom-table th {
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.custom-table td {
+  color: var(--color-text);
+}
+
+.custom-table tbody tr:hover {
+  color: #000;
+}
+
+.custom-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: var(--color-bg);
+  z-index: 2;
+}

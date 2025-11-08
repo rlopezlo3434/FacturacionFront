@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Nuevo Movimiento</h2>
+
+<mat-dialog-content style="display: flex; flex-direction: column; gap: 0.5rem;">
+    <label>Tipo de movimiento</label>
+    <select class="select" [(ngModel)]="movimiento.movementType" name="movementType">
+        <option value="" disabled selected>Seleccione...</option>
+        <option value="Entrada">Entrada</option>
+        <option value="Salida">Salida</option>
+    </select>
+
+    <label>Cantidad</label>
+    <input class="input" type="number" [(ngModel)]="movimiento.quantity" name="quantity">
+
+    <label>Notas</label>
+    <input class="input" [(ngModel)]="movimiento.notes" name="notes">
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" style="display: flex; gap: 0.5rem;">
+    <button class="btn-cancelar" mat-button (click)="cancelar()">Cancelar</button>
+    <button class="btn-primary" mat-flat-button color="primary" (click)="guardar()">Guardar</button>
+</mat-dialog-actions>

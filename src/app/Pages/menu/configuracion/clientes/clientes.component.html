@@ -1,1 +1,107 @@
-<p>clientes works!</p>
+<div>
+    <div class="header-secuence">
+        <div class="color">Configuración</div>
+        <mat-icon class="color">chevron_right</mat-icon>
+        <div class="selected">Gestión de Clientes</div>
+    </div>
+    <div class="subTitle">Lista de Clientes</div>
+    <div class="filtersContainer">
+        <div class="input-wrapper">
+            <mat-icon class="input-icon">search</mat-icon>
+            <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Nombre, Apellido o DNI..."
+                class="input" />
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <select class="select" [(ngModel)]="filtroEstado">
+                <option value="" disabled selected>Estado</option>
+                <option [value]="true">Activo</option>
+                <option [value]="false">Suspendido</option>
+            </select>
+            <select class="select" [(ngModel)]="filtroGenero">
+                <option value="" disabled selected>Genero</option>
+                <option [value]="'M'">Masculino</option>
+                <option [value]="'F'">Femenino</option>
+            </select>
+        </div>
+    </div>
+    <div class="table-container">
+        <div class="table-actions">
+            <div class="table-actions-container">
+                <button class="btn btn-create" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREAR
+                    CLIENTE</button>
+            </div>
+            <div class="table-actions-container">
+                <button (click)="removerFiltros()" class="btn btn-remove"><mat-icon>delete</mat-icon> REMOVER
+                    FILTROS</button>
+            </div>
+        </div>
+        <div class="table-scroll">
+            <div class="table-body">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Nro Documento</th>
+                            <th style="text-align: center;">Nombres</th>
+                            <th style="text-align: center;">Apellidos</th>
+                            <th style="text-align: center;">Género</th>
+                            <th style="text-align: center;">Correo</th>
+                            <th style="text-align: center;">Hijos</th>
+                            <th style="text-align: center;">Numeros</th>
+                            <th style="text-align: center;">Estado</th>
+                            <th style="text-align: center;">Promociones</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let cli of clientes | filtroCliente:filtroTexto:filtroEstado:filtroGenero | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
+                            (click)="openEditDialog(cli)">
+                            <td style="text-align: center;">{{ cli.documentIdentificationNumber }}</td>
+                            <td style="text-align: center;">{{ cli.firstName }}</td>
+                            <td style="text-align: center;">{{ cli.lastName }}</td>
+                            <td style="text-align: center;">{{ cli.gender == "M" ? "Hombre" : "Mujer" }}</td>
+                            <td style="text-align: center;">{{ cli.email }}</td>
+                            <td style="text-align: center;">
+                                <mat-icon (click)="$event.stopPropagation(); openHijosDialog(cli, 'agregar')"
+                                    style="margin-right: 0.3rem;">
+                                    add_circle
+                                </mat-icon>
+                                <mat-icon (click)="$event.stopPropagation(); openHijosDialog(cli, 'listar')">
+                                    format_list_bulleted
+                                </mat-icon>
+                            </td>
+                            <td style="text-align: center;">
+                                <mat-icon
+                                    (click)="openNumbersDialog(cli); $event.stopPropagation()">format_list_bulleted</mat-icon>
+                            </td>
+                            <td style="text-align: center;">
+                                <select class="select" [disabled]="roleCode === 'COLLAB'" [(ngModel)]="cli.isActive"
+                                    (click)="$event.stopPropagation()" (change)="updateEstado(cli)">
+                                    <option [ngValue]="true">Activo</option>
+                                    <option [ngValue]="false">Suspendido</option>
+                                </select>
+                            </td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" (change)="cli.acceptsMarketing = !cli.acceptsMarketing; updateMarketing(cli)"
+                                    (click)=" $event.stopPropagation()" [checked]="cli.acceptsMarketing" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pagination">
+            <span>Filas por página: </span>
+            <select class="select" [(ngModel)]="filasPorPagina">
+                <option *ngFor="let size of [5,10,20]" [value]="size">{{ size }}</option>
+            </select>
+            <span>{{(paginaActual-1)*filasPorPagina+1}} -
+                {{paginaActual*filasPorPagina > clientes.length ? clientes.length : paginaActual*filasPorPagina}}
+                de {{clientes.length}}</span>
+            <button class="paginacion-icon" (click)="paginaAnterior()"
+                [disabled]="paginaActual===1"><mat-icon>chevron_left</mat-icon></button>
+            <button class="paginacion-icon" (click)="paginaSiguiente()"
+                [disabled]="paginaActual*filasPorPagina>=clientes.length"><mat-icon>chevron_right</mat-icon></button>
+        </div>
+    </div>
+
+</div>
