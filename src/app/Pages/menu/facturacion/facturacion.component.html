@@ -1,25 +1,42 @@
-<div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+<div style="display: flex; align-items: center; justify-content: space-between;">
     <h2>Facturación</h2>
-
-    <div class="tipoComprobante">
-        <label>Tipo de comprobante:</label>
-        <select [(ngModel)]="venta.serieSeleccionada" class="input">
-            <option value="" disabled selected>Seleccione una serie</option>
-            <option *ngFor="let s of series" [ngValue]="s">
-                {{ s.tipo }} - {{ s.serie }}
-            </option>
-        </select>
-    </div>
+    <div><input class="input" type="date" [(ngModel)]="fechaHoy" (change)="loadVentas()"></div>
 </div>
 <div class="container-fac">
     <div style="flex: 1;">
+        <div class="tipoComprobante">
+            <!-- <div class="btn-reporte" (click)="reporteDiario()">
+            Reporte Diario
+        </div> -->
+            <div class="form-group">
+                <select [(ngModel)]="venta.metodo_pago" name="metodo_pago" class="input">
+                    <option value="" disabled selected>Método de pago</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Yape">Yape</option>
+                    <option value="Plin">Plin</option>
+                    <option value="Transferencia">Transferencia</option>
+                    <option value="Tarjeta">Tarjeta</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <!-- <label>Tipo de comprobante:</label> -->
+                <div><input class="input" type="date" [(ngModel)]="fechaBoleteoHoy"></div>
+
+                <select [(ngModel)]="venta.serieSeleccionada" class="input">
+                    <option value="" disabled selected>Seleccione una serie</option>
+                    <option *ngFor="let s of series" [ngValue]="s">
+                        {{ s.tipo }} - {{ s.serie }}
+                    </option>
+                </select>
+            </div>
+        </div>
         <!-- Contenedor del input (relative solo aquí) -->
         <div class="addClient">
             <div (click)="mostrarCliente()" class="input-wrapper input"
                 style="flex: 1; display: flex; align-items: center;">
                 <mat-icon class="input-icon">person</mat-icon>
                 <!-- Texto fijo -->
-                <div style="flex: 1; padding: 0 1.7rem;">Agregar Cliente y Empleado(s)</div>
+                <div style="flex: 1; padding: 0 1.7rem;">Agregar Cliente</div>
             </div>
         </div>
         <div *ngIf="!agregarCliente">
@@ -38,7 +55,7 @@
             'border-left': '3px solid ' + (item.isActive ? '#28a745' : '#ccc'),
             'padding-left': '0.4rem'
         }">
-                            <div><strong>{{ item.item }}</strong> {{ item.code }}</div>
+                            <!-- <div><strong>{{ item.item }}</strong> {{ item.code }}</div> -->
                             <div>
                                 {{ item.description }} -
                                 <span style="font-weight: 500;">{{ item.value | currency:'S/.' }}</span>
@@ -66,10 +83,17 @@
                     'align-items': 'center'
                 }">
                         <div style="flex: 1;">
-                            <div><strong>{{ item.item }}</strong> {{ item.code }}</div>
-                            <div>
-                                {{ item.description }} -
-                                <span style="font-weight: 500;">{{ item.value | currency:'S/.' }}</span>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div>
+                                    <div><strong>{{ item.item }}</strong> {{ item.code }}</div>
+                                    <div>
+                                        {{ item.description }} -
+                                        <span style="font-weight: 500;">{{ item.value | currency:'S/.' }}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <mat-icon (click)="abrirSeleccionEmpleados(item)">person</mat-icon>
+                                </div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.7rem; margin-top: 0.3rem;">
                                 <div class="flexColum">
@@ -82,11 +106,6 @@
                                     <input (change)="actualizarTotales(item)" type="number" [(ngModel)]="item.value"
                                         class="input responsiveInput" step="0.01" />
                                 </div>
-
-                                <!-- Subtotal -->
-                                <!-- <div style="margin-left: auto; font-weight: 500;">
-                                Subtotal: {{ item.value * (item.cantidad || 1) | currency:'S/.' }}
-                            </div> -->
                             </div>
                         </div>
                         <div>
@@ -95,6 +114,13 @@
                     </div>
 
                 </div>
+            </div>
+            <div>
+                Descuentos Disponibles:
+                <select class="input" [(ngModel)]="promoTarjeta" (change)="onPromoChange()">
+                    <option [ngValue]="0" >% 0</option>
+                    <option *ngFor="let promo of promociones" [ngValue]="promo.descuentoAplicado"> % {{ promo.descuentoAplicado }}</option>
+                </select>
             </div>
             <!-- Lista de items seleccionados (fuera del relative) -->
             <div style="margin-top: 1rem; text-align: right;">
@@ -108,8 +134,20 @@
                 <textarea style="resize: none;" [(ngModel)]="venta.observaciones" class="input" rows="3"
                     placeholder="Agregar observaciones..."></textarea>
             </div>
+            <div *ngIf="venta.metodo_pago == 'Efectivo'"
+                style="display: flex; align-items: center; gap: 1rem; margin-top: 1rem; justify-content: end;">
+
+                <div>Monto recibido</div>
+                <input type="number" [(ngModel)]="montoIngresado" class="input" />
+
+                <div>
+                    <strong>Vuelto: </strong>
+                    {{ (montoIngresado - totalGeneral) | currency:'S/.' }}
+                </div>
+            </div>
             <div>
-                <button (click)="imprimirVenta()" class="btn btn-primary btn-venta">GENERAR VENTA</button>
+                <button (click)="imprimirVenta()" [disabled]="isLoading" class="btn btn-primary btn-venta">GENERAR
+                    VENTA</button>
             </div>
 
         </div>
@@ -187,15 +225,13 @@
                     </div>
                 </div>
             </div>
-            <div class="empleado-selector" style="position: relative; margin-top: 0.5rem;">
-                <!-- Input de búsqueda -->
+            <!-- <div class="empleado-selector" style="position: relative; margin-top: 0.5rem;">
                 <div class="input-wrapper">
                     <mat-icon class="input-icon">badge</mat-icon>
                     <input type="text" placeholder="Buscar empleado..." class="input" [(ngModel)]="empleadoBuscado"
                         (input)="filtrarEmpleados()" (focus)="mostrarListaEmpleados = true"
                         (blur)="ocultarListaConRetardoEmpleados()" />
                 </div>
-                <!-- Lista desplegable -->
                 <div *ngIf="mostrarListaEmpleados && empleadosFiltrados.length > 0" class="dropdown-list2">
                     <div *ngFor="let emp of empleadosFiltrados" class="dropdown-item2"
                         (mousedown)="seleccionarEmpleado(emp)">
@@ -208,7 +244,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Chips de empleados seleccionados -->
                 <div *ngIf="empleadosSeleccionados.length > 0" class="chips-container">
                     <div class="chip" *ngFor="let emp of empleadosSeleccionados">
                         {{ emp.firstName }} {{ emp.lastName }}
@@ -217,11 +252,31 @@
                 </div>
 
 
-            </div>
+            </div> -->
         </div>
     </div>
-    <div class="container2" >
-        <div class="titleComprobantes">COMPROBANTES EMITIDOS</div>
+    <div class="container2">
+        <div class="header-container2">
+            <div class="titleComprobantes">COMPROBANTES EMITIDOS</div>
+            <button class="btn-more-reporte" [matMenuTriggerFor]="menuOpcionesReportes">
+                REPORTES
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menuOpcionesReportes="matMenu">
+
+                <button mat-menu-item (click)="obtenerProductividad()">
+                    <mat-icon>description</mat-icon>
+                    <span>Productividad</span>
+                </button>
+
+                <button mat-menu-item (click)="reporteDiario()">
+                    <mat-icon>description</mat-icon>
+                    <span>Reporte diario</span>
+                </button>
+
+            </mat-menu>
+
+        </div>
 
         <div *ngIf="ventas?.length === 0" class="text-gray-500 text-center">
             No hay comprobantes registrados.
@@ -230,7 +285,7 @@
         <div class="lista-comprobantes">
             <div *ngFor="let v of ventas" class="comprobante-card">
                 <div class="comprobante-header">
-                    <div class="tipo">{{ v.tipoComprobante }}</div>
+                    <div class="tipo">{{ v.tipoComprobante }} {{ v.anulado == false ? '' : '(Anulado)' }}</div>
                     <div class="fecha">{{ v.fecha }}</div>
                 </div>
 
@@ -239,12 +294,33 @@
                         {{ v.serie }} - {{ v.numero }}
                     </div>
                     <div class="total">S/ {{ v.total | number: '1.2-2' }}</div>
+
                 </div>
 
                 <div class="comprobante-footer">
-                    <a [href]="v.linkPdf" target="_blank" class="btn-pdf">
-                        📄 Ver PDF
-                    </a>
+                    <button (click)="imprimirPdf(v.linkPdf)" class="btn-pdf">
+                        📄 Imprimir PDF
+                    </button>
+                    <button class="btn-more" [matMenuTriggerFor]="menuOpciones">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <!-- Opciones del menú -->
+                    <mat-menu #menuOpciones="matMenu">
+
+                        <button mat-menu-item (click)="downloadPDF(v.linkPdf)">
+                            <mat-icon>picture_as_pdf</mat-icon>
+                            <span>Descargar PDF</span>
+                        </button>
+
+                        <button *ngIf="v.anulado == false" mat-menu-item (click)="anularComprobante(v)">
+                            <mat-icon>cancel</mat-icon>
+                            <span>Anular comprobante</span>
+                        </button>
+
+                    </mat-menu>
+                    <!-- <button (click)="anularComprobante(v)" class="btn-anular">
+                        Anular
+                    </button> -->
                 </div>
             </div>
         </div>

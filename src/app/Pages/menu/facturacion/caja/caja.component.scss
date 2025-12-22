@@ -1,0 +1,87 @@
+.cardCaja {
+    display: flex;
+    border-radius: 1rem;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1rem;
+    justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    background-color: #f3f3f3;
+
+    & .card-body {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        text-align: center;
+    }
+}
+.btn-more-reporte{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+.btn-cerrar {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+
+    &:hover:not(:disabled) {
+        background-color: #080808;
+    }
+
+    &:disabled {
+        background-color: #e2e3e5;
+        cursor: not-allowed;
+    }
+}
+
+.cardMovimientos {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 2fr; /* EXACTO IGUAL AL HEADER */
+    align-items: center;
+    justify-items: center; /* CENTRA CADA CELDA */
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: #fcfcfc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    margin-bottom: 0.7rem;
+}
+.flex2{
+    padding: 0 0.5rem;
+    flex: 0.7;
+    max-height: calc(100vh - 250px); /* Ajusta el alto máximo que desees */
+    overflow-y: auto;  /* Activa scroll vertical */
+}
+.headerMovimientos {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 2fr; /* MISMA DISTRIBUCIÓN QUE EL CONTENIDO */
+    background-color: black;
+    color: white;
+    border-radius: 1rem;
+    padding: 0.5rem 0.5rem;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    position: sticky;
+    top: 0;  
+    z-index: 10;
+}
+
+.agregarMovimiento{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    justify-content: end;
+}
+.header{
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+}

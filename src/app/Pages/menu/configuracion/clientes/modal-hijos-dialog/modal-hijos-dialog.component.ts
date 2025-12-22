@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ClienteService } from '../../../../../../services/cliente.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-modal-hijos-dialog',
@@ -9,15 +10,20 @@ import { ClienteService } from '../../../../../../services/cliente.service';
 })
 export class ModalHijosDialogComponent {
   hijos: any[] = [];
-  newChild = { firstName: '', lastName: '', fechaCumpleanios: '' };
-  isAgregar = false;
+  newChild = { id: null, firstName: '', lastName: '', fechaCumpleanios: null };
+  isAgregar: boolean = false;
+  isEditar: boolean = false;
+  hijoSeleccionado: any = null;
 
   constructor(
     private dialogRef: MatDialogRef<ModalHijosDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private clienteService: ClienteService
+    private clienteService: ClienteService,
+    private snackBar: MatSnackBar
   ) {
+    console.log(data)
     this.isAgregar = data.modo === 'agregar';
+    console.log(this.isAgregar)
     this.loadHijos();
   }
 
@@ -31,6 +37,53 @@ export class ModalHijosDialogComponent {
       }
     });
   }
+
+  editarHijo(hijo: any) {
+    this.isEditar = true;
+    this.isAgregar = false;
+
+    this.newChild = {
+      id: hijo.id,
+      firstName: hijo.firstName,
+      lastName: hijo.lastName,
+      fechaCumpleanios: hijo.fechaCumpleanios
+        ? hijo.fechaCumpleanios.substring(0, 10)
+        : null
+    };
+  }
+
+  updateHijo() {
+    this.clienteService.updateChild(this.newChild).subscribe({
+      next: () => {
+        this.isEditar = false;
+        this.resetForm();
+        this.loadHijos(); // vuelve a listar
+        this.snackBar.open(
+            'Datos del hijo actualizado correctamente',
+            '',
+            {
+              duration: 3000,
+              horizontalPosition: 'right',
+              verticalPosition: 'top',
+              panelClass: ['success-snackbar']
+            }
+          );
+      },
+      error: () => {
+        console.log('Error al actualizar el hijo');
+      }
+    });
+  }
+
+  resetForm() {
+    this.newChild = {
+      id: null,
+      firstName: '',
+      lastName: '',
+      fechaCumpleanios: null
+    };
+  }
+
 
   addHijo() {
     if (!this.newChild.firstName.trim() || !this.newChild.lastName.trim()) {
@@ -49,7 +102,7 @@ export class ModalHijosDialogComponent {
       next: (response) => {
         this.dialogRef.close(response);
 
-        this.newChild = { firstName: '', lastName: '', fechaCumpleanios: '' };
+        this.newChild = { id: null, firstName: '', lastName: '', fechaCumpleanios: null };
       },
       error: (err) => {
         console.error('Error al agregar hijo:', err);

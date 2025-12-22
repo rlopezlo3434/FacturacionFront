@@ -99,4 +99,60 @@ export class ModalClientesDialogComponent {
     this.dialogRef.close();
   }
 
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
+
+  consultarDocumento() {
+    this.clienteService.consultarDocumento(this.cli.documentIdentificationType, this.cli.documentIdentificationNumber)
+      .subscribe({
+        next: (response: any) => {
+
+          // 1️⃣ Validar error del backend
+          if (response?.message === 'not found') {
+            this.snackBar.open(
+              'No se encontraron datos para el documento proporcionado',
+              '',
+              {
+                duration: 3000,
+                horizontalPosition: 'right',
+                verticalPosition: 'top',
+                panelClass: ['error-snackbar']
+              }
+            );
+            return; // IMPORTANTE: detener el flujo
+          }
+
+          // 2️⃣ Si sí existen datos, llenar el formulario
+          this.cli.firstName = response.first_name || response.razon_social || '';
+          this.cli.lastName = response.first_last_name || '';
+
+          this.snackBar.open(
+            'Datos del documento cargados correctamente',
+            '',
+            {
+              duration: 3000,
+              horizontalPosition: 'right',
+              verticalPosition: 'top',
+              panelClass: ['success-snackbar']
+            }
+          );
+        },
+
+        // 3️⃣ Si es un error HTTP (404, 500, etc.)
+        error: (err) => {
+          this.snackBar.open(
+            'Error al consultar el documento',
+            '',
+            {
+              duration: 3000,
+              horizontalPosition: 'right',
+              verticalPosition: 'top',
+              panelClass: ['error-snackbar']
+            }
+          );
+        }
+      });
+  }
+
 }

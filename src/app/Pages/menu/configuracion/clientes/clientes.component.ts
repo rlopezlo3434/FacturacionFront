@@ -20,7 +20,7 @@ export class ClientesComponent {
   filtroGenero: string = '';
 
   paginaActual = 1;
-  filasPorPagina = 5;
+  filasPorPagina = 50;
 
   roleCode: string | null = null;
 
@@ -69,17 +69,17 @@ export class ClientesComponent {
     });
   }
 
-  openCreateHijosDialog(cliente: any) {
-    const dialogRef = this.dialog.open(ModalHijosDialogComponent, {
-      width: '400px',
-      data: { cliente }
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadClientes();
-      }
-    });
-  }
+  // openCreateHijosDialog(cliente: any) {
+  //   const dialogRef = this.dialog.open(ModalHijosDialogComponent, {
+  //     width: '400px',
+  //     data: { cliente }
+  //   });
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (result) {
+  //       this.loadClientes();
+  //     }
+  //   });
+  // }
 
   openHijosDialog(cliente: any, modo: 'listar' | 'agregar') {
     const dialogRef = this.dialog.open(ModalHijosDialogComponent, {

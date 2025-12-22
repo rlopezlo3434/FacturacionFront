@@ -32,7 +32,7 @@ import { ModalEmpleadoDialogComponent } from './Pages/menu/configuracion/emplead
 import { ModalClientesDialogComponent } from './Pages/menu/configuracion/clientes/modal-clientes-dialog/modal-clientes-dialog.component';
 import { ModalPromocionesDialogComponent } from './Pages/menu/configuracion/promociones/modal-promociones-dialog/modal-promociones-dialog.component';
 import { ItemsAdminComponent } from './Pages/menu/configuracion/items/items-admin/items-admin.component';
-
+import {MatMenuModule} from '@angular/material/menu'
 //pipes
 import { FiltroEmpleadoPipe } from './pipes/filtro-empleado.pipe';
 import { FiltroItemPipe } from './pipes/filtro-item.pipe';
@@ -44,6 +44,8 @@ import { ModalHijosDialogComponent } from './Pages/menu/configuracion/clientes/m
 import { FacturacionComponent } from './Pages/menu/facturacion/facturacion.component';
 import { KardexComponent } from './Pages/menu/configuracion/kardex/kardex.component';
 import { KardexModalComponent } from './Pages/menu/configuracion/kardex/kardex-modal/kardex-modal.component';
+import { SeleccionEmpleadosModalComponent } from './Pages/menu/facturacion/seleccion-empleados-modal/seleccion-empleados-modal.component';
+import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
 @NgModule({
   declarations: [AppComponent,
     HeaderComponent,
@@ -68,7 +70,9 @@ import { KardexModalComponent } from './Pages/menu/configuracion/kardex/kardex-m
     ModalHijosDialogComponent,
     FacturacionComponent,
     KardexComponent,
-    KardexModalComponent
+    KardexModalComponent,
+    SeleccionEmpleadosModalComponent,
+    CajaComponent
 
   ],
   imports: [
@@ -79,6 +83,7 @@ import { KardexModalComponent } from './Pages/menu/configuracion/kardex/kardex-m
     MatInputModule,
     FormsModule,
     MatSidenavModule,
+    MatMenuModule,
     MatListModule,
     MatTableModule,
     BrowserAnimationsModule,

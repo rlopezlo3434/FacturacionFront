@@ -7,22 +7,45 @@
     No hay hijos registrados.
   </div>
 
-  <ul *ngIf="!isAgregar">
-    <li *ngFor="let hijo of hijos">
-      {{ hijo.firstName }} {{ hijo.lastName }} - {{ hijo.fechaCumpleanios | date:'dd/MM/yyyy' }}
+  <ul *ngIf="!isAgregar && !isEditar">
+    <li *ngFor="let hijo of hijos" style="display: flex; gap: 1rem; align-items: center;">
+      <span>
+        {{ hijo.firstName }} {{ hijo.lastName }} -
+        {{ hijo.fechaCumpleanios | date:'dd/MM/yyyy' }}
+      </span>
+
+      <button class="btn-primary" (click)="editarHijo(hijo)">
+        Editar
+      </button>
     </li>
   </ul>
 
+  <!-- FORMULARIO (AGREGAR / EDITAR) -->
+  <div *ngIf="isAgregar || isEditar" class="form-grid" style="display: flex; flex-direction: column; gap: 1rem;">
+
+    <input type="text" class="input" placeholder="Nombre *" [(ngModel)]="newChild.firstName" />
+
+    <input type="text" class="input" placeholder="Apellido *" [(ngModel)]="newChild.lastName" />
+
+    <input type="date" class="input" [(ngModel)]="newChild.fechaCumpleanios" />
+
+    <button class="btn-primary" style="justify-content: center !important"
+      (click)="isEditar ? updateHijo() : addHijo()">
+
+      {{ isEditar ? 'GUARDAR CAMBIOS' : 'AGREGAR' }}
+    </button>
+  </div>
+
+<!-- 
   <div *ngIf="isAgregar" class="form-grid" style="display: flex; flex-direction: column; gap: 1rem;">
     <input type="text" class="input" placeholder="Nombre *" [(ngModel)]="newChild.firstName" />
     <input type="text" class="input" placeholder="Apellido *" [(ngModel)]="newChild.lastName" />
     <input type="date" class="input" [(ngModel)]="newChild.fechaCumpleanios" />
     <button class="btn-primary" style="justify-content: center !important" (click)="addHijo()">AGREGAR</button>
-    
-  </div>
+
+  </div> -->
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button class="btn-cancelar" (click)="cancel()">Cancelar</button>
-  <!-- <button class="btn-primary" (click)="save()">Guardar</button> -->
 </mat-dialog-actions>

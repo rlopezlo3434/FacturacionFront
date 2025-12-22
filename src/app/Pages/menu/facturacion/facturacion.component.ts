@@ -6,6 +6,8 @@ import { FacturacionService } from '../../../../services/facturacion.service';
 import { ItemVenta } from '../../../Models/Item';
 import { EmpleadosService } from '../../../../services/empleados.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { SeleccionEmpleadosModalComponent } from './seleccion-empleados-modal/seleccion-empleados-modal.component';
 
 @Component({
   selector: 'app-facturacion',
@@ -18,17 +20,22 @@ export class FacturacionComponent {
     cliente: null,
     detalles: [],
     promocionSeleccionada: null,
-    total: 0
+    total: 0,
+    metodo_pago: ''
   };
   itemBuscado = '';
-
+  isLoading = false;
   mostrarLista = false;
   mostrarLista2 = false;
   agregarCliente = false;
   searchCliente = false;
-
+  fechaHoy: string = new Date().toISOString().substring(0, 10);
+  fechaBoleteoHoy: string = new Date().toISOString().substring(0, 10);
   clienteBuscado = '';
-  promociones: any[] = [];
+  promoTarjeta = 0;
+  promociones: [{
+    descuentoAplicado: number
+  }];
   dniCliente = '';
   items: any[] = [];
   ventas: any[] = [];
@@ -37,7 +44,7 @@ export class FacturacionComponent {
   clientesFiltrados: any[] = [];
   itemsSeleccionados: any[] = [];
   series: any[] = [];
-
+  montoIngresado: number = 0;
   empleadoBuscado: string = '';
   empleados: any[] = [];
   empleadosFiltrados: any[] = [];
@@ -53,11 +60,15 @@ export class FacturacionComponent {
     private facturacionService: FacturacionService,
     private empleadoService: EmpleadosService,
     private promoService: PromocionesService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
     this.cli.gender = "";
     this.cli.documentIdentificationType = "";
     this.venta.serieSeleccionada = ""
+    this.promociones = [{
+      descuentoAplicado: 0
+    }];
   }
 
   ngOnInit() {
@@ -66,6 +77,7 @@ export class FacturacionComponent {
     this.loadEmpleados();
     this.loadVentas();
     this.seriesComprobantes();
+
   }
 
   mostrarCliente() {
@@ -126,7 +138,8 @@ export class FacturacionComponent {
   }
 
   loadVentas() {
-    this.facturacionService.listarVentas().subscribe(ventas => {
+    this.facturacionService.listarVentas(this.fechaHoy).subscribe(ventas => {
+      console.log(this.fechaHoy);
       this.ventas = ventas;
     });
   }
@@ -144,10 +157,21 @@ export class FacturacionComponent {
 
   seleccionarCliente(cliente: any) {
     this.venta.cliente = cliente.client;
+    console.log(this.venta.cliente);
     this.searchCliente = true;
     this.clienteBuscado = '';
     this.mostrarLista2 = false;
     this.agregarCliente = false;
+
+    this.facturacionService.descuentosCliente(this.venta.cliente.documentIdentificationNumber).subscribe({
+      next: (res: any) => {
+        this.promociones = [
+          { descuentoAplicado: res.descuentoAplicado }
+        ];
+
+        console.log('Descuentos disponibles:', this.promociones);
+      }
+    });
   }
 
   eliminarCliente() {
@@ -203,6 +227,29 @@ export class FacturacionComponent {
     setTimeout(() => (this.mostrarLista2 = false), 200);
   }
 
+  abrirSeleccionEmpleados(item: any) {
+    if (!item.empleados) {
+      item.empleados = []; // Inicializamos el arreglo vacío
+    }
+
+    const dialogRef = this.dialog.open(SeleccionEmpleadosModalComponent, {
+      width: '450px',
+      height: '410px',
+      data: {
+        item,
+        cantidad: item.cantidad,
+        empleadosSeleccionados: [...item.empleados] // preselección
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Empleados seleccionados para el ítem:', result);
+        item.empleados = result; // guardamos los empleados asignados
+      }
+    });
+  }
+
   seriesComprobantes() {
     this.facturacionService.getSeries().subscribe({
       next: (res: any) => {
@@ -214,26 +261,96 @@ export class FacturacionComponent {
     });
   }
 
+  anularComprobante(document: any) {
+    console.log(document)
+    this.facturacionService.anularComprobante(document.id).subscribe({
+      next: (res: any) => {
+        this.snackBar.open('Comprobante anulado correctamente.', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+        this.loadVentas();
+      },
+      error: (err) => {
+        console.error('Error al anular el comprobante:', err);
+        this.snackBar.open('No se pudo anular el comprobante.', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
   imprimirVenta() {
+    this.isLoading = true;
+    const servicios = this.itemsSeleccionados.filter(item => item.item === "Servicio");
+
+    console.log('Items seleccionados para la venta:', this.itemsSeleccionados);
+    const sinEmpleados = servicios.some(item =>
+      !item.empleados || item.empleados.length === 0
+    );
+
+    if (sinEmpleados) {
+      this.snackBar.open(
+        'Cada servicio debe tener al menos un empleado asignado.',
+        '',
+        {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        }
+      );
+      this.isLoading = false;
+
+      return;
+    }
+
+    if (this.venta.metodo_pago === '') {
+      this.snackBar.open(
+        'Debe seleccionar un método de pago.',
+        '',
+        {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        }
+      );
+      this.isLoading = false;
+      return;
+    }
+
     const numeroDoc = this.venta.cliente?.documentIdentificationNumber || '';
-    const tipoDocumento = numeroDoc.length === 8 ? 1 : 6;
+    const tipoDocumento = numeroDoc.length === 8 ? "1" : "6";
+
+    const itemsParaEnviar = this.itemsSeleccionados.map(item => ({
+      ...item,
+      empleados: item.empleados || []
+    }));
 
     const resumenVenta = {
-      items: this.itemsSeleccionados,
+      items: itemsParaEnviar,
       subtotalGeneral: this.subtotalGeneral.toFixed(2),
       igvGeneral: this.igvGeneral.toFixed(2),
       totalGeneral: this.totalGeneral.toFixed(2),
       observaciones: this.venta.observaciones || '',
       tipo_de_comprobante: this.venta.serieSeleccionada.tipoComprobante,
-      cliente_numero: "10756841497", //numeroDoc,
+      cliente_numero: this.venta.cliente?.documentIdentificationNumber || '',
       cliente_nombre: this.venta.cliente?.firstName + ' ' + this.venta.cliente?.lastName,
-      serie: "FFF1", //this.venta.serieSeleccionada.serie,
-      cliente_tipo_documento: "6"//tipoDocumento,
+      serie: this.venta.serieSeleccionada.serie,
+      cliente_tipo_documento: tipoDocumento,
+      metodo_pago: this.venta.metodo_pago || '',
+      fecha_emision: this.fechaBoleteoHoy
     };
 
     this.facturacionService.registrarVenta(resumenVenta).subscribe(
       (res: any) => {
-
+        this.isLoading = false;
         if (res.success) {
           this.snackBar.open(res.message, '', {
             duration: 3000,
@@ -241,6 +358,12 @@ export class FacturacionComponent {
             verticalPosition: 'top',
             panelClass: ['success-snackbar']
           });
+          this.itemsSeleccionados = [];
+          this.venta.metodo_pago = '';
+          this.venta.serieSeleccionada = '';
+          this.venta.observaciones = '';
+          this.fechaBoleteoHoy = new Date().toISOString().substring(0, 10);
+
         } else {
           this.snackBar.open(res.message, '', {
             duration: 3000,
@@ -253,6 +376,7 @@ export class FacturacionComponent {
         this.loadVentas();
       },
       (error) => {
+        this.isLoading = false;
         console.error('Error al registrar la venta:', error);
         this.snackBar.open(
           error?.error?.message || 'Ocurrió un error al registrar la venta.',
@@ -267,6 +391,33 @@ export class FacturacionComponent {
       }
     );
 
+  }
+
+  obtenerProductividad() {
+    this.facturacionService.obtenerProductividad().subscribe(blob => {
+      const objectUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = 'productividad.xlsx';
+      a.click();
+
+      URL.revokeObjectURL(objectUrl);
+    });
+  }
+
+  downloadPDF(url: string) {
+    this.facturacionService.descargarPDF(url).subscribe(blob => {
+
+      const objectUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = 'comprobante.pdf'; // nombre estático o dinámico
+      a.click();
+
+      URL.revokeObjectURL(objectUrl);
+    });
   }
 
   eliminarItem(index: number) {
@@ -300,11 +451,86 @@ export class FacturacionComponent {
   }
 
 
-  aplicarDescuento() {
-    if (!this.venta.promocionSeleccionada) return;
-    const promo = this.venta.promocionSeleccionada;
-    this.venta.total -= promo.value;
+  reporteDiario() {
+    this.facturacionService.reporteDiario(this.fechaHoy).subscribe(blob => {
+      const a = document.createElement('a');
+      const objectUrl = URL.createObjectURL(blob);
+      a.href = objectUrl;
+      a.download = `ReporteDiario_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(objectUrl);
+    });
   }
+
+  imprimirPdf(url: string) {
+    this.facturacionService.imprimirPdf(url).subscribe({
+      next: (blob: Blob) => {
+        const fileURL = URL.createObjectURL(blob);
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = fileURL;
+        document.body.appendChild(iframe);
+
+        iframe.onload = () => {
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+          setTimeout(() => {
+            URL.revokeObjectURL(fileURL);
+            iframe.remove();
+          }, 5000);
+        };
+      },
+      error: (err) => {
+        console.error('Error al imprimir PDF:', err);
+        alert('No se pudo imprimir el comprobante.');
+      }
+    });
+  }
+
+  aplicarDescuento() {
+  const descuento = Number(this.promoTarjeta) || 0;
+
+  this.itemsSeleccionados.forEach(item => {
+    const precioConIgv = item.value;
+    const cantidad = item.cantidad;
+
+    // total sin descuento
+    const totalOriginal = precioConIgv * cantidad;
+
+    // aplicar descuento
+    const totalConDescuento = +(totalOriginal * (1 - descuento / 100)).toFixed(2);
+
+    // recalcular valores sin IGV
+    const subtotal = +(totalConDescuento / 1.18).toFixed(2);
+    const igv = +(subtotal * 0.18).toFixed(2);
+
+    // asignar nuevos valores al item
+    item.total = totalConDescuento;
+    item.subtotal = subtotal;
+    item.igv = igv;
+  });
+}
+
+
+  onPromoChange() {
+    console.log('Promoción seleccionada:', this.promoTarjeta);
+    if (!this.promoTarjeta || this.promoTarjeta == 0) {
+      this.quitarDescuento();
+    } else {
+      this.aplicarDescuento();
+    }
+  }
+
+  quitarDescuento() {
+  this.itemsSeleccionados.forEach(item => {
+    const precioConIgv = item.value;
+    const cantidad = item.cantidad;
+
+    item.subtotal = +((precioConIgv / 1.18) * cantidad).toFixed(2);
+    item.igv = +(item.subtotal * 0.18).toFixed(2);
+    item.total = +(precioConIgv * cantidad).toFixed(2);
+  });
+}
 
   guardarVenta() {
     console.log('Venta guardada:', this.venta);

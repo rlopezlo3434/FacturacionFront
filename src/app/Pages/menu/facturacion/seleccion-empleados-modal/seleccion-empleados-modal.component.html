@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>Seleccionar empleados</h2>
+
+<mat-dialog-content>
+
+  <div *ngFor="let idx of cantidadArray; let i = index" class="empleado-block">
+
+    <label class="title">Empleado #{{ i + 1 }}</label>
+
+    <!-- Input buscador -->
+    <div class="input-wrapper">
+      <mat-icon class="input-icon">badge</mat-icon>
+
+      <input type="text"
+             class="input"
+             placeholder="Buscar empleado..."
+             [(ngModel)]="buscadores[i]"
+             (input)="filtrar(i)"
+             (focus)="mostrarLista[i] = true"
+             (blur)="ocultarListaConRetardo(i)" />
+    </div>
+
+    <!-- Lista filtrada -->
+    <div *ngIf="mostrarLista[i]" class="dropdown-list2">
+      <div class="dropdown-item2"
+           *ngFor="let emp of filtrados[i]"
+           (mousedown)="seleccionar(i, emp)">
+        <div [ngStyle]="{
+            'border-left': '3px solid ' + (emp.isActive ? '#28a745' : '#ccc'),
+            'padding-left': '0.4rem'
+        }">
+          <div>{{ emp.name }} {{ emp.lastName }}</div>
+          <div><strong>Cargo</strong> - {{ emp.roleName }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seleccion final -->
+    <div *ngIf="empleadosSeleccionados[i]" class="seleccion-final">
+      <mat-icon>person</mat-icon>
+      {{ empleadosSeleccionados[i].name }} {{ empleadosSeleccionados[i].lastName }}
+      <mat-icon class="delete-icon" (click)="limpiar(i)">close</mat-icon>
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button class="btn-cancelar" (click)="cerrar()">Cancelar</button>
+  <button class="btn-primary"  (click)="guardar()">Guardar</button>
+</mat-dialog-actions>

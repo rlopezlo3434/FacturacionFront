@@ -1,0 +1,135 @@
+<div class="container">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white text-center">
+            <div class="mb-0" style="font-size: 1.5rem;"><strong>Apertura de Caja</strong></div>
+        </div>
+
+
+    </div>
+    <div style="gap: 1rem; display: flex;">
+        <div style="flex: 1.3;">
+            <div class="header">
+
+
+                <!-- MONTO APERTURA -->
+                <div class="mb-3" style="display: flex;gap: 0.5rem; align-items: center;">
+                    <label class="form-label">Monto de Apertura</label>
+                    <input type="number" class="input" [(ngModel)]="monto" placeholder="0.00" min="0">
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+
+                    <!-- BOTÓN -->
+                    <button class="btn btn-cerrar" (click)="abrirCaja()">
+                        Abrir Caja
+                    </button>
+                    <input type="date" class="input-fecha input" [(ngModel)]="fechaHoy" />
+                    <button class="btn-more-reporte" [matMenuTriggerFor]="menuOpcionesReportes">
+                        REPORTES
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menuOpcionesReportes="matMenu">
+
+                        <button mat-menu-item (click)="cajaDiario()">
+                            <mat-icon>description</mat-icon>
+                            <span>Caja Diario</span>
+                        </button>
+                        <button mat-menu-item (click)="reporteCajaMensual()">
+                            <mat-icon>description</mat-icon>
+                            <span>Caja Mensual</span>
+                        </button>
+
+                    </mat-menu>
+                </div>
+
+            </div>
+            <div style="display: flex; flex-direction: column; margin-bottom: 0.5rem;" *ngFor="let caja of cajas">
+
+                <div class="cardCaja">
+
+                    <div class="card-header">
+                        <strong>CAJA #{{ caja.id }}</strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div><strong>Fecha Apertura</strong><br>
+                            {{ caja.fechaApertura | date:'dd-MM-yyyy HH:mm' }}
+                        </div>
+
+                        <div><strong>Monto Apertura</strong><br>
+                            {{ caja.montoApertura | currency:'S/.' }}
+                        </div>
+
+                        <div><strong>Estado</strong> <br>
+                            <span class="badge" [ngClass]="caja.cerrada ? 'bg-danger' : 'bg-success'">
+                                {{ caja.cerrada ? 'CERRADA' : 'ABIERTA' }}
+                            </span>
+                        </div>
+
+                        <button class="btn btn-primary" (click)="verMovimientosCaja(caja.id)">
+                            Ver Movimientos
+                        </button>
+
+                        <button class="btn btn-cerrar" [disabled]="caja.cerrada" (click)="toggleCerrarCaja(caja.id)">
+                            Cerrar Caja
+                        </button>
+
+                        <button class="btn btn-cerrar" [disabled]="caja.cerrada" (click)="toggleMovimiento(caja.id)">
+                            Agregar Movimiento
+                        </button>
+
+                    </div>
+
+                </div>
+                <div *ngIf="cerrarCajaId === caja.id">
+                    <div class="agregarMovimiento">
+                        <div><strong>Efectivo Contado</strong></div>
+                        <input type="number" class="input" [(ngModel)]="efectivoContado"
+                            placeholder="Motivo del movimiento">
+                        <input type="obersvaciones" class="input" [(ngModel)]="observacionesCierre"
+                            placeholder="Observaciones">
+                        <button class="btn btn-cerrar" (click)="cerrarCaja(caja.id)">Cerrar</button>
+                    </div>
+                </div>
+                <div *ngIf="cajaAbiertaMovimientoId === caja.id">
+                    <div class="agregarMovimiento">
+                        <div><strong>Motivo</strong></div>
+                        <input type="text" class="input" [(ngModel)]="motivoMovimiento"
+                            placeholder="Motivo del movimiento">
+                        <div><strong>Monto</strong></div>
+                        <input type="number" class="input" [(ngModel)]="montoMovimiento" placeholder="0.00" min="0">
+                        <div><strong>Movimiento</strong></div>
+
+                        <select class="input" [(ngModel)]="tipoMovimiento">
+                            <option value="ingreso">Ingreso</option>
+                            <option value="egreso">Egreso</option>
+                        </select>
+                        <button class="btn btn-cerrar" (click)="addMovimiento()">Agregar</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="flex2">
+            <div *ngIf="verMovimientos">
+                <div class="headerMovimientos">
+                    <div>Tipo</div>
+                    <div>Monto</div>
+                    <div>Fecha</div>
+                    <div>Motivo</div>
+                </div>
+                <div *ngIf="movs.length === 0" class="sinMovimientos">
+                    No hay movimientos registrados.
+                </div>
+                <div *ngFor="let m of movs" class="cardMovimientos">
+                    <div>{{ m.tipo }}</div>
+                    <div>{{ m.monto | currency:'S/.'}}</div>
+                    <div>{{ m.fechaRegistro | date:'dd-MM-yyyy' }}</div>
+                    <div>{{ m.motivo }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

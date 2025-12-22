@@ -29,7 +29,7 @@ export class ClienteService {
       }
     });
   }
-  
+
   updateMarketing(id: number, acceptsMarketing: boolean) {
     return this.http.post(`${environment.apiBase}/Client/updateStateMarketing/${id}`, { acceptsMarketing }, {
       headers: {
@@ -62,8 +62,36 @@ export class ClienteService {
     });
   }
 
+  updateChild(data: any) {
+    return this.http.put(
+      `${environment.apiBase}/Client/updateChild`,
+      data, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      }
+    }
+    );
+  }
+
+
   createChildren(params: any) {
     return this.http.post(`${environment.apiBase}/Client/children`, params, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      }
+    });
+  }
+
+  consultarDocumento(tipo: string, numero: string) {
+    return this.http.get<any>(`${environment.apiBase}/Facturacion/documento/${numero}?tipo=${tipo}`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      }
+    });
+  }
+
+  consultarDecolect(numero: string, tipo: string) {
+    return this.http.get<any>(`${environment.apiBase}/Facturacion/documento/${numero}?tipo=${tipo}`, {
       headers: {
         Authorization: `Bearer ${this.token}`
       }

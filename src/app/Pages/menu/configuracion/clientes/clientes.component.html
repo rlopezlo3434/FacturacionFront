@@ -44,7 +44,7 @@
                             <th style="text-align: center;">Nombres</th>
                             <th style="text-align: center;">Apellidos</th>
                             <th style="text-align: center;">Género</th>
-                            <th style="text-align: center;">Correo</th>
+                            <!-- <th style="text-align: center;">Correo</th> -->
                             <th style="text-align: center;">Hijos</th>
                             <th style="text-align: center;">Numeros</th>
                             <th style="text-align: center;">Estado</th>
@@ -59,7 +59,7 @@
                             <td style="text-align: center;">{{ cli.firstName }}</td>
                             <td style="text-align: center;">{{ cli.lastName }}</td>
                             <td style="text-align: center;">{{ cli.gender == "M" ? "Hombre" : "Mujer" }}</td>
-                            <td style="text-align: center;">{{ cli.email }}</td>
+                            <!-- <td style="text-align: center;">{{ cli.email }}</td> -->
                             <td style="text-align: center;">
                                 <mat-icon (click)="$event.stopPropagation(); openHijosDialog(cli, 'agregar')"
                                     style="margin-right: 0.3rem;">
@@ -92,7 +92,7 @@
         <div class="pagination">
             <span>Filas por página: </span>
             <select class="select" [(ngModel)]="filasPorPagina">
-                <option *ngFor="let size of [5,10,20]" [value]="size">{{ size }}</option>
+                <option *ngFor="let size of [50,100,200]" [value]="size">{{ size }}</option>
             </select>
             <span>{{(paginaActual-1)*filasPorPagina+1}} -
                 {{paginaActual*filasPorPagina > clientes.length ? clientes.length : paginaActual*filasPorPagina}}

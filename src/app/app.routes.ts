@@ -9,6 +9,7 @@ import { EmpleadosComponent } from './Pages/menu/configuracion/empleados/emplead
 import { ClientesComponent } from './Pages/menu/configuracion/clientes/clientes.component';
 import { FacturacionComponent } from './Pages/menu/facturacion/facturacion.component';
 import { KardexComponent } from './Pages/menu/configuracion/kardex/kardex.component';
+import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -26,6 +27,7 @@ export const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: 'venta', component: FacturacionComponent },
+      { path: 'caja', component: CajaComponent }
     ]
   },
   {
