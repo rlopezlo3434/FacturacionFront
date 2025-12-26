@@ -21,9 +21,9 @@ $MasterLogic-theme: mat.define-theme((color: (theme-type: light,
   --color-header-bg: #f0f0f0;
   --color-shadow: rgba(0, 0, 0, 0.4);
   --color-icon-header: #3d3d3d;
-  --color-bhover: #ff010114;
-  --color-submenu: #ff0000;
-  --color-primary: #ff0000;
+  --color-bhover: #0151ff14;
+  --color-submenu: #2362e9;
+  --color-primary: #2362e9;
 
 }
 
@@ -33,9 +33,9 @@ $MasterLogic-theme: mat.define-theme((color: (theme-type: light,
   --color-header-bg: #1e1e1e;
   --color-shadow: rgba(255, 255, 255, 0.15);
   --color-icon-header: #ffffff;
-  --color-bhover: #ff010114;
-  --color-submenu: #ff0000;
-  --color-primary: #ff0000;
+  --color-bhover: #0151ff14;
+  --color-submenu: #2362e9;
+  --color-primary: #2362e9;
 
 }
 
@@ -67,7 +67,7 @@ body {
 
 .input:focus {
   border: 1px solid var(--color-primary);
-  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  box-shadow: 0 0 5px rgba(0, 47, 255, 0.5);
 }
 
 .select {
@@ -80,7 +80,7 @@ body {
 
 .select:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  box-shadow: 0 0 5px rgba(0, 47, 255, 0.5);
 }
 
 
@@ -102,7 +102,7 @@ body {
 .mat-mdc-snack-bar-container.error-snackbar {
   --mdc-snackbar-container-color: #fdf0f0e0;
   --mdc-snackbar-supporting-text-color: #8e3838;
-  border: 1px solid #f44336;
+  border: 1px solid #3662f4;
   color: #fff !important;
   font-weight: bold;
   border-radius: 6px;
@@ -136,7 +136,7 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: #e60000;
+  background-color: #0023e6;
   color: #fff;
 }
 

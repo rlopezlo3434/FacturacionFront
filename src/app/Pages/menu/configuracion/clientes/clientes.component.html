@@ -1,10 +1,37 @@
 <div>
     <div class="header-secuence">
-        <div class="color">Configuración</div>
-        <mat-icon class="color">chevron_right</mat-icon>
+        <!-- <div class="color">Configuración</div> -->
+        <!-- <mat-icon class="color">chevron_right</mat-icon> -->
         <div class="selected">Gestión de Clientes</div>
     </div>
-    <div class="subTitle">Lista de Clientes</div>
+    <div class="subTitle">Administra tu cartera de clientes premium</div>
+    <div class="container-card">
+        <div class="card">
+            <div class="card-title">Total de Clientes</div>
+            <div class="card-value">{{ clientes.length }}</div>
+            <div class="footer-card">+12 este mes</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Clientes Activos</div>
+            <div class="card-value">3</div>
+            <div class="footer-card">73.8% del total</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Clientes VIP</div>
+            <div class="card-value">10</div>
+            <div class="footer-card">18.75% del total</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Ticket Promedio Soles</div>
+            <div class="card-value">S/. 2,845</div>
+            <div class="footer-card">+8% del total</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Ticket Promedio Dolares</div>
+            <div class="card-value">US$ 2,845</div>
+            <div class="footer-card">+8% del total</div>
+        </div>
+    </div>
     <div class="filtersContainer">
         <div class="input-wrapper">
             <mat-icon class="input-icon">search</mat-icon>
@@ -40,34 +67,62 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th style="text-align: center;">Nro Documento</th>
-                            <th style="text-align: center;">Nombres</th>
-                            <th style="text-align: center;">Apellidos</th>
-                            <th style="text-align: center;">Género</th>
+                            <th>Cliente</th>
+                            <th>Contacto</th>
+                            <th>Vehículo</th>
+                            <th style="text-align: center;">Ultimo Servicio</th>
                             <!-- <th style="text-align: center;">Correo</th> -->
-                            <th style="text-align: center;">Hijos</th>
-                            <th style="text-align: center;">Numeros</th>
+                            <th style="text-align: center;">Próxima Cita</th>
+                            <th style="text-align: center;">Servicios</th>
+                            <th style="text-align: center;">Gasto Total</th>
                             <th style="text-align: center;">Estado</th>
-                            <th style="text-align: center;">Promociones</th>
-
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let cli of clientes | filtroCliente:filtroTexto:filtroEstado:filtroGenero | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
                             (click)="openEditDialog(cli)">
-                            <td style="text-align: center;">{{ cli.documentIdentificationNumber }}</td>
-                            <td style="text-align: center;">{{ cli.firstName }}</td>
-                            <td style="text-align: center;">{{ cli.lastName }}</td>
-                            <td style="text-align: center;">{{ cli.gender == "M" ? "Hombre" : "Mujer" }}</td>
+                            <td>
+                                <div class="cliente-info">
+                                    <div class="avatar-circle">
+                                        {{ cli.firstName.charAt(0) }}
+                                    </div>
+                                    <div class="cliente-details">
+                                        <div class="cliente-name">
+                                            {{ cli.firstName }}
+                                        </div>
+                                        <div class="cliente-document">
+                                            {{cli.documentIdentificationType}}: {{ cli.documentIdentificationNumber }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cliente-contact">
+                                    <div class="cliente-phone">
+                                        <mat-icon>phone</mat-icon>
+                                        <div>
+                                            {{ cli.firstName }}
+                                        </div>
+                                    </div>
+                                    <div class="cliente-email">
+                                        <mat-icon>email</mat-icon>
+                                        <div>
+                                            {{ cli.email }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
                             <!-- <td style="text-align: center;">{{ cli.email }}</td> -->
-                            <td style="text-align: center;">
-                                <mat-icon (click)="$event.stopPropagation(); openHijosDialog(cli, 'agregar')"
-                                    style="margin-right: 0.3rem;">
-                                    add_circle
-                                </mat-icon>
-                                <mat-icon (click)="$event.stopPropagation(); openHijosDialog(cli, 'listar')">
-                                    format_list_bulleted
-                                </mat-icon>
+                            <td>
+                                <div class="cliente-car">
+                                    <mat-icon (click)="$event.stopPropagation(); openHijosDialog(cli, 'agregar')"
+                                        style="margin-right: 0.3rem;">
+                                        directions_car
+                                    </mat-icon>
+                                    <div>
+                                        CRM-114
+                                    </div>
+                                </div>
                             </td>
                             <td style="text-align: center;">
                                 <mat-icon
@@ -81,7 +136,8 @@
                                 </select>
                             </td>
                             <td style="text-align: center;">
-                                <input type="checkbox" (change)="cli.acceptsMarketing = !cli.acceptsMarketing; updateMarketing(cli)"
+                                <input type="checkbox"
+                                    (change)="cli.acceptsMarketing = !cli.acceptsMarketing; updateMarketing(cli)"
                                     (click)=" $event.stopPropagation()" [checked]="cli.acceptsMarketing" />
                             </td>
                         </tr>

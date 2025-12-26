@@ -124,8 +124,8 @@ export class ModalClientesDialogComponent {
           }
 
           // 2️⃣ Si sí existen datos, llenar el formulario
-          this.cli.firstName = response.first_name || response.razon_social || '';
-          this.cli.lastName = response.first_last_name || '';
+          this.cli.firstName = response.first_name + ' ' + response.first_last_name || response.razon_social || '';
+          // this.cli.lastName = response.first_last_name || '';
 
           this.snackBar.open(
             'Datos del documento cargados correctamente',

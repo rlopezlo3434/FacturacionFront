@@ -16,6 +16,7 @@
         width: 100%;
         height: 100vh;
         object-fit: cover;
+        object-position: right center;
         display: block;
         box-shadow: 4px 2px 8px rgba(0, 0, 0, 0.4);
         animation: aparecer 1s ease-out forwards;
@@ -33,7 +34,6 @@
         background: white;
         border-radius: 1.5rem;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        z-index: 2;
         min-width: calc(20vw);
         min-height: calc(13vw);
         position: relative;
@@ -43,12 +43,11 @@
         align-items: center;
 
         .logo {
-          position: absolute;
           top: calc(-18vh + 75px);
           left: 50%;
           width: calc(17vw);
           height: auto;
-          transform: translateX(-50%);
+          // transform: translateX(-50%);
         }
 
         .container-inputs {
@@ -60,7 +59,7 @@
         }
 
         button {
-          background-color: #DC2748;
+          background-color: var(--color-primary);
           color: white;
           border-radius: 0.3rem;
           padding: 1rem 4rem;
@@ -75,19 +74,19 @@
           }
         }
 
-        
+
       }
 
       // Footer text se mantiene en la parte inferior
-        .footer-text {
-          position: absolute;
-          bottom: 2rem;
-          left: 50%;
-          transform: translateX(-50%);
-          text-align: center;
-          color: #333;
-          padding: 1rem;
-        }
+      .footer-text {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        color: #333;
+        padding: 1rem;
+      }
     }
   }
 }
@@ -175,5 +174,5 @@
 }
 
 ::ng-deep .custom-spinner circle {
-  stroke: #DC2748;
+  stroke: #2362e9;
 }
