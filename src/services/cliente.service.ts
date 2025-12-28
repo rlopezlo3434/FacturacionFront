@@ -97,4 +97,13 @@ export class ClienteService {
       }
     });
   }
+
+  downloadReporteClientes(){
+    return this.http.get(`${environment.apiBase}/Facturacion/reporte-Clientes`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      },
+      responseType: 'blob'
+    });
+  }
 }

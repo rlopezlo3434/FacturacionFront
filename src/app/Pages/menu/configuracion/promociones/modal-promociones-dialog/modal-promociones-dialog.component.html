@@ -7,13 +7,7 @@
         <!-- Nombre -->
         <input type="text" class="input" placeholder="Nombre de la promoción *" [(ngModel)]="promo.name" />
 
-        <select class="select" [(ngModel)]="promo.type">
-            <option value="" disabled selected>Tipo de descuento *</option>
-            <option *ngFor="let t of promotionTypes" [value]="t.value">{{ t.label }}</option>
-        </select>
-
-        <!-- Valor -->
-        <input type="number" class="input" placeholder="Valor del descuento *" [(ngModel)]="promo.value" />
+        <input type="text" class="input" placeholder="Código de la promoción *" [(ngModel)]="promo.code" />
 
         <!-- Fecha Inicio -->
          <div style="display: flex; gap: 1rem; justify-content: space-between;">
@@ -34,7 +28,7 @@
 <mat-dialog-actions align="end" style="display: flex; gap: 0.5rem;">
     <button class="btn-cancelar" (click)="cancel()">Cancelar</button>
     <button class="btn-primary" color="primary" (click)="save()"
-        [disabled]="!promo.name || !promo.type || !promo.value || !promo.startDate || !promo.endDate">
+        [disabled]="!promo.name || !promo.startDate || !promo.endDate">
         {{ isEdit ? 'Actualizar' : 'Crear' }}
     </button>
 </mat-dialog-actions>

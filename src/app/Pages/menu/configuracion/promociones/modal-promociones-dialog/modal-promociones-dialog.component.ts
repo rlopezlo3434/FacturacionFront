@@ -10,8 +10,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class ModalPromocionesDialogComponent {
   promo: any = {
     name: '',
-    type: '',
-    value: null,
+    code: '',
     startDate: '',
     endDate: '',
     isActive: true
@@ -19,10 +18,6 @@ export class ModalPromocionesDialogComponent {
 
   isEdit = false;
 
-  promotionTypes = [
-    { value: 'Percentage', label: 'Porcentaje (%)' },
-    { value: 'FixedAmount', label: 'Monto Fijo (S/)' }
-  ];
 
   constructor(
     private dialogRef: MatDialogRef<ModalPromocionesDialogComponent>,

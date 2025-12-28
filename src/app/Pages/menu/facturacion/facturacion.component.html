@@ -118,9 +118,14 @@
             <div>
                 Descuentos Disponibles:
                 <select class="input" [(ngModel)]="promoTarjeta" (change)="onPromoChange()">
-                    <option [ngValue]="0" >% 0</option>
-                    <option *ngFor="let promo of promociones" [ngValue]="promo.descuentoAplicado"> % {{ promo.descuentoAplicado }}</option>
+                    <option [ngValue]="0">% 0</option>
+                    <option *ngFor="let promo of promociones" [ngValue]="promo.descuentoAplicado"> % {{
+                        promo.descuentoAplicado }}</option>
                 </select>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+                Código Promocional: 
+                <input type="text" class="input" [(ngModel)]="codigoPromocional" />
             </div>
             <!-- Lista de items seleccionados (fuera del relative) -->
             <div style="margin-top: 1rem; text-align: right;">
@@ -271,7 +276,7 @@
 
                 <button mat-menu-item (click)="reporteDiario()">
                     <mat-icon>description</mat-icon>
-                    <span>Reporte diario</span>
+                    <span>Reporte Mensual</span>
                 </button>
 
             </mat-menu>

@@ -175,4 +175,14 @@ export class ClientesComponent {
   }
 
 
+  downloadReporteClientes(){
+    this.clienteService.downloadReporteClientes().subscribe((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'reporte_clientes.xlsx';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  }  
 }

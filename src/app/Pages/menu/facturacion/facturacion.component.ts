@@ -51,7 +51,7 @@ export class FacturacionComponent {
   empleadosSeleccionados: any[] = [];
   mostrarListaEmpleados = false;
   timeoutEmpleados: any;
-
+  codigoPromocional: string = '';
   tipoClienteSeleccionado: string | null = null;
   cli: any = {};
 
@@ -345,7 +345,8 @@ export class FacturacionComponent {
       serie: this.venta.serieSeleccionada.serie,
       cliente_tipo_documento: tipoDocumento,
       metodo_pago: this.venta.metodo_pago || '',
-      fecha_emision: this.fechaBoleteoHoy
+      fecha_emision: this.fechaBoleteoHoy,
+      codigoPromocional: this.codigoPromocional || ''
     };
 
     this.facturacionService.registrarVenta(resumenVenta).subscribe(
