@@ -4,89 +4,100 @@
             <mat-icon (click)="openMenu()">menu</mat-icon>
         </div>
         <div class="input-wrapper">
-            <mat-icon class="input-icon">search</mat-icon>
-            <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Nombre, Apellido o DNI..." class="input" />
-        </div>
+        <mat-icon class="input-icon">search</mat-icon>
+        <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Placa, Cliente" class="input" />
     </div>
-
+    </div>
+    
     <div class="header-secuence">
         <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-            <div class="selected">Gestión de Clientes</div>
-            <div class="subTitle">Administra tu cartera de clientes premium</div>
+            <div class="selected">Gestión de Vehículos</div>
+            <div class="subTitle">Inventario de vehículos premium</div>
         </div>
         <div>
             <button class="btn btn-create" (click)="openCreateDialog()">
                 <mat-icon>add</mat-icon> Nuevo
-                Cliente</button>
+                Vehículo</button>
         </div>
     </div>
     <div class="container-card">
         <div class="card">
-            <div class="card-title">Total de Clientes</div>
-            <div class="card-value">{{ clientes.length }}</div>
-            <div class="footer-card">+12 este mes</div>
+            <div class="card-title">Total de Vehículos</div>
+            <div class="card-value">256</div>
+            <div class="footer-card">En base de datos</div>
         </div>
         <div class="card">
-            <div class="card-title">Clientes Activos</div>
+            <div class="card-title">Mantenimiento</div>
             <div class="card-value">3</div>
-            <div class="footer-card">73.8% del total</div>
+            <div class="footer-card">Este mes</div>
         </div>
         <div class="card">
-            <div class="card-title">Clientes VIP</div>
-            <div class="card-value">10</div>
-            <div class="footer-card">18.75% del total</div>
-        </div>
-        <div class="card">
-            <div class="card-title">Ticket Promedio Soles</div>
-            <div class="card-value">S/. 2,845</div>
-            <div class="footer-card">+8% del total</div>
-        </div>
-        <div class="card">
-            <div class="card-title">Ticket Promedio Dolares</div>
-            <div class="card-value">US$ 2,845</div>
-            <div class="footer-card">+8% del total</div>
+            <div class="card-title">Marca Premium</div>
+            <div class="card-value">BMW</div>
+            <div class="footer-card">Más atendida</div>
         </div>
     </div>
-    <!-- <div class="filtersContainer">
+    <div class="cards-container">
+        <div class="card-vehiculo" *ngFor="let v of vehiculos">
 
-        <div style="display: flex; gap: 1rem;">
-            <select class="select" [(ngModel)]="filtroEstado">
-                <option value="" disabled selected>Estado</option>
-                <option [value]="true">Activo</option>
-                <option [value]="false">Suspendido</option>
-            </select>
-            <select class="select" [(ngModel)]="filtroGenero">
-                <option value="" disabled selected>Genero</option>
-                <option [value]="'M'">Masculino</option>
-                <option [value]="'F'">Femenino</option>
-            </select>
-        </div>
-    </div> -->
-    <div class="table-container">
-        <div class="table-actions">
-            <div class="selected">Lista de Clientes</div>
-            <!-- <div class="table-actions-container">
-                <button class="btn btn-create" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREAR
-                    CLIENTE</button>
-            </div>
-            <div class="table-actions-container">
-                <button (click)="removerFiltros()" class="btn btn-remove"><mat-icon>delete</mat-icon> REMOVER
-                    FILTROS</button>
-            </div> -->
-        </div>
+      <div class="image">
+          <img [src]="v.imagen" alt="{{v.modelo}}">
+      </div>
+
+      <div class="card-details">
+          <div class="card-description">{{ v.modelo }}</div>
+
+          <div class="card-anio-color">
+              {{ v.anio }} • {{ v.color }}
+          </div>
+
+          <div class="card-subDetails">
+              <div class="icon">
+                  <mat-icon>directions_car</mat-icon>
+                  <div>Placa</div>
+              </div>
+              <div class="description-subDetail">{{ v.placa }}</div>
+          </div>
+
+          <div class="card-subDetails">
+              <div class="icon">
+                  <mat-icon>speed</mat-icon>
+                  <div>Kilometraje</div>
+              </div>
+              <div class="description-subDetail">{{ v.km }}</div>
+          </div>
+
+          <div class="card-subDetails">
+              <div class="icon">
+                  <mat-icon>build</mat-icon>
+                  <div>Último Servicio</div>
+              </div>
+              <div class="description-subDetail">{{ v.ultimoServicio }}</div>
+          </div>
+
+          <div class="card-subDetails">
+              <div class="icon">
+                  <mat-icon>calendar_today</mat-icon>
+                  <div>Próximo Servicio</div>
+              </div>
+              <div class="description-subDetail">{{ v.proximoServicio }}</div>
+          </div>
+
+      </div>
+    </div>
+    <!-- <div class="table-container">
+        
         <div class="table-scroll">
             <div class="table-body">
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>Cliente</th>
-                            <th>Contacto</th>
-                            <th>Vehículo</th>
-                            <th>Ultimo Servicio</th>
-                            <th>Próxima Cita</th>
-                            <th>Servicios</th>
-                            <th>Gasto Total</th>
-                            <th>Estado</th>
+                            <th>Placa</th>
+                            <th>Kilometraje</th>
+                            <th>Año y Color</th>
+                            <th>Último Servicio</th>
+                            <th>Próximo Servicio</th>
+                            <th>Clientes</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -112,7 +123,7 @@
                                     <div class="cliente-phone">
                                         <mat-icon>phone</mat-icon>
                                         <div>
-                                            922914520
+                                            {{ cli.firstName }}
                                         </div>
                                     </div>
                                     <div class="cliente-email">
@@ -123,7 +134,6 @@
                                     </div>
                                 </div>
                             </td>
-                            <!-- <td style="text-align: center;">{{ cli.email }}</td> -->
                             <td>
                                 <div class="cliente-car">
                                     <mat-icon (click)="$event.stopPropagation(); openHijosDialog(cli, 'agregar')"
@@ -135,28 +145,21 @@
                                     </div>
                                 </div>
                             </td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 0.3rem;">
-                                    <mat-icon>calendar_month</mat-icon>
-                                    <div>20-09-2025</div>
-
-                                </div>
+                            <td style="text-align: center;">
+                                <mat-icon
+                                    (click)="openNumbersDialog(cli); $event.stopPropagation()">format_list_bulleted</mat-icon>
                             </td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 0.3rem;">
-                                    <mat-icon>calendar_month</mat-icon>
-                                    <div>20-09-2025</div>
-
-                                </div>
+                            <td style="text-align: center;">
+                                <select class="select" [disabled]="roleCode === 'COLLAB'" [(ngModel)]="cli.isActive"
+                                    (click)="$event.stopPropagation()" (change)="updateEstado(cli)">
+                                    <option [ngValue]="true">Activo</option>
+                                    <option [ngValue]="false">Suspendido</option>
+                                </select>
                             </td>
-                            <td>
-                                12
-                            </td>
-                            <td>
-                                {{ 2500 | currency:'PEN':'symbol':'1.2-2' }}
-                            </td>
-                            <td><span *ngIf="cli.isActive" class="chip activo">Activo</span>
-                                <span *ngIf="!cli.isActive" class="chip suspendido">Suspendido</span>
+                            <td style="text-align: center;">
+                                <input type="checkbox"
+                                    (change)="cli.acceptsMarketing = !cli.acceptsMarketing; updateMarketing(cli)"
+                                    (click)=" $event.stopPropagation()" [checked]="cli.acceptsMarketing" />
                             </td>
                         </tr>
                     </tbody>
@@ -176,6 +179,6 @@
             <button class="paginacion-icon" (click)="paginaSiguiente()"
                 [disabled]="paginaActual*filasPorPagina>=clientes.length"><mat-icon>chevron_right</mat-icon></button>
         </div>
-    </div>
+    </div> -->
 
 </div>

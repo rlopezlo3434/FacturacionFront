@@ -1,20 +1,102 @@
 import { Component } from '@angular/core';
+import { ModalHijosDialogComponent } from '../clientes/modal-hijos-dialog/modal-hijos-dialog.component';
+import { ModalClientesDialogComponent } from '../clientes/modal-clientes-dialog/modal-clientes-dialog.component';
+import { ModalNumbersDialogComponent } from '../clientes/modal-numbers-dialog/modal-numbers-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ClienteService } from '../../../../../services/cliente.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ModalClientesDialogComponent } from './modal-clientes-dialog/modal-clientes-dialog.component';
-import { ModalNumbersDialogComponent } from './modal-numbers-dialog/modal-numbers-dialog.component';
-import { ModalHijosDialogComponent } from './modal-hijos-dialog/modal-hijos-dialog.component';
 import { SidebarService } from '../../../../../services/sidebar.service';
 
 @Component({
-  selector: 'app-clientes',
-  templateUrl: './clientes.component.html',
-  styleUrl: './clientes.component.scss'
+  selector: 'app-vehiculos',
+  templateUrl: './vehiculos.component.html',
+  styleUrl: './vehiculos.component.scss'
 })
-export class ClientesComponent {
+export class VehiculosComponent {
 
-  clientes: any[] = [];
+  vehiculos = [
+    {
+      modelo: 'Toyota Yaris',
+      anio: 2023,
+      color: 'Gris Oscuro',
+      placa: 'ABC-1234',
+      km: '12,450 KM',
+      ultimoServicio: '10-10-2025',
+      proximoServicio: '10-12-2025',
+      imagen: 'https://hyundai.pe/wp-content/uploads/2024/02/New-TUCSON-carro-familia-viaje.webp'
+    },
+    {
+      modelo: 'Hyundai Tucson',
+      anio: 2024,
+      color: 'Negro',
+      placa: 'XYZ-9876',
+      km: '5,200 KM',
+      ultimoServicio: '20-09-2025',
+      proximoServicio: '20-11-2025',
+      imagen: 'https://hyundai.pe/wp-content/uploads/2024/02/New-TUCSON-carro-familia-viaje.webp'
+    },
+    {
+      modelo: 'Hyundai Tucson',
+      anio: 2024,
+      color: 'Negro',
+      placa: 'XYZ-9876',
+      km: '5,200 KM',
+      ultimoServicio: '20-09-2025',
+      proximoServicio: '20-11-2025',
+      imagen: 'https://hyundai.pe/wp-content/uploads/2024/02/New-TUCSON-carro-familia-viaje.webp'
+    },
+    {
+      modelo: 'Hyundai Tucson',
+      anio: 2024,
+      color: 'Negro',
+      placa: 'XYZ-9876',
+      km: '5,200 KM',
+      ultimoServicio: '20-09-2025',
+      proximoServicio: '20-11-2025',
+      imagen: 'https://hyundai.pe/wp-content/uploads/2024/02/New-TUCSON-carro-familia-viaje.webp'
+    },
+    {
+      modelo: 'Hyundai Tucson',
+      anio: 2024,
+      color: 'Negro',
+      placa: 'XYZ-9876',
+      km: '5,200 KM',
+      ultimoServicio: '20-09-2025',
+      proximoServicio: '20-11-2025',
+      imagen: 'https://hyundai.pe/wp-content/uploads/2024/02/New-TUCSON-carro-familia-viaje.webp'
+    },
+    {
+      modelo: 'Hyundai Tucson',
+      anio: 2024,
+      color: 'Negro',
+      placa: 'XYZ-9876',
+      km: '5,200 KM',
+      ultimoServicio: '20-09-2025',
+      proximoServicio: '20-11-2025',
+      imagen: 'https://hyundai.pe/wp-content/uploads/2024/02/New-TUCSON-carro-familia-viaje.webp'
+    },
+    {
+      modelo: 'Hyundai Tucson',
+      anio: 2024,
+      color: 'Negro',
+      placa: 'XYZ-9876',
+      km: '5,200 KM',
+      ultimoServicio: '20-09-2025',
+      proximoServicio: '20-11-2025',
+      imagen: 'https://hyundai.pe/wp-content/uploads/2024/02/New-TUCSON-carro-familia-viaje.webp'
+    },
+    {
+      modelo: 'Hyundai Tucson',
+      anio: 2024,
+      color: 'Negro',
+      placa: 'XYZ-9876',
+      km: '5,200 KM',
+      ultimoServicio: '20-09-2025',
+      proximoServicio: '20-11-2025',
+      imagen: 'https://hyundai.pe/wp-content/uploads/2024/02/New-TUCSON-carro-familia-viaje.webp'
+    }
+  ];
+
 
   filtroTexto: string = '';
   filtroEstado: string = '';
@@ -25,23 +107,16 @@ export class ClientesComponent {
 
   roleCode: string | null = null;
 
-
-  constructor(private dialog: MatDialog, private clienteService: ClienteService, 
-    private snackBar: MatSnackBar, private sidebarService: SidebarService) {
+  constructor(private sidebarService: SidebarService, private dialog: MatDialog, private clienteService: ClienteService, private snackBar: MatSnackBar) {
     const userString = localStorage.getItem('user');
     const user = userString ? JSON.parse(userString) : null;
     this.roleCode = user?.roleCode;
   }
 
   ngOnInit() {
-    this.loadClientes();
   }
 
-  loadClientes() {
-    this.clienteService.getClientesByEstablishment().subscribe(data => {
-      this.clientes = data;
-    });
-  }
+  
 
   removerFiltros() {
     this.filtroTexto = '';
@@ -54,10 +129,7 @@ export class ClientesComponent {
     if (this.paginaActual > 1) this.paginaActual--;
   }
 
-  paginaSiguiente() {
-    if (this.paginaActual * this.filasPorPagina < this.clientes.length) this.paginaActual++;
-  }
-
+  
   openCreateDialog() {
     const dialogRef = this.dialog.open(ModalClientesDialogComponent, {
       width: '1500px',
@@ -66,7 +138,6 @@ export class ClientesComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.loadClientes();
       }
     });
   }
@@ -83,7 +154,6 @@ export class ClientesComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.loadClientes();
       }
       if (result.message) {
         this.snackBar.open(result.message, '', {
@@ -105,7 +175,6 @@ export class ClientesComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         // si modificó los números, podrías refrescar la lista
-        this.loadClientes();
       }
     });
   }
@@ -119,7 +188,6 @@ export class ClientesComponent {
           verticalPosition: 'top',
           panelClass: ['success-snackbar']
         });
-        this.loadClientes();
       },
       error: (error) => {
         this.snackBar.open('Error al actualizar preferencia de marketing', '', {
@@ -141,7 +209,6 @@ export class ClientesComponent {
           verticalPosition: 'top',
           panelClass: ['success-snackbar']
         });
-        this.loadClientes();
 
       },
       error: (error) => {
@@ -163,7 +230,6 @@ export class ClientesComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.loadClientes();
       }
     });
   }

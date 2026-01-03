@@ -1,0 +1,103 @@
+<div>
+    <div class="search-menu">
+        <div class="icon-menu">
+            <mat-icon (click)="openMenu()">menu</mat-icon>
+        </div>
+        <div class="input-wrapper">
+            <mat-icon class="input-icon">search</mat-icon>
+            <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Servicio" class="input" />
+        </div>
+    </div>
+
+    <div class="header-secuence">
+        <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+            <div class="selected">Gestión de Mano de Obra</div>
+            <div class="subTitle">Los montos mencionados son más IGV y no incluyen repuestos
+            </div>
+        </div>
+        <div>
+            <button class="btn btn-create" (click)="openCreateDialog()">
+                <mat-icon>add</mat-icon> Nueva
+                Mano de obra</button>
+        </div>
+    </div>
+    <div class="container-card">
+        <div class="card">
+            <div class="card-title">Total de Servicios</div>
+            <div class="card-value">256</div>
+            <div class="footer-card">En base de datos</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Mano de obra del Mes</div>
+            <div class="card-value">3</div>
+            <div class="footer-card">Este mes</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Rango de Precios</div>
+            <div class="card-value"> S/ 450 – S/ 1,500</div>
+            <div class="footer-card">Mínimo: S/ 450 &nbsp;&nbsp;•&nbsp;&nbsp; Máximo: S/ 1,500</div>
+        </div>
+    </div>
+
+    <div class="table-container">
+
+        <div class="table-scroll">
+            <div class="table-body">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Servicio</th>
+                            <th>Tipo Vehículo</th>
+                            <th>Precio</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let m of manoDeObra | filtroCliente:filtroTexto:filtroEstado:filtroGenero | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
+                            (click)="openEditDialog(m)">
+                            <td>
+                                {{m.codigo}}
+                            </td>
+                            <td>
+                                {{m.servicio}}
+                            </td>
+                            <td>
+                                <div class="cliente-car">
+                                    <mat-icon style="margin-right: 0.3rem;">
+                                        directions_car
+                                    </mat-icon>
+                                    <div>
+                                        {{m.tipoVehiculo}}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {{ m.precio | currency:'PEN':'symbol':'1.2-2' }}
+                            </td>
+                            <td>
+                                <span *ngIf="m.activo" class="chip activo">Activo</span>
+                                <span *ngIf="!m.activo" class="chip suspendido">Suspendido</span>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pagination">
+            <span>Filas por página: </span>
+            <select class="select" [(ngModel)]="filasPorPagina">
+                <option *ngFor="let size of [50,100,200]" [value]="size">{{ size }}</option>
+            </select>
+            <span>{{(paginaActual-1)*filasPorPagina+1}} -
+                {{paginaActual*filasPorPagina > manoDeObra.length ? manoDeObra.length : paginaActual*filasPorPagina}}
+                de {{manoDeObra.length}}</span>
+            <button class="paginacion-icon" (click)="paginaAnterior()"
+                [disabled]="paginaActual===1"><mat-icon>chevron_left</mat-icon></button>
+            <button class="paginacion-icon" (click)="paginaSiguiente()"
+                [disabled]="paginaActual*filasPorPagina>=manoDeObra.length"><mat-icon>chevron_right</mat-icon></button>
+        </div>
+    </div>
+
+</div>

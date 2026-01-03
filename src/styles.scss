@@ -148,3 +148,25 @@ body {
   cursor: not-allowed;
   /* icono de prohibido */
 }
+
+.chip{
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* Activo */
+.chip.activo{
+  background: rgba(0,200,83,.15);
+  color: #00c853;
+  border: 1px solid #00c8531a;
+}
+
+/* Suspendido */
+.chip.suspendido{
+  background: rgba(255,82,82,.15);
+  color: #ff5252;
+  border: 1px solid #ff52520a;
+}

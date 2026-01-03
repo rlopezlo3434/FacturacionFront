@@ -1,5 +1,5 @@
 mat-sidenav-container {
-  height: calc(100% - 57px);
+  height: calc(100% - 0px);
   background-color: var(--color-bg);
   max-width: 100%;
 }
@@ -8,7 +8,8 @@ mat-sidenav {
   width: calc(20vw + 30px);
   min-width: 200px;
   max-width: 300px;
-  background-color: var(--color-bg);
+  // background-color: var(--color-bg);
+  background-color: #dddddd;
   box-shadow: 1px 0 2px var(--color-shadow);
   border-radius: 0px !important;
 }
@@ -24,6 +25,7 @@ mat-nav-list {
   justify-content: space-between;
   padding: 1rem;
   color: var(--color-text);
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 1rem;
@@ -31,8 +33,17 @@ mat-nav-list {
   }
 }
 
-.main-content{
-    padding: 1rem;
+.title-App {
+  color: var(--color-submenu);
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-shadow: 0 2px 2px var(--color-shadow);
+  text-align: center;
+  padding: 1rem;
+}
+
+.main-content {
+  padding: 1rem;
 }
 
 .back-hover {
@@ -46,7 +57,7 @@ mat-nav-list {
 }
 
 .active {
-  background-color: var(--color-bhover); 
+  background-color: var(--color-bhover);
   color: var(--color-submenu);
   font-weight: 500;
 }

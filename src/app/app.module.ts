@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -46,6 +46,12 @@ import { KardexComponent } from './Pages/menu/configuracion/kardex/kardex.compon
 import { KardexModalComponent } from './Pages/menu/configuracion/kardex/kardex-modal/kardex-modal.component';
 import { SeleccionEmpleadosModalComponent } from './Pages/menu/facturacion/seleccion-empleados-modal/seleccion-empleados-modal.component';
 import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
+import { VehiculosComponent } from './Pages/menu/configuracion/vehiculos/vehiculos.component';
+import { ManoDeObraComponent } from './Pages/menu/configuracion/mano-de-obra/mano-de-obra.component';
+import localeEsPe from '@angular/common/locales/es-PE';
+import { registerLocaleData } from '@angular/common'
+registerLocaleData(localeEsPe);
+
 @NgModule({
   declarations: [AppComponent,
     HeaderComponent,
@@ -72,7 +78,9 @@ import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
     KardexComponent,
     KardexModalComponent,
     SeleccionEmpleadosModalComponent,
-    CajaComponent
+    CajaComponent,
+    VehiculosComponent,
+    ManoDeObraComponent
 
   ],
   imports: [
@@ -93,7 +101,7 @@ import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
     HttpClientModule,
     RouterModule.forRoot(routes)
   ],
-  providers: [provideAnimationsAsync()],
+  providers: [provideAnimationsAsync(), { provide: LOCALE_ID, useValue: 'es-PE' }],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

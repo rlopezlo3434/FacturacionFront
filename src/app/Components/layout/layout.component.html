@@ -1,9 +1,13 @@
-<app-header></app-header>
+<!-- <app-header></app-header> -->
 <mat-sidenav-container>
-  <mat-sidenav #sidenav mode="side">
+  <mat-sidenav #sidenav mode="side" opened="true" class="app-sidenav">
+    <div class="title-App">
+      X-treme Motors
+    </div>
+
     <mat-nav-list>
       <div *ngFor="let item of menuItems">
-        <div class="menu"  (click)="item.route ? navigateTo(item.route) : toggleMenu(item)">
+        <div class="menu" (click)="item.route ? navigateTo(item.route) : toggleMenu(item)">
           <div class="margin-item-left">
             <mat-icon matListIcon>{{ item.icon }}</mat-icon>
             <span matLine>{{ item.label }}</span>
@@ -14,12 +18,8 @@
         </div>
 
         <div *ngIf="item.open" style="padding-left: 16px">
-          <div
-            *ngFor="let child of item.children"
-            class="back-hover"
-            [routerLink]="child.route"
-            routerLinkActive="active"
-          >
+          <div *ngFor="let child of item.children" class="back-hover" [routerLink]="child.route"
+            routerLinkActive="active">
             <span>{{ child.label }}</span>
           </div>
         </div>
@@ -28,7 +28,7 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="main-content">
-        <router-outlet></router-outlet>
+      <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

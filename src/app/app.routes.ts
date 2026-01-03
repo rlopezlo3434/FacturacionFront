@@ -10,6 +10,8 @@ import { ClientesComponent } from './Pages/menu/configuracion/clientes/clientes.
 import { FacturacionComponent } from './Pages/menu/facturacion/facturacion.component';
 import { KardexComponent } from './Pages/menu/configuracion/kardex/kardex.component';
 import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
+import { VehiculosComponent } from './Pages/menu/configuracion/vehiculos/vehiculos.component';
+import { ManoDeObraComponent } from './Pages/menu/configuracion/mano-de-obra/mano-de-obra.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -38,6 +40,8 @@ export const routes: Routes = [
       { path: 'Descuentos', component: PromocionesComponent },
       { path: 'Empleados', component: EmpleadosComponent },
       { path: 'Clientes', component: ClientesComponent },
+      { path: 'ManoDeObra', component: ManoDeObraComponent },
+      { path: 'Vehiculos', component: VehiculosComponent },
       { path: 'Almacen', component: KardexComponent },
     ]
   }

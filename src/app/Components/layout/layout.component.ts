@@ -43,7 +43,9 @@ export class LayoutComponent {
         icon: 'settings',
         children: [
           { label: 'Gestion de Cliente', route: '/configuracion/Clientes' },
-          { label: 'Gestion de Items', route: '/configuracion/Items' },
+          { label: 'Gestion de Vehiculos', route: '/configuracion/Vehiculos' },
+          { label: 'Gestion de Mano de Obra', route: '/configuracion/ManoDeObra' },
+          // { label: 'Gestion de Items', route: '/configuracion/Items' },
           { label: 'Gestion de Empleados', route: '/configuracion/Empleados' },
           // { label: 'Gestion de Descuentos', route: '/configuracion/Descuentos' },
           // { label: 'Gestion de Almacén', route: '/configuracion/Almacen' }
