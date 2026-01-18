@@ -119,12 +119,13 @@
                 Descuentos Disponibles:
                 <select class="input" [(ngModel)]="promoTarjeta" (change)="onPromoChange()">
                     <option [ngValue]="0">% 0</option>
-                    <option *ngFor="let promo of promociones" [ngValue]="promo.descuentoAplicado"> % {{
-                        promo.descuentoAplicado }}</option>
+                    <option *ngFor="let promo of promociones" [ngValue]="promo.descuentoAplicado">
+                        % {{ promo.descuentoAplicado }}
+                    </option>
                 </select>
             </div>
             <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
-                Código Promocional: 
+                Código Promocional:
                 <input type="text" class="input" [(ngModel)]="codigoPromocional" />
             </div>
             <!-- Lista de items seleccionados (fuera del relative) -->
@@ -157,55 +158,6 @@
 
         </div>
         <div *ngIf="agregarCliente">
-            <!-- <div style="display: flex; gap: 1rem;">
-                <div class="tipoCliente" [class.seleccionado]="tipoClienteSeleccionado === 'empresa'"
-                    (click)="toggleTipoCliente('empresa')">
-                    Empresa
-                </div>
-
-                <div class="tipoCliente" [class.seleccionado]="tipoClienteSeleccionado === 'persona'"
-                    (click)="toggleTipoCliente('persona')">
-                    Persona
-                </div>
-            </div>
-
-            <div style="margin: 1rem 0;">
-                <div class="form-grid">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <input style="flex: 1" type="text" class="input" placeholder="Número de Identificación *"
-                            [(ngModel)]="cli.documentIdentificationNumber" />
-
-                        <mat-icon class="info-icon" (click)="consultarDocumento()"
-                            matTooltip="Seleccione el tipo de documento antes de ingresar el número.">
-                            info
-                        </mat-icon>
-                    </div>
-
-                    <select class="select" [(ngModel)]="cli.documentIdentificationType">
-                        <option value="" disabled selected>Tipo de Documento *</option>
-                        <option value="DNI">DNI</option>
-                        <option value="RUC">RUC</option>
-                        <option value="CARNET_EXTRANJERIA">Carnet de Extranjería</option>
-                    </select>
-
-                    <input type="text" class="input" placeholder="Nombre(s) *" [(ngModel)]="cli.firstName" />
-
-                    <input type="text" class="input" placeholder="Apellido(s) *" [(ngModel)]="cli.lastName" />
-
-                    <select class="select" [(ngModel)]="cli.gender">
-                        <option value="" disabled selected>Género *</option>
-                        <option value="M">Masculino</option>
-                        <option value="F">Femenino</option>
-                    </select>
-
-                    <input type="email" class="input" placeholder="Correo Electrónico" [(ngModel)]="cli.email" />
-
-                    <label class="checkbox-label">
-                        <input type="checkbox" [(ngModel)]="cli.acceptsMarketing" />
-                        Promociones
-                    </label>
-                </div>
-            </div> -->
             <!-- Buscador de cliente -->
             <div *ngIf="!searchCliente" style="position: relative; margin-top: 0.5rem;">
                 <div class="input-wrapper">
@@ -229,35 +181,33 @@
                         </div>
                     </div>
                 </div>
+
+
             </div>
-            <!-- <div class="empleado-selector" style="position: relative; margin-top: 0.5rem;">
-                <div class="input-wrapper">
-                    <mat-icon class="input-icon">badge</mat-icon>
-                    <input type="text" placeholder="Buscar empleado..." class="input" [(ngModel)]="empleadoBuscado"
-                        (input)="filtrarEmpleados()" (focus)="mostrarListaEmpleados = true"
-                        (blur)="ocultarListaConRetardoEmpleados()" />
-                </div>
-                <div *ngIf="mostrarListaEmpleados && empleadosFiltrados.length > 0" class="dropdown-list2">
-                    <div *ngFor="let emp of empleadosFiltrados" class="dropdown-item2"
-                        (mousedown)="seleccionarEmpleado(emp)">
-                        <div [ngStyle]="{
-                        'border-left': '3px solid ' + (emp.isActive ? '#28a745' : '#ccc'),
-                        'padding-left': '0.4rem'
-                        }">
-                            <div>{{ emp.firstName }} {{ emp.lastName }}</div>
-                            <div><strong>Cargo</strong> - {{ emp.roleName }}</div>
+            <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                <!-- <div class="tarjeta">
+                    <div class="casilla" *ngFor="let c of tarjeta" [class.marcada]="c.marcada" (click)="marcar(c)">
+                        <span *ngIf="c.label">{{ c.label }}</span>
+                    </div>
+                </div> -->
+
+                <div class="tarjeta-wrapper">
+
+                    <div class="tarjeta">
+                        <div class="casilla" *ngFor="let c of tarjeta" [class.marcada]="c.marcada"
+                         [attr.data-fecha]="c.fecha ? (c.fecha | date:'dd/MM/yyyy') : null" (click)="marcar(c)">
+                            <span *ngIf="c.label">{{ c.label }}</span>
                         </div>
                     </div>
-                </div>
-                <div *ngIf="empleadosSeleccionados.length > 0" class="chips-container">
-                    <div class="chip" *ngFor="let emp of empleadosSeleccionados">
-                        {{ emp.firstName }} {{ emp.lastName }}
-                        <mat-icon class="delete-icon" (click)="eliminarEmpleado(emp)">close</mat-icon>
+
+                    <div *ngIf="tarjetaCompleta" class="reset-container">
+                        <button class="btn-reset" (click)="resetTarjeta()">
+                            Resetear tarjeta
+                        </button>
                     </div>
+
                 </div>
-
-
-            </div> -->
+            </div>
         </div>
     </div>
     <div class="container2">
@@ -274,9 +224,14 @@
                     <span>Productividad</span>
                 </button>
 
-                <button mat-menu-item (click)="reporteDiario()">
+                <button mat-menu-item (click)="reporteMensual()">
                     <mat-icon>description</mat-icon>
                     <span>Reporte Mensual</span>
+                </button>
+
+                <button mat-menu-item (click)="reporteDiario()">
+                    <mat-icon>description</mat-icon>
+                    <span>Reporte Diario</span>
                 </button>
 
             </mat-menu>
@@ -332,6 +287,7 @@
 
     </div>
 </div>
+
 
 <!-- SECCIÓN: PROMOCIONES -->
 <!-- <div class="form-row">

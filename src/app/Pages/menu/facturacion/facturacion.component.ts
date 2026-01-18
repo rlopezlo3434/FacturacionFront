@@ -32,10 +32,8 @@ export class FacturacionComponent {
   fechaHoy: string = new Date().toISOString().substring(0, 10);
   fechaBoleteoHoy: string = new Date().toISOString().substring(0, 10);
   clienteBuscado = '';
+  promociones: any[] = [];
   promoTarjeta = 0;
-  promociones: [{
-    descuentoAplicado: number
-  }];
   dniCliente = '';
   items: any[] = [];
   ventas: any[] = [];
@@ -55,6 +53,8 @@ export class FacturacionComponent {
   tipoClienteSeleccionado: string | null = null;
   cli: any = {};
 
+  tarjeta: any[] = [];
+
   constructor(
     private clienteService: ClienteService,
     private facturacionService: FacturacionService,
@@ -72,6 +72,11 @@ export class FacturacionComponent {
   }
 
   ngOnInit() {
+    const hoy = new Date();
+    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
+    this.fechaHoy = hoy.toISOString().substring(0, 10);
+    this.fechaBoleteoHoy = hoy.toISOString().substring(0, 10);
+
     this.loadItems();
     this.getChildren();
     this.loadEmpleados();
@@ -163,11 +168,16 @@ export class FacturacionComponent {
     this.mostrarLista2 = false;
     this.agregarCliente = false;
 
-    this.facturacionService.descuentosCliente(this.venta.cliente.documentIdentificationNumber).subscribe({
+    this.cargarTarjeta(this.venta.cliente.id);
+
+    this.actualizarPromos();
+  }
+
+  cargarTarjeta(clienteId: number) {
+    this.facturacionService.getTarjetaCliente(clienteId).subscribe({
       next: (res: any) => {
-        this.promociones = [
-          { descuentoAplicado: res.descuentoAplicado }
-        ];
+        this.tarjeta = res.casillas
+        this.actualizarPromos();
 
         console.log('Descuentos disponibles:', this.promociones);
       }
@@ -395,7 +405,7 @@ export class FacturacionComponent {
   }
 
   obtenerProductividad() {
-    this.facturacionService.obtenerProductividad().subscribe(blob => {
+    this.facturacionService.obtenerProductividad(this.fechaHoy).subscribe(blob => {
       const objectUrl = URL.createObjectURL(blob);
 
       const a = document.createElement('a');
@@ -452,8 +462,19 @@ export class FacturacionComponent {
   }
 
 
-  reporteDiario() {
+  reporteMensual() {
     this.facturacionService.reporteDiario(this.fechaHoy).subscribe(blob => {
+      const a = document.createElement('a');
+      const objectUrl = URL.createObjectURL(blob);
+      a.href = objectUrl;
+      a.download = `ReporteDiario_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(objectUrl);
+    });
+  }
+
+  reporteDiario() {
+    this.facturacionService.reporteDiario2(this.fechaHoy).subscribe(blob => {
       const a = document.createElement('a');
       const objectUrl = URL.createObjectURL(blob);
       a.href = objectUrl;
@@ -489,28 +510,28 @@ export class FacturacionComponent {
   }
 
   aplicarDescuento() {
-  const descuento = Number(this.promoTarjeta) || 0;
+    const descuento = Number(this.promoTarjeta) || 0;
 
-  this.itemsSeleccionados.forEach(item => {
-    const precioConIgv = item.value;
-    const cantidad = item.cantidad;
+    this.itemsSeleccionados.forEach(item => {
+      const precioConIgv = item.value;
+      const cantidad = item.cantidad;
 
-    // total sin descuento
-    const totalOriginal = precioConIgv * cantidad;
+      // total sin descuento
+      const totalOriginal = precioConIgv * cantidad;
 
-    // aplicar descuento
-    const totalConDescuento = +(totalOriginal * (1 - descuento / 100)).toFixed(2);
+      // aplicar descuento
+      const totalConDescuento = +(totalOriginal * (1 - descuento / 100)).toFixed(2);
 
-    // recalcular valores sin IGV
-    const subtotal = +(totalConDescuento / 1.18).toFixed(2);
-    const igv = +(subtotal * 0.18).toFixed(2);
+      // recalcular valores sin IGV
+      const subtotal = +(totalConDescuento / 1.18).toFixed(2);
+      const igv = +(subtotal * 0.18).toFixed(2);
 
-    // asignar nuevos valores al item
-    item.total = totalConDescuento;
-    item.subtotal = subtotal;
-    item.igv = igv;
-  });
-}
+      // asignar nuevos valores al item
+      item.total = totalConDescuento;
+      item.subtotal = subtotal;
+      item.igv = igv;
+    });
+  }
 
 
   onPromoChange() {
@@ -523,15 +544,15 @@ export class FacturacionComponent {
   }
 
   quitarDescuento() {
-  this.itemsSeleccionados.forEach(item => {
-    const precioConIgv = item.value;
-    const cantidad = item.cantidad;
+    this.itemsSeleccionados.forEach(item => {
+      const precioConIgv = item.value;
+      const cantidad = item.cantidad;
 
-    item.subtotal = +((precioConIgv / 1.18) * cantidad).toFixed(2);
-    item.igv = +(item.subtotal * 0.18).toFixed(2);
-    item.total = +(precioConIgv * cantidad).toFixed(2);
-  });
-}
+      item.subtotal = +((precioConIgv / 1.18) * cantidad).toFixed(2);
+      item.igv = +(item.subtotal * 0.18).toFixed(2);
+      item.total = +(precioConIgv * cantidad).toFixed(2);
+    });
+  }
 
   guardarVenta() {
     console.log('Venta guardada:', this.venta);
@@ -540,4 +561,61 @@ export class FacturacionComponent {
   cancelar() {
     this.venta = { tipoComprobante: 'BOLETA_ELECTRONICA', cliente: null, detalles: [], total: 0 };
   }
+
+  marcar(casilla: any) {
+    casilla.marcada = !casilla.marcada;
+
+    this.facturacionService.registrarVisita(this.venta.cliente.id)
+      .subscribe(() => {
+        this.cargarTarjeta(this.venta.cliente.id);
+
+      });
+  }
+
+  get tarjetaCompleta(): boolean {
+    return this.tarjeta?.length > 0 && this.tarjeta.every(c => c.marcada);
+  }
+  get visitasMarcadas(): number {
+    return this.tarjeta?.filter(c => c.marcada).length ?? 0;
+  }
+
+  get descuentoDisponible(): number {
+
+    switch (this.visitasMarcadas) {
+
+      case 3: return 5;
+      case 6: return 10;
+      case 9: return 15;
+      case 12: return 20;
+
+      default: return 0;
+    }
+  }
+
+  resetTarjeta() {
+    this.facturacionService.resetTarjeta(this.venta.cliente.id)
+      .subscribe(() => {
+        this.cargarTarjeta(this.venta.cliente.id);
+      });
+  }
+
+
+  actualizarPromos() {
+
+    this.promociones = [];   // limpiar
+
+    const descuento = this.descuentoDisponible;
+
+    if (descuento > 0) {
+      this.promociones.push({
+        descuentoAplicado: descuento
+      });
+
+      // this.promoTarjeta = descuento;   // seleccionar automático
+    }
+    else {
+      this.promoTarjeta = 0;
+    }
+  }
+
 }

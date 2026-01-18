@@ -51,12 +51,20 @@ export class LayoutComponent {
 
       },
       {
-        label: 'Alamacén',
+        label: 'Almacén',
         name: 'almacen',
         icon: 'house_siding',
         children: [
           { label: 'Kardex', route: '/configuracion/Almacen' }],
 
+      },
+      {
+        label: 'Dashboard',
+        name: 'dashboard',
+        icon: 'dashboard',
+        children: [
+          { label: 'Resumen', route: '/dashboard/resumen' }
+        ],
       },
     ];
 

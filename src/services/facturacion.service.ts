@@ -24,6 +24,22 @@ export class FacturacionService {
     });
   }
 
+  getTarjetaCliente(clienteId: number) {
+    return this.http.get<any[]>(`${environment.apiBase}/Client/${clienteId}/tarjeta`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      }
+    });
+  }
+
+  resetTarjeta(clienteId: number) {
+    return this.http.post<any>(`${environment.apiBase}/Client/reset-tarjeta`, { clienteId }, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      }
+    });
+  }
+
   getChildren() {
     return this.http.get<any[]>(`${environment.apiBase}/Client/childrenByClient`, {
       headers: {
@@ -37,6 +53,12 @@ export class FacturacionService {
       headers: {
         Authorization: `Bearer ${this.token}`
       }
+    });
+  }
+
+  registrarVisita(clienteId: number) {
+    return this.http.post(`${environment.apiBase}/Client/registrar-visita`, {
+      clienteId
     });
   }
 
@@ -56,16 +78,31 @@ export class FacturacionService {
       params: {
         fecha: fecha
       },
-      responseType: 'blob' 
+      responseType: 'blob'
     });
   }
 
-  obtenerProductividad(): Observable<Blob> {
+  reporteDiario2(fecha: string): Observable<Blob> {
+    return this.http.get(`${environment.apiBase}/facturacion/reporte-diario3`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      },
+      params: {
+        fecha: fecha
+      },
+      responseType: 'blob'
+    });
+  }
+
+  obtenerProductividad(fecha: string): Observable<Blob> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.token}`
     });
     return this.http.get(`${environment.apiBase}/facturacion/reporte-productividad`, {
       headers,
+      params: {
+        fechas: fecha
+      },
       responseType: 'blob'
     });
   }

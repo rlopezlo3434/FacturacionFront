@@ -338,6 +338,77 @@
     background-color: #da1616;
 }
 
+.tarjeta-wrapper{
+  position: relative;
+  display: inline-block;
+}
+
+.tarjeta{
+  width: 20vw;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  grid-gap: 12px;
+  border: 2px solid #ddd;
+}
+
+.casilla{
+  height: 70px;
+  border: 2px dashed #bbb;
+  border-radius: 10px;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size: 13px;
+  padding: 6px;
+  cursor:pointer;
+}
+
+.casilla.marcada{
+  background: rgba(0, 200, 120, .2);
+  border-color: #2ecc71;
+}
+
+.casilla.marcada::before {
+  content:"✔";
+  font-size:26px;
+  color:#2ecc71;
+}
+.casilla.marcada::after  {
+  content: attr(data-fecha);
+  display: block;
+  font-size: 10px;
+  margin-top: 4px;
+  color: #666;
+}
+
+
+.reset-container{
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.btn-reset{
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+
+.btn-reset:hover{
+  background:#e63939;
+}
+
+
 @media (max-width: 900px) {
     .container2 {
         margin-top: 1rem;

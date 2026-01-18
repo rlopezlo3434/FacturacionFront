@@ -38,6 +38,7 @@ import { FiltroEmpleadoPipe } from './pipes/filtro-empleado.pipe';
 import { FiltroItemPipe } from './pipes/filtro-item.pipe';
 import { FiltroClientePipe } from './pipes/filtro-cliente.pipe';
 import { FiltroPromocioPipe } from './pipes/filtro-promocio.pipe';
+import { QRCodeModule } from 'angularx-qrcode';
 
 import { ModalNumbersDialogComponent } from './Pages/menu/configuracion/clientes/modal-numbers-dialog/modal-numbers-dialog.component';
 import { ModalHijosDialogComponent } from './Pages/menu/configuracion/clientes/modal-hijos-dialog/modal-hijos-dialog.component';
@@ -46,6 +47,9 @@ import { KardexComponent } from './Pages/menu/configuracion/kardex/kardex.compon
 import { KardexModalComponent } from './Pages/menu/configuracion/kardex/kardex-modal/kardex-modal.component';
 import { SeleccionEmpleadosModalComponent } from './Pages/menu/facturacion/seleccion-empleados-modal/seleccion-empleados-modal.component';
 import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
+import { ResumenComponent } from './Pages/menu/dashboard/resumen/resumen.component';
+import { BaseChartDirective } from 'ng2-charts';
+
 @NgModule({
   declarations: [AppComponent,
     HeaderComponent,
@@ -72,10 +76,13 @@ import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
     KardexComponent,
     KardexModalComponent,
     SeleccionEmpleadosModalComponent,
-    CajaComponent
+    CajaComponent,
+    ResumenComponent
 
   ],
   imports: [
+    BaseChartDirective,
+    QRCodeModule,
     BrowserModule,
     MatProgressBarModule,
     MatIconModule,
