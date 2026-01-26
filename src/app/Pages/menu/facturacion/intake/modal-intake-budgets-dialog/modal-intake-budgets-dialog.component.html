@@ -1,0 +1,97 @@
+<h2 mat-dialog-title class="dialog-title">
+  Presupuestos del Internamiento
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+  <div class="section">
+    <div class="subTitle">
+      Internamiento: <strong>{{ data?.intake?.id }}</strong> •
+      Placa: <strong>{{ data?.intake?.vehicle?.plate }}</strong>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-field full">
+        <label class="label">Buscar presupuesto</label>
+        <input class="input" [(ngModel)]="filtroTexto" placeholder="Buscar por código..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Cards -->
+  <div class="container-card">
+    <div class="card">
+      <div class="card-title">Total Presupuestos</div>
+      <div class="card-value">{{ budgets.length }}</div>
+      <div class="footer-card">Histórico completo</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Oficial</div>
+      <div class="card-value">{{ getOfficialCode() }}</div>
+      <div class="footer-card">Aprobado por cliente</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Pendientes</div>
+      <div class="card-value">{{ countPending() }}</div>
+      <div class="footer-card">Por aprobar</div>
+    </div>
+  </div>
+
+  <!-- ✅ Tabla de presupuestos -->
+  <div class="table-container">
+    <div class="table-actions">
+      <div class="selected">Listado</div>
+
+      <button class="btn btn-create" (click)="openCreateBudgetModal()">
+        <mat-icon>add</mat-icon> Nuevo Presupuesto
+      </button>
+    </div>
+
+    <div class="table-scroll">
+      <div class="table-body">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Total</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Oficial</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              *ngFor="let b of budgets | budgetFilter:filtroTexto"
+              (click)="openDetailBudget(b)"
+              style="cursor:pointer;"
+            >
+              <td><strong>{{ b.code }}</strong></td>
+              <td>{{ b.total | currency:'PEN':'symbol':'1.2-2' }}</td>
+              <td>{{ b.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+
+              <td>
+                <span class="chip activo" *ngIf="b.isApproved">Aprobado</span>
+                <span class="chip suspendido" *ngIf="!b.isApproved">Pendiente</span>
+              </td>
+
+              <td>
+                <span class="chip multi" *ngIf="b.isOfficial">OFICIAL</span>
+                <span *ngIf="!b.isOfficial" style="color:gray;">Histórico</span>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+  <button class="btn-cancelar" (click)="cancelar()">Cerrar</button>
+</mat-dialog-actions>

@@ -1,0 +1,149 @@
+<h2 mat-dialog-title class="dialog-title">
+  Orden de Trabajo - {{ workOrder?.code || '...' }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+  <!-- ✅ Datos generales -->
+  <div class="section">
+    <div class="subTitle">Información General</div>
+
+    <div class="info-grid">
+
+      <div class="info-card">
+        <div class="info-label">Internamiento</div>
+        <div class="info-value">#{{ workOrder?.vehicleIntakeId }}</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-label">Modo</div>
+        <div class="info-value">
+          <span class="chip multi" *ngIf="workOrder?.mode === 1">Taller</span>
+          <span class="chip suspendido" *ngIf="workOrder?.mode === 2">Recojo</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-label">Estado</div>
+        <div class="info-value">
+          <span class="chip activo" *ngIf="workOrder?.isCompleted">Completado</span>
+          <span class="chip suspendido" *ngIf="!workOrder?.isCompleted">Pendiente</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-label">Fecha</div>
+        <div class="info-value">{{ workOrder?.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ✅ Vehículo / Cliente -->
+  <div class="section">
+    <div class="subTitle">Vehículo y Cliente</div>
+
+    <div class="vehiculo-box">
+
+      <div class="vehiculo-item">
+        <div class="vehiculo-label">Placa</div>
+        <div class="vehiculo-value">{{ workOrder?.vehicle?.plate }}</div>
+      </div>
+
+      <div class="vehiculo-item">
+        <div class="vehiculo-label">Marca</div>
+        <div class="vehiculo-value">{{ workOrder?.vehicle?.brand?.name }}</div>
+      </div>
+
+      <div class="vehiculo-item">
+        <div class="vehiculo-label">Modelo</div>
+        <div class="vehiculo-value">{{ workOrder?.vehicle?.model?.name }}</div>
+      </div>
+
+      <div class="vehiculo-item">
+        <div class="vehiculo-label">Cliente</div>
+        <div class="vehiculo-value">{{ workOrder?.client?.names }}</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ✅ Notas generales -->
+  <div class="section" *ngIf="workOrder?.notes">
+    <div class="subTitle">Notas</div>
+    <div class="notes-box">
+      {{ workOrder?.notes }}
+    </div>
+  </div>
+
+  <!-- ✅ Items -->
+  <div class="section">
+    <div class="subTitle">Checklist de Trabajo</div>
+
+    <div class="table-container">
+      <div class="table-scroll">
+        <div class="table-body detail-table">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th style="width:120px;">Cant.</th>
+                <th style="width:120px;">Completado</th>
+                <th>Observación</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let it of items">
+
+                <td>
+                  <span class="chip type-product" *ngIf="it.itemType === 1">Producto</span>
+                  <span class="chip type-service" *ngIf="it.itemType === 2">Servicio</span>
+                </td>
+
+                <td>
+                  <div class="item-title">{{ it.name }}</div>
+                </td>
+
+                <td>
+                  <strong>{{ it.quantity }}</strong>
+                </td>
+
+                <td>
+                  <mat-checkbox [(ngModel)]="it.isCompleted"></mat-checkbox>
+                </td>
+
+                <td>
+                  <input class="input-mini"
+                         [(ngModel)]="it.observations"
+                         placeholder="Ej: pendiente por repuesto..." />
+                </td>
+
+              </tr>
+
+              <tr *ngIf="items.length === 0">
+                <td colspan="5" class="empty-row">
+                  No hay items en esta orden de trabajo.
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+  <button class="btn-cancelar" (click)="cancelar()">Cerrar</button>
+
+  <button class="btn-primary"
+          (click)="guardarAvance()"
+          [disabled]="items.length === 0 || loading">
+    {{ loading ? 'Guardando...' : 'Guardar avance' }}
+  </button>
+</mat-dialog-actions>

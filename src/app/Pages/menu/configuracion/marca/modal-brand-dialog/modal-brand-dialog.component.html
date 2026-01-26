@@ -1,0 +1,47 @@
+<h2 mat-dialog-title class="dialog-title">
+  {{ data ? 'Editar Marca' : 'Nueva Marca' }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+  <div class="section">
+    <div class="subTitle">Información de la Marca</div>
+
+    <div class="form-grid">
+
+      <!-- Nombre -->
+      <div class="form-field full">
+        <label class="label">Nombre de la Marca *</label>
+        <input
+          type="text"
+          class="input"
+          placeholder="Ej: Toyota"
+          [(ngModel)]="brand.name"
+        />
+      </div>
+
+      <!-- Estado -->
+      <div class="form-field full" *ngIf="data">
+        <label class="label">Estado</label>
+        <select class="select" [(ngModel)]="brand.isActive">
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">Inactivo</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+  <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+
+  <button
+    class="btn-primary"
+    (click)="guardar()"
+    [disabled]="!brand.name || brand.name.trim().length < 2"
+  >
+    {{ data ? 'Actualizar' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

@@ -12,6 +12,12 @@ import { KardexComponent } from './Pages/menu/configuracion/kardex/kardex.compon
 import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
 import { VehiculosComponent } from './Pages/menu/configuracion/vehiculos/vehiculos.component';
 import { ManoDeObraComponent } from './Pages/menu/configuracion/mano-de-obra/mano-de-obra.component';
+import { MarcaComponent } from './Pages/menu/configuracion/marca/marca.component';
+import { IntakeComponent } from './Pages/menu/facturacion/intake/intake.component';
+import { ServiciosComponent } from './Pages/menu/configuracion/servicios/servicios.component';
+import { ProductosComponent } from './Pages/menu/configuracion/productos/productos.component';
+import { PresupuestosComponent } from './Pages/menu/facturacion/presupuestos/presupuestos.component';
+import { OrdenesTrabajoComponent } from './Pages/menu/facturacion/ordenes-trabajo/ordenes-trabajo.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -28,8 +34,11 @@ export const routes: Routes = [
     path: 'facturacion',
     component: LayoutComponent,
     children: [
+      { path: 'intake', component: IntakeComponent },
       { path: 'venta', component: FacturacionComponent },
-      { path: 'caja', component: CajaComponent }
+      { path: 'caja', component: CajaComponent },
+      { path: 'presupuestos/intake/:intakeId', component: PresupuestosComponent },
+      { path: 'orden-trabajo/intake', component: OrdenesTrabajoComponent }
     ]
   },
   {
@@ -42,7 +51,10 @@ export const routes: Routes = [
       { path: 'Clientes', component: ClientesComponent },
       { path: 'ManoDeObra', component: ManoDeObraComponent },
       { path: 'Vehiculos', component: VehiculosComponent },
+      { path: 'Productos', component: ProductosComponent },
+      { path: 'Servicios', component: ServiciosComponent },
       { path: 'Almacen', component: KardexComponent },
+      { path: 'Marcas', component: MarcaComponent }
     ]
   }
 ];

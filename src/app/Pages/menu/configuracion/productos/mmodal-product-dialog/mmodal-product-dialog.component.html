@@ -1,0 +1,83 @@
+<h2 mat-dialog-title class="dialog-title">
+  {{ data ? 'Editar Producto' : 'Nuevo Producto' }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+  <div class="section">
+    <div class="subTitle">Información del Producto</div>
+
+    <div class="form-grid">
+
+      <!-- Nombre -->
+      <div class="form-field full">
+        <label class="label">Nombre *</label>
+        <input class="input" type="text"
+          placeholder="Ej: Filtro de aceite"
+          [(ngModel)]="product.name" />
+      </div>
+
+      <!-- Cantidad -->
+      <div class="form-field">
+        <label class="label">Cantidad *</label>
+        <input class="input" type="number"
+          placeholder="Ej: 15"
+          [(ngModel)]="product.quantity" />
+      </div>
+
+      <!-- Cantidad -->
+      <div class="form-field">
+        <label class="label">Precio Unidad *</label>
+        <input class="input" type="number"
+          placeholder="Ej: 15"
+          [(ngModel)]="product.price" />
+      </div>
+
+      <!-- Código serie -->
+      <div class="form-field">
+        <label class="label">Código Serie</label>
+        <input class="input" type="text"
+          placeholder="Ej: P240"
+          [(ngModel)]="product.serialCode" />
+      </div>
+
+      <!-- MultiMarca -->
+      <div class="form-field">
+        <label class="label">Multi Marca</label>
+        <select class="select" [(ngModel)]="product.isMultiBrand" (change)="onMultiBrandChange()">
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false">No</option>
+        </select>
+      </div>
+
+      <!-- Marca (solo si NO es multi marca) -->
+      <div class="form-field" *ngIf="!product.isMultiBrand">
+        <label class="label">Marca *</label>
+        <select class="select" [(ngModel)]="product.brandId">
+          <option [ngValue]="null" disabled>Seleccionar</option>
+          <option *ngFor="let b of brands" [ngValue]="b.id">
+            {{ b.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Código (solo al editar) -->
+      <div class="form-field full" *ngIf="data">
+        <label class="label">Código</label>
+        <input class="input" type="text" [value]="data.code" disabled />
+      </div>
+
+    </div>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+  <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+
+  <button class="btn-primary"
+    (click)="guardar()"
+    [disabled]="!product.name || product.quantity === null || product.quantity < 0 || (!product.isMultiBrand && !product.brandId)">
+    {{ data ? 'Actualizar' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

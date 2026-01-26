@@ -1,0 +1,170 @@
+<div>
+
+  <!-- 🔍 buscador + menú -->
+  <div class="search-menu">
+    <div class="icon-menu">
+      <mat-icon (click)="openMenu()">menu</mat-icon>
+    </div>
+
+    <div class="input-wrapper">
+      <mat-icon class="input-icon">search</mat-icon>
+      <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Placa, Cliente o Modo..." class="input" />
+    </div>
+  </div>
+
+  <!-- ✅ header -->
+  <div class="header-secuence">
+    <div style="display:flex; flex-direction:column; gap:0.4rem;">
+      <div class="selected">Gestión de Internamientos</div>
+      <div class="subTitle">Registro de ingreso de vehículos al taller</div>
+    </div>
+
+    <div>
+      <button class="btn btn-create" (click)="openCreateIntakeDialog()">
+        <mat-icon>add</mat-icon> Nuevo Internamiento
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ cards resumen -->
+  <div class="container-card">
+    <div class="card">
+      <div class="card-title">Total Internamientos</div>
+      <div class="card-value">{{ internamientos.length }}</div>
+      <div class="footer-card">Registrados</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Recepción Taller</div>
+      <div class="card-value">{{ countMode(1) }}</div>
+      <div class="footer-card">Este mes</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Recojo a Domicilio</div>
+      <div class="card-value">{{ countMode(2) }}</div>
+      <div class="footer-card">Este mes</div>
+    </div>
+  </div>
+
+  <!-- ✅ tabla -->
+  <div class="table-container">
+    <div class="table-actions">
+      <div class="selected">Lista de Internamientos</div>
+    </div>
+
+    <div class="table-scroll">
+      <div class="table-body">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Vehículo</th>
+              <th>Cliente</th>
+              <th>Modo</th>
+              <th>Dirección</th>
+              <th>Kilometraje</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Presupuesto</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              *ngFor="let i of internamientos | intakeFilter:filtroTexto | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
+              (click)="openDetail(i)">
+
+              <!-- Vehículo -->
+              <td>
+                <div class="cliente-info">
+                  <div class="avatar-circle">
+                    {{ getInitials(i.vehicle?.plate) }}
+                  </div>
+
+                  <div class="cliente-details">
+                    <div class="cliente-name">
+                      {{ i.vehicle?.plate }}
+                    </div>
+                    <div class="cliente-document">
+                      {{ i.vehicle?.brand?.name }} • {{ i.vehicle?.model?.name }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Cliente -->
+              <td>
+                <div class="cliente-contact">
+                  <div class="cliente-email">
+                    <mat-icon>person</mat-icon>
+                    <div>{{ i.client?.names }}</div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Modo -->
+              <td>
+                <span class="chip modo-taller" *ngIf="i.mode === 1">Taller</span>
+                <span class="chip modo-domicilio" *ngIf="i.mode === 2">Domicilio</span>
+              </td>
+
+              <!-- Dirección -->
+              <td>
+                <span *ngIf="i.mode === 2">{{ i.pickupAddress }}</span>
+                <span *ngIf="i.mode === 1" style="color: gray;">—</span>
+              </td>
+
+              <!-- Kilometraje -->
+              <td>
+                {{ i.mileageKm }} km
+              </td>
+
+              <!-- Fecha -->
+              <td>
+                <div style="display:flex; align-items:center; gap:0.3rem;">
+                  <mat-icon>calendar_month</mat-icon>
+                  <div>{{ i.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+                </div>
+              </td>
+
+              <!-- Estado -->
+              <td>
+                <span class="chip activo" *ngIf="i.isActive">Activo</span>
+                <span class="chip suspendido" *ngIf="!i.isActive">Finalizado</span>
+              </td>
+
+              <!-- Presupuesto -->
+              <td>
+                <button class="btn btn-create" (click)="$event.stopPropagation(); goToBudgets(i)">
+                  Presupuesto
+                </button>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+    <!-- ✅ paginación -->
+    <div class="pagination">
+      <span>Filas por página: </span>
+
+      <span>
+        {{ (paginaActual-1)*filasPorPagina+1 }} -
+        {{ paginaActual*filasPorPagina > internamientos.length ? internamientos.length : paginaActual*filasPorPagina }}
+        de {{ internamientos.length }}
+      </span>
+
+      <button class="paginacion-icon" (click)="paginaAnterior()" [disabled]="paginaActual===1">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <button class="paginacion-icon" (click)="paginaSiguiente()"
+        [disabled]="paginaActual*filasPorPagina>=internamientos.length">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+
+</div>

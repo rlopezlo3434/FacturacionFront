@@ -1,0 +1,120 @@
+<div>
+
+  <!-- 🔍 buscador -->
+  <div class="search-menu">
+    <div class="icon-menu">
+      <mat-icon (click)="openMenu()">menu</mat-icon>
+    </div>
+
+    <div class="input-wrapper">
+      <mat-icon class="input-icon">search</mat-icon>
+      <input [(ngModel)]="filtroTexto" type="text"
+        placeholder="Buscar por Código o Nombre..." class="input" />
+    </div>
+  </div>
+
+  <!-- ✅ Header -->
+  <div class="header-secuence">
+    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+      <div class="selected">Gestión de Servicios</div>
+      <div class="subTitle">Administra tu catálogo de servicios y precios</div>
+    </div>
+
+    <div>
+      <button class="btn btn-create" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon> Nuevo Servicio
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ Cards -->
+  <div class="container-card">
+    <div class="card">
+      <div class="card-title">Total de Servicios</div>
+      <div class="card-value">{{ services.length }}</div>
+      <div class="footer-card">Registrados</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Servicios Activos</div>
+      <div class="card-value">{{ countActivos() }}</div>
+      <div class="footer-card">Disponibles</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Servicios Inactivos</div>
+      <div class="card-value">{{ countInactivos() }}</div>
+      <div class="footer-card">Suspendidos</div>
+    </div>
+  </div>
+
+  <!-- ✅ Tabla -->
+  <div class="table-container">
+    <div class="table-actions">
+      <div class="selected">Lista de Servicios</div>
+    </div>
+
+    <div class="table-scroll">
+      <div class="table-body">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Servicio</th>
+              <th>Precio</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              *ngFor="let s of services | serviceFilter:filtroTexto | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
+              (click)="openEditDialog(s)"
+              style="cursor: pointer;"
+            >
+              <td>
+                <strong>{{ s.code }}</strong>
+              </td>
+
+              <td>
+                {{ s.name }}
+              </td>
+
+              <td>
+                {{ s.price | currency:'PEN':'symbol':'1.2-2' }}
+              </td>
+
+              <td>
+                <span class="chip activo" *ngIf="s.isActive">Activo</span>
+                <span class="chip suspendido" *ngIf="!s.isActive">Inactivo</span>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+    <!-- ✅ paginación -->
+    <div class="pagination">
+      <span>Filas por página: </span>
+
+      <span>
+        {{(paginaActual-1)*filasPorPagina+1}} -
+        {{paginaActual*filasPorPagina > services.length ? services.length : paginaActual*filasPorPagina}}
+        de {{services.length}}
+      </span>
+
+      <button class="paginacion-icon" (click)="paginaAnterior()" [disabled]="paginaActual===1">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <button class="paginacion-icon" (click)="paginaSiguiente()"
+        [disabled]="paginaActual*filasPorPagina>=services.length">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+  </div>
+
+</div>

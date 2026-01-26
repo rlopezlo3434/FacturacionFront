@@ -1,184 +1,132 @@
 <div>
-    <div class="search-menu">
-        <div class="icon-menu">
-            <mat-icon (click)="openMenu()">menu</mat-icon>
-        </div>
-        <div class="input-wrapper">
-        <mat-icon class="input-icon">search</mat-icon>
-        <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Placa, Cliente" class="input" />
+  <!-- SEARCH -->
+  <div class="search-menu">
+    <div class="icon-menu">
+      <mat-icon (click)="openMenu()">menu</mat-icon>
     </div>
-    </div>
-    
-    <div class="header-secuence">
-        <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-            <div class="selected">Gestión de Vehículos</div>
-            <div class="subTitle">Inventario de vehículos premium</div>
-        </div>
-        <div>
-            <button class="btn btn-create" (click)="openCreateDialog()">
-                <mat-icon>add</mat-icon> Nuevo
-                Vehículo</button>
-        </div>
-    </div>
-    <div class="container-card">
-        <div class="card">
-            <div class="card-title">Total de Vehículos</div>
-            <div class="card-value">256</div>
-            <div class="footer-card">En base de datos</div>
-        </div>
-        <div class="card">
-            <div class="card-title">Mantenimiento</div>
-            <div class="card-value">3</div>
-            <div class="footer-card">Este mes</div>
-        </div>
-        <div class="card">
-            <div class="card-title">Marca Premium</div>
-            <div class="card-value">BMW</div>
-            <div class="footer-card">Más atendida</div>
-        </div>
-    </div>
-    <div class="cards-container">
-        <div class="card-vehiculo" *ngFor="let v of vehiculos">
 
+    <div class="input-wrapper">
+      <mat-icon class="input-icon">search</mat-icon>
+      <input
+        [(ngModel)]="filtroTexto"
+        type="text"
+        placeholder="Buscar por Placa o Cliente..."
+        class="input"
+      />
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header-secuence">
+    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+      <div class="selected">Gestión de Vehículos</div>
+      <div class="subTitle">Inventario de vehículos premium</div>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem;">
+      <button class="btn btn-create" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon> Nuevo Vehículo
+      </button>
+    </div>
+  </div>
+
+  <!-- CARDS RESUMEN -->
+  <div class="container-card">
+    <div class="card">
+      <div class="card-title">Total de Vehículos</div>
+      <div class="card-value">{{ vehiculos.length }}</div>
+      <div class="footer-card">En base de datos</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Activos</div>
+      <div class="card-value">{{ getActivosCount() }}</div>
+      <div class="footer-card">Disponibles</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Marca más frecuente</div>
+      <div class="card-value">{{ marcaMasFrecuente || '-' }}</div>
+      <div class="footer-card">Top en lista</div>
+    </div>
+  </div>
+
+  <!-- LISTADO EN CARDS -->
+  <div class="cards-container">
+
+    <div
+      class="card-vehiculo"
+      *ngFor="let v of vehiculos | filtroVehiculo:filtroTexto"
+      (click)="openEditDialog(v)"
+    >
+
+      <!-- IMAGEN OPCIONAL -->
       <div class="image">
-          <img [src]="v.imagen" alt="{{v.modelo}}">
+        <img
+          [src]="getVehicleImage(v)"
+          alt="Vehículo"
+          (error)="onImgError($event)"
+        />
       </div>
 
       <div class="card-details">
-          <div class="card-description">{{ v.modelo }}</div>
 
-          <div class="card-anio-color">
-              {{ v.anio }} • {{ v.color }}
+        <!-- MODELO -->
+        <div class="card-description">
+          {{ v.model?.name }} <span class="muted">• {{ v.brand?.name }}</span>
+        </div>
+
+        <!-- Año / Color -->
+        <div class="card-anio-color">
+          {{ v.year }} • {{ v.color || 'Sin color' }}
+        </div>
+
+        <!-- Placa -->
+        <div class="card-subDetails">
+          <div class="icon">
+            <mat-icon>directions_car</mat-icon>
+            <div>Placa</div>
+          </div>
+          <div class="description-subDetail">{{ v.plate }}</div>
+        </div>
+
+        <!-- Dueño -->
+        <div class="card-subDetails">
+          <div class="icon">
+            <mat-icon>person</mat-icon>
+            <div>Cliente</div>
+          </div>
+          <div class="description-subDetail">
+            {{ v.owner?.name || 'Sin asignar' }}
+          </div>
+        </div>
+
+        <!-- Kilometraje -->
+        <div class="card-subDetails">
+          <div class="icon">
+            <mat-icon>speed</mat-icon>
+            <div>Kilometraje</div>
+          </div>
+          <div class="description-subDetail">
+            {{ v.currentMileageKm || 0 }} km
+          </div>
+        </div>
+
+        <!-- Estado -->
+        <div class="card-subDetails">
+          <div class="icon">
+            <mat-icon>verified</mat-icon>
+            <div>Estado</div>
           </div>
 
-          <div class="card-subDetails">
-              <div class="icon">
-                  <mat-icon>directions_car</mat-icon>
-                  <div>Placa</div>
-              </div>
-              <div class="description-subDetail">{{ v.placa }}</div>
+          <div class="description-subDetail">
+            <span class="chip activo" *ngIf="v.isActive">Activo</span>
+            <span class="chip suspendido" *ngIf="!v.isActive">Inactivo</span>
           </div>
-
-          <div class="card-subDetails">
-              <div class="icon">
-                  <mat-icon>speed</mat-icon>
-                  <div>Kilometraje</div>
-              </div>
-              <div class="description-subDetail">{{ v.km }}</div>
-          </div>
-
-          <div class="card-subDetails">
-              <div class="icon">
-                  <mat-icon>build</mat-icon>
-                  <div>Último Servicio</div>
-              </div>
-              <div class="description-subDetail">{{ v.ultimoServicio }}</div>
-          </div>
-
-          <div class="card-subDetails">
-              <div class="icon">
-                  <mat-icon>calendar_today</mat-icon>
-                  <div>Próximo Servicio</div>
-              </div>
-              <div class="description-subDetail">{{ v.proximoServicio }}</div>
-          </div>
+        </div>
 
       </div>
     </div>
-    <!-- <div class="table-container">
-        
-        <div class="table-scroll">
-            <div class="table-body">
-                <table class="custom-table">
-                    <thead>
-                        <tr>
-                            <th>Placa</th>
-                            <th>Kilometraje</th>
-                            <th>Año y Color</th>
-                            <th>Último Servicio</th>
-                            <th>Próximo Servicio</th>
-                            <th>Clientes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let cli of clientes | filtroCliente:filtroTexto:filtroEstado:filtroGenero | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
-                            (click)="openEditDialog(cli)">
-                            <td>
-                                <div class="cliente-info">
-                                    <div class="avatar-circle">
-                                        {{ cli.firstName.charAt(0) }}
-                                    </div>
-                                    <div class="cliente-details">
-                                        <div class="cliente-name">
-                                            {{ cli.firstName }}
-                                        </div>
-                                        <div class="cliente-document">
-                                            {{cli.documentIdentificationType}}: {{ cli.documentIdentificationNumber }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="cliente-contact">
-                                    <div class="cliente-phone">
-                                        <mat-icon>phone</mat-icon>
-                                        <div>
-                                            {{ cli.firstName }}
-                                        </div>
-                                    </div>
-                                    <div class="cliente-email">
-                                        <mat-icon>email</mat-icon>
-                                        <div>
-                                            {{ cli.email }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="cliente-car">
-                                    <mat-icon (click)="$event.stopPropagation(); openHijosDialog(cli, 'agregar')"
-                                        style="margin-right: 0.3rem;">
-                                        directions_car
-                                    </mat-icon>
-                                    <div>
-                                        CRM-114
-                                    </div>
-                                </div>
-                            </td>
-                            <td style="text-align: center;">
-                                <mat-icon
-                                    (click)="openNumbersDialog(cli); $event.stopPropagation()">format_list_bulleted</mat-icon>
-                            </td>
-                            <td style="text-align: center;">
-                                <select class="select" [disabled]="roleCode === 'COLLAB'" [(ngModel)]="cli.isActive"
-                                    (click)="$event.stopPropagation()" (change)="updateEstado(cli)">
-                                    <option [ngValue]="true">Activo</option>
-                                    <option [ngValue]="false">Suspendido</option>
-                                </select>
-                            </td>
-                            <td style="text-align: center;">
-                                <input type="checkbox"
-                                    (change)="cli.acceptsMarketing = !cli.acceptsMarketing; updateMarketing(cli)"
-                                    (click)=" $event.stopPropagation()" [checked]="cli.acceptsMarketing" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="pagination">
-            <span>Filas por página: </span>
-            <select class="select" [(ngModel)]="filasPorPagina">
-                <option *ngFor="let size of [50,100,200]" [value]="size">{{ size }}</option>
-            </select>
-            <span>{{(paginaActual-1)*filasPorPagina+1}} -
-                {{paginaActual*filasPorPagina > clientes.length ? clientes.length : paginaActual*filasPorPagina}}
-                de {{clientes.length}}</span>
-            <button class="paginacion-icon" (click)="paginaAnterior()"
-                [disabled]="paginaActual===1"><mat-icon>chevron_left</mat-icon></button>
-            <button class="paginacion-icon" (click)="paginaSiguiente()"
-                [disabled]="paginaActual*filasPorPagina>=clientes.length"><mat-icon>chevron_right</mat-icon></button>
-        </div>
-    </div> -->
 
+  </div>
 </div>

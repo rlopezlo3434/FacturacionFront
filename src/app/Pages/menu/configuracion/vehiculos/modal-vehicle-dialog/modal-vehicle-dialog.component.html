@@ -1,0 +1,114 @@
+<h2 mat-dialog-title class="dialog-title">
+  {{ data?.id ? 'Editar Vehículo' : 'Nuevo Vehículo' }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+  <div class="section">
+    <div class="subTitle">Información del Vehículo</div>
+
+    <div class="form-grid">
+
+      <!-- Placa -->
+      <div class="form-field">
+        <label class="label">Placa *</label>
+        <input
+          type="text"
+          class="input"
+          placeholder="Ej: ABC-123"
+          [(ngModel)]="vehicle.plate"
+          (input)="vehicle.plate = vehicle.plate.toUpperCase()"
+        />
+      </div>
+
+      <!-- Año -->
+      <div class="form-field">
+        <label class="label">Año *</label>
+        <input
+          type="number"
+          class="input"
+          placeholder="Ej: 2023"
+          [(ngModel)]="vehicle.year"
+        />
+      </div>
+
+      <!-- Marca -->
+      <div class="form-field">
+        <label class="label">Marca *</label>
+        <select class="select" [(ngModel)]="selectedBrandId" (change)="onBrandChange()">
+          <option [ngValue]="null" disabled>Seleccionar</option>
+          <option *ngFor="let b of brands" [ngValue]="b.id">
+            {{ b.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Modelo -->
+      <div class="form-field">
+        <label class="label">Modelo *</label>
+        <select class="select" [(ngModel)]="vehicle.modelId">
+          <option [ngValue]="null" disabled>Seleccionar</option>
+          <option *ngFor="let m of models" [ngValue]="m.id">
+            {{ m.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Color -->
+      <div class="form-field">
+        <label class="label">Color</label>
+        <input
+          type="text"
+          class="input"
+          placeholder="Ej: Gris Oscuro"
+          [(ngModel)]="vehicle.color"
+        />
+      </div>
+
+      <!-- Kilometraje -->
+      <div class="form-field">
+        <label class="label">Kilometraje (km)</label>
+        <input
+          type="number"
+          class="input"
+          placeholder="Ej: 12450"
+          [(ngModel)]="vehicle.currentMileageKm"
+        />
+      </div>
+
+      <!-- Dueño -->
+      <div class="form-field full">
+        <label class="label">Cliente Dueño *</label>
+        <select class="select" [(ngModel)]="vehicle.ownerClientId">
+          <option [ngValue]="null" disabled>Seleccionar</option>
+          <option *ngFor="let c of clients" [ngValue]="c.id">
+            {{ c.names }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Estado (solo editar) -->
+      <div class="form-field full" *ngIf="data?.id">
+        <label class="label">Estado</label>
+        <select class="select" [(ngModel)]="vehicle.isActive">
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">Inactivo</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+  <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+
+  <button
+    class="btn-primary"
+    (click)="guardar()"
+    [disabled]="!vehicle.plate || !vehicle.year || !selectedBrandId || !vehicle.modelId || !vehicle.ownerClientId"
+  >
+    {{ data?.id ? 'Actualizar' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

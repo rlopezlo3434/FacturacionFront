@@ -1,0 +1,144 @@
+<h2 mat-dialog-title class="dialog-title">
+  Detalle de Internamiento #{{ intake?.id || '...' }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+  <!-- ✅ Info general -->
+  <div class="section">
+    <div class="subTitle">Información General</div>
+
+    <div class="info-grid">
+
+      <div class="info-card">
+        <div class="info-label">Modo</div>
+        <div class="info-value">
+          <span class="chip modo-taller" *ngIf="intake?.mode === 1">Taller</span>
+          <span class="chip modo-domicilio" *ngIf="intake?.mode === 2">Domicilio</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-label">Kilometraje</div>
+        <div class="info-value">{{ intake?.mileageKm }} km</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-label">Fecha</div>
+        <div class="info-value">{{ intake?.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-label">Estado</div>
+        <div class="info-value">
+          <span class="chip activo" *ngIf="intake?.isActive">Activo</span>
+          <span class="chip suspendido" *ngIf="!intake?.isActive">Finalizado</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ✅ Dirección si es domicilio -->
+    <div class="address-box" *ngIf="intake?.mode === 2">
+      <mat-icon>home</mat-icon>
+      <div>
+        <div class="address-title">Dirección de recojo</div>
+        <div class="address-value">{{ intake?.pickupAddress }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ✅ Vehículo / Cliente -->
+  <div class="section">
+    <div class="subTitle">Vehículo y Cliente</div>
+
+    <div class="vehiculo-box">
+      <div class="vehiculo-item">
+        <div class="vehiculo-label">Placa</div>
+        <div class="vehiculo-value">{{ intake?.vehicle?.plate }}</div>
+      </div>
+
+      <div class="vehiculo-item">
+        <div class="vehiculo-label">Marca</div>
+        <div class="vehiculo-value">{{ intake?.vehicle?.brand?.name }}</div>
+      </div>
+
+      <div class="vehiculo-item">
+        <div class="vehiculo-label">Modelo</div>
+        <div class="vehiculo-value">{{ intake?.vehicle?.model?.name }}</div>
+      </div>
+
+      <div class="vehiculo-item">
+        <div class="vehiculo-label">Cliente</div>
+        <div class="vehiculo-value">{{ intake?.client?.names }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Observaciones -->
+  <div class="section" *ngIf="intake?.notes">
+    <div class="subTitle">Observaciones Generales</div>
+    <div class="notes-box">{{ intake?.notes }}</div>
+  </div>
+
+  <!-- ✅ Inventario -->
+  <div class="section">
+    <div class="subTitle">Inventario del Vehículo</div>
+
+    <div class="table-container">
+      <div class="table-scroll">
+        <div class="table-body detail-table">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th style="width:130px;">¿Tiene?</th>
+                <!-- <th>Observación</th> -->
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let d of intakeDetails">
+
+                <td>
+                  <div class="item-title">{{ d.name }}</div>
+                  <div class="item-sub" *ngIf="d.groupName">
+                    Grupo: {{ d.groupName }}
+                  </div>
+                </td>
+
+                <td>
+                  <span class="chip activo" *ngIf="d.isPresent">SI</span>
+                  <span class="chip suspendido" *ngIf="!d.isPresent">NO</span>
+                </td>
+
+                <!-- <td>
+                  <span style="color: gray;" *ngIf="!d.observation">—</span>
+                  <span *ngIf="d.observation">{{ d.observation }}</span>
+                </td> -->
+
+              </tr>
+
+              <tr *ngIf="intakeDetails.length === 0">
+                <td colspan="3" class="empty-row">
+                  No hay inventario registrado para este internamiento.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+  <button class="btn-cancelar" (click)="cancelar()">Cerrar</button>
+
+  <button class="btn-primary" (click)="goToBudget()">
+    Presupuestos
+  </button>
+</mat-dialog-actions>

@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ClienteService } from '../../../../../../services/cliente.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CatalogosService } from '../../../../../../services/catalogos.service';
 
 @Component({
   selector: 'app-modal-clientes-dialog',
@@ -13,14 +14,24 @@ export class ModalClientesDialogComponent {
   password = '';
   hide = true;
   roleCode: string | null = null;
+  catalogDocument: any[] = [];
+  catalogGender: any[] = [];
+  catalogContactTypes: any[] = [];
 
+  selectedContactTypeId: number | null = null;
+  selectedDocumentTypeId: number | null = null;
+  selectedGenderId: number | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<ModalClientesDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private clienteService: ClienteService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cataService: CatalogosService
   ) {
+
+    this.getCatalogos();
+
     const userString = localStorage.getItem('user');
     const user = userString ? JSON.parse(userString) : null;
     this.roleCode = user?.roleCode;
@@ -28,38 +39,95 @@ export class ModalClientesDialogComponent {
       // Editar
       console.log(data)
       this.cli = { ...data };
+
+      this.selectedDocumentTypeId = this.cli.documentIdentificationType?.id ?? null;
+      this.selectedGenderId = this.cli.gender?.id ?? null;
+      this.cli.numbers = (this.cli.numbers || []).map((n: any) => ({
+        ...n,
+        type: n.type
+      }))
+
+      console.log(this.cli)
+
     } else {
       // Crear
       this.cli = {
-        firstName: '',
-        lastName: '',
-        documentIdentificationType: '',
+        names: '',
         documentIdentificationNumber: '',
         email: '',
         gender: '',
-        numbers: ['']
+        acceptsMarketing: false,
+        numbers: []
       };
+
+      this.selectedDocumentTypeId = null;
+      this.selectedGenderId = null;
     }
   }
 
+  getCatalogos() {
+    this.catalogDocumentType();
+    this.catalogGenderType();
+    this.catalogContactType();
+  }
+
+  catalogDocumentType() {
+    this.cataService.getCatalogTypeDocument().subscribe((data) => {
+      this.catalogDocument = data;
+    });
+  }
+
+  catalogGenderType() {
+    this.cataService.getCatalogGender().subscribe((data) => {
+      this.catalogGender = data;
+    });
+  }
+
+  catalogContactType() {
+    this.cataService.getCatalogoContactTypes().subscribe((data) => {
+      this.catalogContactTypes = data;
+    });
+  }
+
   addNumber() {
-    this.cli.numbers.push('');
+    if (!this.cli.numbers) this.cli.numbers = [];
+
+    this.cli.numbers.push({
+      contactName: '',
+      type: null,
+      number: '',
+      isPrimary: this.cli.numbers.length === 0
+    });
   }
 
   removeNumber(index: number) {
     this.cli.numbers.splice(index, 1);
+
+    // Si borraron el principal y aún hay números, setea otro como principal
+    if (this.cli.numbers.length > 0 && !this.cli.numbers.some((x: any) => x.isPrimary)) {
+      this.cli.numbers[0].isPrimary = true;
+    }
+  }
+
+  setPrimary(index: number) {
+    this.cli.numbers.forEach((x: any, i: number) => {
+      x.isPrimary = i === index;
+    });
   }
 
   guardar() {
+
+    const documentTypeSelected = this.catalogDocument.find(x => x.id === this.selectedDocumentTypeId);
+    const genderSelected = this.catalogGender.find(x => x.id === this.selectedGenderId);
+
     const cliente = {
-      firstName: this.cli.firstName,
-      lastName: this.cli.lastName,
+      names: this.cli.names,
       documentIdentificationNumber: this.cli.documentIdentificationNumber,
-      documentIdentificationType: this.cli.documentIdentificationType,
-      gender: this.cli.gender,
+      documentIdentificationType: documentTypeSelected.id,
+      gender: genderSelected.id,
       email: this.cli.email,
       acceptsMarketing: this.cli.acceptsMarketing || false,
-      numbers: this.cli.numbers.filter((num: string) => num && num.trim() !== '')
+      numbers: this.cli.numbers
     };
 
     // creación o edición
@@ -104,7 +172,9 @@ export class ModalClientesDialogComponent {
   }
 
   consultarDocumento() {
-    this.clienteService.consultarDocumento(this.cli.documentIdentificationType, this.cli.documentIdentificationNumber)
+    const documentTypeSelected = this.catalogDocument.find(x => x.id === this.selectedDocumentTypeId);
+    console.log(this.cli);
+    this.clienteService.consultarDocumento(documentTypeSelected?.name, this.cli.documentIdentificationNumber)
       .subscribe({
         next: (response: any) => {
 
@@ -123,8 +193,11 @@ export class ModalClientesDialogComponent {
             return; // IMPORTANTE: detener el flujo
           }
 
+          const fullName = `${response?.first_name ?? ''} ${response?.first_last_name ?? ''}`.trim();
+
+          this.cli.names = fullName || response?.razon_social || '';
           // 2️⃣ Si sí existen datos, llenar el formulario
-          this.cli.firstName = response.first_name + ' ' + response.first_last_name || response.razon_social || '';
+          // this.cli.names = response.first_name + ' ' + response.first_last_name || response.razon_social || '';
           // this.cli.lastName = response.first_last_name || '';
 
           this.snackBar.open(

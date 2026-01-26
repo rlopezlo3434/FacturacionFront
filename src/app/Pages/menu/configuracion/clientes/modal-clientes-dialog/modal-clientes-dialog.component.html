@@ -1,67 +1,119 @@
-<h2 mat-dialog-title>
-    {{ data ? 'Editar Cliente' : 'Crear Cliente' }}
+<h2 mat-dialog-title class="dialog-title">
+    {{ data ? 'Editar Cliente' : 'Nuevo Cliente' }}
 </h2>
 
-<mat-dialog-content>
-    <div class="subTitle">Información Personal</div>
-    <div class="form-grid">
-        <!-- Tipo de Documento -->
-        <select class="select" [(ngModel)]="cli.documentIdentificationType">
-            <option value="" disabled selected>Tipo de Documento *</option>
-            <option value="DNI">DNI</option>
-            <option value="RUC">RUC</option>
-            <option value="CARNET_EXTRANJERIA">Carnet de Extranjería</option>
-        </select>
+<mat-dialog-content class="dialog-content">
 
-        <!-- Número de Documento -->
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <input style="flex: 1;" type="text" class="input" placeholder="Número de Identificación *"
-                [(ngModel)]="cli.documentIdentificationNumber" />
-            <mat-icon (click)="consultarDocumento()">search</mat-icon>
-        </div>
+    <div class="section">
+        <div class="subTitle">Información Personal</div>
 
-        <!-- Nombre -->
-        <input type="text" class="input" placeholder="Nombre(s) *" [(ngModel)]="cli.firstName" />
+        <div class="form-grid">
 
-        <!-- Apellido -->
-        <input type="text" class="input" placeholder="Apellido(s) *" [(ngModel)]="cli.lastName" />
+            <!-- Tipo de Documento -->
+            <div class="form-field">
+                <label class="label">Tipo de Documento *</label>
+                <select class="select" [(ngModel)]="selectedDocumentTypeId">
+                    <option [ngValue]="null" disabled>Seleccionar</option>
 
-        <!-- Género -->
-        <select class="select" [(ngModel)]="cli.gender">
-            <option value="" disabled selected>Género *</option>
-            <option value="M">Masculino</option>
-            <option value="F">Femenino</option>
-        </select>
-
-
-        <!-- Correo -->
-        <!-- <input type="email" class="input" placeholder="Correo Electrónico" [(ngModel)]="cli.email" /> -->
-        <div></div>
-        <div class="phone-list">
-            <div *ngFor="let num of cli.numbers; let i = index; trackBy: trackByIndex" class="phone-item">
-                <input type="text" class="input" placeholder="Número de teléfono" [(ngModel)]="cli.numbers[i]" />
-                <button class="btn-icon delete" (click)="removeNumber(i)" type="button">
-                    <mat-icon>delete</mat-icon>
-                </button>
+                    <option *ngFor="let item of catalogDocument" [ngValue]="item.id">
+                        {{ item.name }}
+                    </option>
+                </select>
             </div>
 
-            <button class="btn-icon add" (click)="addNumber()" type="button">
-                <mat-icon>add_circle</mat-icon> Agregar número
-            </button>
-        </div>
+            <!-- Número de Documento -->
+            <div class="form-field">
+                <label class="label">Número de Documento *</label>
 
-        <!-- Checkbox Marketing -->
-        <label class="checkbox-label">
-            <input type="checkbox" [(ngModel)]="cli.acceptsMarketing" />
-            Promociones
-        </label>
+                <div class="search-field">
+                    <input type="text" class="input" placeholder="Ej: 12345678"
+                        [(ngModel)]="cli.documentIdentificationNumber" />
+
+                    <button class="icon-btn" type="button" (click)="consultarDocumento()">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Nombre / RUC -->
+            <div class="form-field">
+                <label class="label">Nombre Completo o RUC *</label>
+                <input type="text" class="input" placeholder="Ej: Juan Pérez" [(ngModel)]="cli.names" />
+            </div>
+
+            <!-- Género -->
+            <div class="form-field">
+                <label class="label">Género *</label>
+                <select class="select" [(ngModel)]="selectedGenderId">
+                    <option [ngValue]="null" disabled>Seleccionar</option>
+
+                    <option *ngFor="let item of catalogGender" [ngValue]="item.id">
+                        {{ item.name }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Correo -->
+            <div class="form-field full">
+                <label class="label">Correo Electrónico</label>
+                <input type="email" class="input" placeholder="Ej: correo@empresa.com" [(ngModel)]="cli.email" />
+            </div>
+
+        </div>
     </div>
+
+    <div class="section">
+        <div class="subTitle">Agregar Número adicional</div>
+        <!-- aquí luego metes tu lista -->
+        <div class="phone-list">
+
+            <!-- Lista de números -->
+            <div *ngFor="let num of cli.numbers; let i = index" class="phone-item">
+
+                <input class="input" placeholder="Nombre contacto (Opcional)"
+                    [(ngModel)]="cli.numbers[i].contactName" />
+
+                <!-- Tipo contacto -->
+                <select class="select" [(ngModel)]="cli.numbers[i].type">
+                    <option [ngValue]="null" disabled>Tipo</option>
+                    <option *ngFor="let item of catalogContactTypes" [ngValue]="item.id">
+                        {{ item.name }}
+                    </option>
+                </select>
+                <!-- Contact name -->
+                <input class="input" placeholder="Número" [(ngModel)]="cli.numbers[i].number" />
+
+                <!-- Principal -->
+                <label class="primary-check">
+                    <input type="radio" name="primaryNumber" [checked]="cli.numbers[i].isPrimary"
+                        (change)="setPrimary(i)" />
+                    Principal
+                </label>
+                <!-- Número -->
+
+                <!-- Eliminar -->
+                <button class="btn-icon delete" type="button" (click)="removeNumber(i)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+
+            </div>
+
+            <!-- Botón agregar -->
+            <button class="btn-add" type="button" (click)="addNumber()">
+                <mat-icon>add_circle</mat-icon>
+                Agregar número
+            </button>
+
+        </div>
+    </div>
+
 </mat-dialog-content>
 
-<mat-dialog-actions align="end" style="display: flex; gap: 0.5rem;">
-    <button class="btn-cancelar" (click)="cancelar()">CANCELAR</button>
-    <button class="btn-primary" color="primary" (click)="guardar()"
-        [disabled]="!cli.firstName  || !cli.documentIdentificationType || !cli.documentIdentificationNumber ">
-        {{ data ? 'ACTUALIZAR' : 'CREAR' }}
+<mat-dialog-actions class="dialog-actions" align="end">
+    <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+
+    <button class="btn-primary" (click)="guardar()"
+        [disabled]="!cli.names || !selectedDocumentTypeId || !cli.documentIdentificationNumber || !selectedGenderId">
+        {{ data ? 'Actualizar' : 'Crear' }}
     </button>
 </mat-dialog-actions>

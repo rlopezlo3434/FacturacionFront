@@ -5,10 +5,10 @@
         </div>
         <div class="input-wrapper">
             <mat-icon class="input-icon">search</mat-icon>
-            <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Nombre, Apellido o DNI..." class="input" />
+            <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Nombre, Apellido o DNI..."
+                class="input" />
         </div>
     </div>
-
     <div class="header-secuence">
         <div style="display: flex; flex-direction: column; gap: 0.4rem;">
             <div class="selected">Gestión de Clientes</div>
@@ -47,32 +47,11 @@
             <div class="footer-card">+8% del total</div>
         </div>
     </div>
-    <!-- <div class="filtersContainer">
 
-        <div style="display: flex; gap: 1rem;">
-            <select class="select" [(ngModel)]="filtroEstado">
-                <option value="" disabled selected>Estado</option>
-                <option [value]="true">Activo</option>
-                <option [value]="false">Suspendido</option>
-            </select>
-            <select class="select" [(ngModel)]="filtroGenero">
-                <option value="" disabled selected>Genero</option>
-                <option [value]="'M'">Masculino</option>
-                <option [value]="'F'">Femenino</option>
-            </select>
-        </div>
-    </div> -->
     <div class="table-container">
         <div class="table-actions">
             <div class="selected">Lista de Clientes</div>
-            <!-- <div class="table-actions-container">
-                <button class="btn btn-create" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREAR
-                    CLIENTE</button>
-            </div>
-            <div class="table-actions-container">
-                <button (click)="removerFiltros()" class="btn btn-remove"><mat-icon>delete</mat-icon> REMOVER
-                    FILTROS</button>
-            </div> -->
+
         </div>
         <div class="table-scroll">
             <div class="table-body">
@@ -81,7 +60,6 @@
                         <tr>
                             <th>Cliente</th>
                             <th>Contacto</th>
-                            <th>Vehículo</th>
                             <th>Ultimo Servicio</th>
                             <th>Próxima Cita</th>
                             <th>Servicios</th>
@@ -95,14 +73,14 @@
                             <td>
                                 <div class="cliente-info">
                                     <div class="avatar-circle">
-                                        {{ cli.firstName.charAt(0) }}
+                                        {{ getInitials(cli.names) }}
                                     </div>
                                     <div class="cliente-details">
                                         <div class="cliente-name">
-                                            {{ cli.firstName }}
+                                            {{ cli.names }}
                                         </div>
                                         <div class="cliente-document">
-                                            {{cli.documentIdentificationType}}: {{ cli.documentIdentificationNumber }}
+                                            {{cli.documentIdentificationType.name}}: {{ cli.documentIdentificationNumber }}
                                         </div>
                                     </div>
                                 </div>
@@ -111,9 +89,27 @@
                                 <div class="cliente-contact">
                                     <div class="cliente-phone">
                                         <mat-icon>phone</mat-icon>
-                                        <div>
-                                            922914520
+
+                                        <div class="phone-main">
+                                            {{ getPrimaryPhone(cli.numbers) || 'Sin teléfono' }}
                                         </div>
+
+                                        <button (click)="$event.stopPropagation()" *ngIf="cli.numbers?.length > 1"
+                                            mat-button [matMenuTriggerFor]="phonesMenu" class="phone-more-btn">
+                                            +{{ cli.numbers.length - 1 }} más
+                                        </button>
+
+                                        <mat-menu #phonesMenu="matMenu">
+                                            <button mat-menu-item *ngFor="let c of cli.numbers">
+                                                <mat-icon>phone</mat-icon>
+
+                                                <span>
+                                                    <strong *ngIf="c.isPrimary">Principal</strong>
+                                                    <strong *ngIf="!c.isPrimary">{{ c.contactName || c.type }}</strong>
+                                                    : {{ c.number }}
+                                                </span>
+                                            </button>
+                                        </mat-menu>
                                     </div>
                                     <div class="cliente-email">
                                         <mat-icon>email</mat-icon>
@@ -123,18 +119,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <!-- <td style="text-align: center;">{{ cli.email }}</td> -->
-                            <td>
-                                <div class="cliente-car">
-                                    <mat-icon (click)="$event.stopPropagation(); openHijosDialog(cli, 'agregar')"
-                                        style="margin-right: 0.3rem;">
-                                        directions_car
-                                    </mat-icon>
-                                    <div>
-                                        CRM-114
-                                    </div>
-                                </div>
-                            </td>
+                           
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.3rem;">
                                     <mat-icon>calendar_month</mat-icon>
@@ -155,7 +140,9 @@
                             <td>
                                 {{ 2500 | currency:'PEN':'symbol':'1.2-2' }}
                             </td>
-                            <td><span *ngIf="cli.isActive" class="chip activo">Activo</span>
+                            <td>
+                                <span style="cursor: pointer;" (click)="$event.stopPropagation()" *ngIf="cli.isActive"
+                                    class="chip activo">Activo</span>
                                 <span *ngIf="!cli.isActive" class="chip suspendido">Suspendido</span>
                             </td>
                         </tr>
@@ -165,9 +152,7 @@
         </div>
         <div class="pagination">
             <span>Filas por página: </span>
-            <select class="select" [(ngModel)]="filasPorPagina">
-                <option *ngFor="let size of [50,100,200]" [value]="size">{{ size }}</option>
-            </select>
+            
             <span>{{(paginaActual-1)*filasPorPagina+1}} -
                 {{paginaActual*filasPorPagina > clientes.length ? clientes.length : paginaActual*filasPorPagina}}
                 de {{clientes.length}}</span>

@@ -1,0 +1,154 @@
+<div>
+
+  <!-- 🔍 Search -->
+  <div class="search-menu">
+    <div class="icon-menu">
+      <mat-icon (click)="openMenu()">menu</mat-icon>
+    </div>
+
+    <div class="input-wrapper">
+      <mat-icon class="input-icon">search</mat-icon>
+      <input [(ngModel)]="filtroTexto"
+             type="text"
+             placeholder="Buscar por OT, placa o cliente..."
+             class="input" />
+    </div>
+  </div>
+
+  <!-- ✅ Header -->
+  <div class="header-secuence">
+    <div style="display:flex; flex-direction:column; gap:0.4rem;">
+      <div class="selected">Órdenes de Trabajo</div>
+      <div class="subTitle">Listado general para mecánicos (sin precios)</div>
+    </div>
+
+    <div>
+      <button class="btn btn-create" (click)="reload()">
+        <mat-icon>refresh</mat-icon> Refrescar
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ Cards -->
+  <div class="container-card">
+    <div class="card">
+      <div class="card-title">Total OT</div>
+      <div class="card-value">{{ workOrders.length }}</div>
+      <div class="footer-card">Registradas</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Pendientes</div>
+      <div class="card-value">{{ countPending() }}</div>
+      <div class="footer-card">En proceso</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Completadas</div>
+      <div class="card-value">{{ countCompleted() }}</div>
+      <div class="footer-card">Finalizadas</div>
+    </div>
+  </div>
+
+  <!-- ✅ Tabla -->
+  <div class="table-container">
+    <div class="table-actions">
+      <div class="selected">Lista de Órdenes</div>
+    </div>
+
+    <div class="table-scroll">
+      <div class="table-body">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>OT</th>
+              <th>Vehículo</th>
+              <th>Cliente</th>
+              <th>Internamiento</th>
+              <th>Modo</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              *ngFor="let ot of workOrders | worOrderFiler:filtroTexto | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
+              (click)="openDetail(ot)"
+              style="cursor:pointer;"
+            >
+
+              <td><strong>{{ ot.code }}</strong></td>
+
+              <td>
+                <div class="cliente-info">
+                  <div class="avatar-circle">
+                    {{ getInitials(ot.vehicle?.plate) }}
+                  </div>
+
+                  <div class="cliente-details">
+                    <div class="cliente-name">
+                      {{ ot.vehicle?.plate }}
+                    </div>
+                    <div class="cliente-document">
+                      {{ ot.vehicle?.brand?.name }} • {{ ot.vehicle?.model?.name }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="cliente-name">
+                  {{ ot.client?.names || '—' }}
+                </div>
+              </td>
+
+              <td>#{{ ot.vehicleIntakeId }}</td>
+
+              <td>
+                <span class="chip multi" *ngIf="ot.mode === 1">Taller</span>
+                <span class="chip suspendido" *ngIf="ot.mode === 2">Recojo</span>
+              </td>
+
+              <td>
+                <span class="chip activo" *ngIf="ot.isCompleted">Completado</span>
+                <span class="chip suspendido" *ngIf="!ot.isCompleted">Pendiente</span>
+              </td>
+
+              <td>{{ ot.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
+
+            <tr *ngIf="workOrders.length === 0">
+              <td colspan="7" class="empty-row">
+                No hay órdenes de trabajo registradas.
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+    <!-- ✅ paginación -->
+    <div class="pagination">
+      <span>Filas por página: </span>
+
+      <span>
+        {{(paginaActual-1)*filasPorPagina+1}} -
+        {{paginaActual*filasPorPagina > workOrders.length ? workOrders.length : paginaActual*filasPorPagina}}
+        de {{workOrders.length}}
+      </span>
+
+      <button class="paginacion-icon" (click)="paginaAnterior()" [disabled]="paginaActual===1">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <button class="paginacion-icon" (click)="paginaSiguiente()"
+        [disabled]="paginaActual*filasPorPagina>=workOrders.length">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+  </div>
+
+</div>

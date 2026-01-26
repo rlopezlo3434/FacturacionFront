@@ -1,0 +1,150 @@
+<h2 mat-dialog-title class="dialog-title">
+    Nuevo Internamiento
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+    <!-- ✅ SECCIÓN: Datos -->
+    <div class="section">
+        <div class="subTitle">Datos del Internamiento</div>
+
+        <div class="form-grid">
+
+            <!-- Vehículo -->
+            <div class="form-field">
+                <label class="label">Vehículo *</label>
+
+                <div class="combo-box">
+                    <input type="text" class="input" placeholder="Buscar por placa o modelo..."
+                        [(ngModel)]="vehicleSearch" (focus)="showVehicleDropdown = true; filterVehiclesNative()"
+                        (input)="filterVehiclesNative()" />
+
+                    <div class="dropdown" *ngIf="showVehicleDropdown && filteredVehicles.length > 0">
+                        <button type="button" class="dropdown-item" *ngFor="let v of filteredVehicles"
+                            (click)="selectVehicle(v)">
+                            <div class="item-title">{{ v.plate }}</div>
+                            <div class="item-subtitle">{{ v.model?.name }} • {{ v.brand?.name }}</div>
+                        </button>
+                    </div>
+
+                    <!-- ✅ cuando no hay resultados -->
+                    <div class="dropdown empty" *ngIf="showVehicleDropdown && filteredVehicles.length === 0">
+                        <div class="empty-text">No se encontraron vehículos</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Cliente -->
+            <div class="form-field">
+                <label class="label">Cliente *</label>
+                <select class="select" [(ngModel)]="intake.clientId">
+                    <option [ngValue]="null" disabled>Seleccionar</option>
+                    <option *ngFor="let c of clients" [ngValue]="c.id">
+                        {{ c.names }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Modo -->
+            <div class="form-field">
+                <label class="label">Modo de Internamiento *</label>
+                <select class="select" [(ngModel)]="intake.mode">
+                    <option [ngValue]="1">Recepción en Taller</option>
+                    <option [ngValue]="2">Recojo a Domicilio</option>
+                </select>
+            </div>
+
+            <!-- Kilometraje -->
+            <div class="form-field">
+                <label class="label">Kilometraje (km) *</label>
+                <input type="number" class="input" placeholder="Ej: 35500" [(ngModel)]="intake.mileageKm" />
+            </div>
+
+            <!-- Dirección (solo domicilio) -->
+            <div class="form-field full" *ngIf="intake.mode === 2">
+                <label class="label">Dirección de Recojo *</label>
+                <input type="text" class="input" placeholder="Ej: Av. Los Olivos 123 - SJL"
+                    [(ngModel)]="intake.pickupAddress" />
+            </div>
+
+            <!-- Observaciones -->
+            <div class="form-field full">
+                <label class="label">Observaciones Generales</label>
+                <textarea class="textarea" placeholder="Ej: Rayón en puerta derecha, revisar luces..."
+                    [(ngModel)]="intake.observations"></textarea>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ✅ SECCIÓN: Inventario -->
+    <div class="section">
+        <div class="subTitle">Inventario del Vehículo</div>
+
+        <!-- ✅ Grupo 1 -->
+        <div class="inventory-group" *ngIf="inventoryVehiculo.length > 0">
+            <div class="group-title">Inventario del Vehículo</div>
+
+            <div class="inventory-table">
+                <div class="inventory-head">
+                    <div>Item</div>
+                    <div class="center">SI</div>
+                    <div class="center">NO</div>
+                </div>
+
+                <div class="inventory-row" *ngFor="let item of inventoryVehiculo">
+                    <div class="inventory-item-name">{{ item.name }}</div>
+
+                    <div class="center">
+                        <input type="radio" [name]="'inv_' + item.id" [checked]="item.isPresent === true"
+                            (change)="setInventory(item.id, true)" />
+                    </div>
+
+                    <div class="center">
+                        <input type="radio" [name]="'inv_' + item.id" [checked]="item.isPresent === false"
+                            (change)="setInventory(item.id, false)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ Grupo 2 -->
+        <div class="inventory-group" *ngIf="inventoryAccesorios.length > 0">
+            <div class="group-title">Accesorios</div>
+
+            <div class="inventory-table">
+                <div class="inventory-head">
+                    <div>Item</div>
+                    <div class="center">SI</div>
+                    <div class="center">NO</div>
+                </div>
+
+                <div class="inventory-row" *ngFor="let item of inventoryAccesorios">
+                    <div class="inventory-item-name">{{ item.name }}</div>
+
+                    <div class="center">
+                        <input type="radio" [name]="'inv_' + item.id" [checked]="item.isPresent === true"
+                            (change)="setInventory(item.id, true)" />
+                    </div>
+
+                    <div class="center">
+                        <input type="radio" [name]="'inv_' + item.id" [checked]="item.isPresent === false"
+                            (change)="setInventory(item.id, false)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+    <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+
+    <button class="btn-primary" (click)="guardar()"
+        [disabled]="!intake.vehicleId || !intake.clientId || !intake.mode || !intake.mileageKm || (intake.mode === 2 && !intake.pickupAddress)">
+        Guardar Internamiento
+    </button>
+</mat-dialog-actions>

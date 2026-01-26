@@ -1,0 +1,138 @@
+<div>
+
+  <!-- 🔍 buscador -->
+  <div class="search-menu">
+    <div class="icon-menu">
+      <mat-icon (click)="openMenu()">menu</mat-icon>
+    </div>
+
+    <div class="input-wrapper">
+      <mat-icon class="input-icon">search</mat-icon>
+      <input [(ngModel)]="filtroTexto" type="text"
+        placeholder="Buscar por Código, Nombre, Serie o Marca..."
+        class="input" />
+    </div>
+  </div>
+
+  <!-- ✅ Header -->
+  <div class="header-secuence">
+    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+      <div class="selected">Gestión de Productos</div>
+      <div class="subTitle">Administra tu inventario de productos y repuestos</div>
+    </div>
+
+    <div>
+      <button class="btn btn-create" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon> Nuevo Producto
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ Cards -->
+  <div class="container-card">
+    <div class="card">
+      <div class="card-title">Total Productos</div>
+      <div class="card-value">{{ productos.length }}</div>
+      <div class="footer-card">En inventario</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Stock Bajo</div>
+      <div class="card-value">{{ countLowStock() }}</div>
+      <div class="footer-card">Menor a {{ lowStockLimit }}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Multi Marca</div>
+      <div class="card-value">{{ countMultiBrand() }}</div>
+      <div class="footer-card">Productos universales</div>
+    </div>
+  </div>
+
+  <!-- ✅ Tabla -->
+  <div class="table-container">
+    <div class="table-actions">
+      <div class="selected">Lista de Productos</div>
+    </div>
+
+    <div class="table-scroll">
+      <div class="table-body">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <!-- <th>Id</th> -->
+              <th>Código</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio x Unidad</th>
+              <th>Código Serie</th>
+              <th>Marca</th>
+              <th>Multi Marca</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              *ngFor="let p of productos | productFilter:filtroTexto | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
+              (click)="openEditDialog(p)"
+              style="cursor:pointer;"
+            >
+              <!-- <td>{{ p.id }}</td> -->
+
+              <td>
+                <strong>{{ p.code }}</strong>
+              </td>
+
+              <td>{{ p.name }}</td>
+
+              <td>
+                <span [class.low-stock]="p.quantity <= lowStockLimit">
+                  {{ p.quantity }}
+                </span>
+              </td>
+
+              <td>{{ p.price | currency:'PEN':'symbol':'1.2-2' }}
+
+
+              <td>{{ p.serialCode || '—' }}</td>
+
+              <td>
+                <span *ngIf="p.isMultiBrand" style="color:gray;">Todas</span>
+                <span *ngIf="!p.isMultiBrand">{{ p.brand?.name || '—' }}</span>
+              </td>
+
+              <td>
+                <span class="chip multi" *ngIf="p.isMultiBrand">Sí</span>
+                <span class="chip single" *ngIf="!p.isMultiBrand">No</span>
+              </td>
+
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+    <!-- ✅ paginación -->
+    <div class="pagination">
+      <span>Filas por página: </span>
+
+      <span>
+        {{(paginaActual-1)*filasPorPagina+1}} -
+        {{paginaActual*filasPorPagina > productos.length ? productos.length : paginaActual*filasPorPagina}}
+        de {{productos.length}}
+      </span>
+
+      <button class="paginacion-icon" (click)="paginaAnterior()" [disabled]="paginaActual===1">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <button class="paginacion-icon" (click)="paginaSiguiente()"
+        [disabled]="paginaActual*filasPorPagina>=productos.length">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+  </div>
+
+</div>

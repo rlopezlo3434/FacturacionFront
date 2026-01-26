@@ -26,7 +26,7 @@ export class ClientesComponent {
   roleCode: string | null = null;
 
 
-  constructor(private dialog: MatDialog, private clienteService: ClienteService, 
+  constructor(private dialog: MatDialog, private clienteService: ClienteService,
     private snackBar: MatSnackBar, private sidebarService: SidebarService) {
     const userString = localStorage.getItem('user');
     const user = userString ? JSON.parse(userString) : null;
@@ -60,7 +60,7 @@ export class ClientesComponent {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(ModalClientesDialogComponent, {
-      width: '1500px',
+      width: '1600px',
       panelClass: 'full-modal'
     });
 
@@ -73,6 +73,29 @@ export class ClientesComponent {
 
   openMenu() {
     this.sidebarService.toggleSidenav();
+  }
+
+  getPrimaryPhone(contacts: any[]): string {
+    if (!contacts || contacts.length === 0) return "";
+
+    const primary = contacts.find(x => x.isPrimary);
+    return (primary?.number || contacts[0]?.number || "").toString();
+  }
+
+  getInitials(fullName: string): string {
+    if (!fullName) return "";
+
+    const words = fullName
+      .trim()
+      .split(/\s+/)
+      .filter(w => w.length > 0);
+
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+
+    // Si tiene 1 palabra: 2 primeras letras
+    return words[0].substring(0, 2).toUpperCase();
   }
 
   openHijosDialog(cliente: any, modo: 'listar' | 'agregar') {
@@ -157,7 +180,7 @@ export class ClientesComponent {
 
   openEditDialog(item: any) {
     const dialogRef = this.dialog.open(ModalClientesDialogComponent, {
-      width: '1500px',
+      width: '2000px',
       data: item
     });
 

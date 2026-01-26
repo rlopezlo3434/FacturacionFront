@@ -94,6 +94,22 @@
 
 }
 
+.phone-more-btn {
+  min-width: auto !important;
+  padding: 0 8px !important;
+  line-height: 26px;
+  height: 26px;
+  font-size: 12px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+
+.phone-main {
+  font-weight: 500;
+}
+
 .cliente-car{
     display: flex;
     align-items: center;
@@ -125,6 +141,10 @@
 
 .table-scroll {
     overflow-x: auto;
+}
+
+.drawer{
+    height: 100%;
 }
 
 .table-actions {

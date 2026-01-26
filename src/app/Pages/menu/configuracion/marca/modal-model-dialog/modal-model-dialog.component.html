@@ -1,0 +1,59 @@
+<h2 mat-dialog-title class="dialog-title">
+  {{ showBrandSelect ? 'Editar Modelo' : 'Nuevo Modelo' }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+  <div class="section">
+    <div class="subTitle">Información del Modelo</div>
+
+    <div class="form-grid">
+
+      <!-- Marca -->
+      <div class="form-field full" *ngIf="showBrandSelect">
+        <label class="label">Marca *</label>
+
+        <select class="select" [(ngModel)]="model.brandId">
+          <option [ngValue]="null" disabled>Seleccionar</option>
+          <option *ngFor="let b of brands" [ngValue]="b.id">
+            {{ b.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Modelo -->
+      <div class="form-field full">
+        <label class="label">Nombre del Modelo *</label>
+        <input
+          type="text"
+          class="input"
+          placeholder="Ej: Yaris"
+          [(ngModel)]="model.name"
+        />
+      </div>
+
+      <!-- Estado (solo al editar) -->
+      <div class="form-field full" *ngIf="data">
+        <label class="label">Estado</label>
+        <select class="select" [(ngModel)]="model.isActive">
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">Inactivo</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+  <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+
+  <button
+    class="btn-primary"
+    (click)="guardar()"
+    [disabled]="!model.name || model.name.trim().length < 2 || !model.brandId"
+  >
+    {{ showBrandSelect ? 'Actualizar' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

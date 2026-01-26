@@ -21,6 +21,7 @@ import { UsuariosComponent } from './Pages/menu/usuarios/usuarios.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ItemsComponent } from './Pages/menu/configuracion/items/items.component';
@@ -49,7 +50,34 @@ import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
 import { VehiculosComponent } from './Pages/menu/configuracion/vehiculos/vehiculos.component';
 import { ManoDeObraComponent } from './Pages/menu/configuracion/mano-de-obra/mano-de-obra.component';
 import localeEsPe from '@angular/common/locales/es-PE';
-import { registerLocaleData } from '@angular/common'
+import { registerLocaleData } from '@angular/common';
+import { MarcaComponent } from './Pages/menu/configuracion/marca/marca.component';
+import { ModalBrandDialogComponent } from './Pages/menu/configuracion/marca/modal-brand-dialog/modal-brand-dialog.component';
+import { ModalModelDialogComponent } from './Pages/menu/configuracion/marca/modal-model-dialog/modal-model-dialog.component'
+import { FiltroVehiculoPipe } from "./pipes/filtro-vehiculo.pipe";
+import { ModalVehicleDialogComponent } from './Pages/menu/configuracion/vehiculos/modal-vehicle-dialog/modal-vehicle-dialog.component';
+import { IntakeComponent } from './Pages/menu/facturacion/intake/intake.component';
+import { ModalIntakeDialogComponent } from './Pages/menu/facturacion/intake/modal-intake-dialog/modal-intake-dialog.component';
+import { IntakeFilterPipe } from "./pipes/intake-filter.pipe";
+import { ServiciosComponent } from './Pages/menu/configuracion/servicios/servicios.component';
+import { ModalServiceMasterDialogComponent } from './Pages/menu/configuracion/servicios/modal-service-master-dialog/modal-service-master-dialog.component';
+import { ServiceFilterPipe } from './pipes/service-filter.pipe';
+import { ProductosComponent } from './Pages/menu/configuracion/productos/productos.component';
+import { MmodalProductDialogComponent } from './Pages/menu/configuracion/productos/mmodal-product-dialog/mmodal-product-dialog.component';
+import { ProductFilterPipe } from "./pipes/product-filter.pipe";
+import { ModalIntakeBudgetsDialogComponent } from './Pages/menu/facturacion/intake/modal-intake-budgets-dialog/modal-intake-budgets-dialog.component';
+import { PresupuestosComponent } from './Pages/menu/facturacion/presupuestos/presupuestos.component';
+import { BudgetFilterPipe } from "./pipes/budget-filter.pipe";
+import { ModalBudgetCreateDialogComponent } from './Pages/menu/facturacion/presupuestos/modal-budget-create-dialog/modal-budget-create-dialog.component';
+import { ModalBudgetDetailDialogComponent } from './Pages/menu/facturacion/presupuestos/modal-budget-detail-dialog/modal-budget-detail-dialog.component';
+import { OrdenesTrabajoComponent } from './Pages/menu/facturacion/ordenes-trabajo/ordenes-trabajo.component';
+import { WorOrderFilerPipe } from "./pipes/wor-order-filer.pipe";
+import { ModalWorkOrderDetailDialogComponent } from './Pages/menu/facturacion/ordenes-trabajo/modal-work-order-detail-dialog/modal-work-order-detail-dialog.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ModalIntakeDetailDialogComponent } from './Pages/menu/facturacion/intake/modal-intake-detail-dialog/modal-intake-detail-dialog.component';
+
+
+
 registerLocaleData(localeEsPe);
 
 @NgModule({
@@ -80,10 +108,29 @@ registerLocaleData(localeEsPe);
     SeleccionEmpleadosModalComponent,
     CajaComponent,
     VehiculosComponent,
-    ManoDeObraComponent
+    ManoDeObraComponent,
+    MarcaComponent,
+    ModalBrandDialogComponent,
+    ModalModelDialogComponent,
+    ModalVehicleDialogComponent,
+    IntakeComponent,
+    ModalIntakeDialogComponent,
+    ServiciosComponent,
+    ModalServiceMasterDialogComponent,
+    ProductosComponent,
+    MmodalProductDialogComponent,
+    ModalIntakeBudgetsDialogComponent,
+    PresupuestosComponent,
+    ModalBudgetCreateDialogComponent,
+    ModalBudgetDetailDialogComponent,
+    OrdenesTrabajoComponent,
+    ModalWorkOrderDetailDialogComponent,
+    ModalIntakeDetailDialogComponent
 
   ],
   imports: [
+    MatCheckboxModule,
+    MatAutocompleteModule,
     BrowserModule,
     MatProgressBarModule,
     MatIconModule,
@@ -99,8 +146,14 @@ registerLocaleData(localeEsPe);
     MatProgressSpinnerModule,
     MatDialogModule,
     HttpClientModule,
-    RouterModule.forRoot(routes)
-  ],
+    RouterModule.forRoot(routes),
+    FiltroVehiculoPipe,
+    IntakeFilterPipe,
+    ServiceFilterPipe,
+    ProductFilterPipe,
+    BudgetFilterPipe,
+    WorOrderFilerPipe
+],
   providers: [provideAnimationsAsync(), { provide: LOCALE_ID, useValue: 'es-PE' }],
   bootstrap: [AppComponent],
 })

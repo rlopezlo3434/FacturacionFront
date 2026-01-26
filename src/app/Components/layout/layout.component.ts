@@ -33,8 +33,10 @@ export class LayoutComponent {
         name: 'facturacion',
         icon: 'receipt_long',
         children: [
+          { label: 'Internamiento Vehículos', route: '/facturacion/intake' },
+          { label: 'Ordenes de Trabajo', route: '/facturacion/orden-trabajo/intake' },
           { label: 'Generar Venta', route: '/facturacion/venta' },
-          { label: 'Caja', route: '/facturacion/caja' }
+          // { label: 'Caja', route: '/facturacion/caja' }
         ],
       },
       {
@@ -42,9 +44,11 @@ export class LayoutComponent {
         name: 'configuracion',
         icon: 'settings',
         children: [
-          { label: 'Gestion de Cliente', route: '/configuracion/Clientes' },
-          { label: 'Gestion de Vehiculos', route: '/configuracion/Vehiculos' },
-          { label: 'Gestion de Mano de Obra', route: '/configuracion/ManoDeObra' },
+          { label: 'Clientes', route: '/configuracion/Clientes' },
+          { label: 'Marcas / Modelos', route: '/configuracion/Marcas' },
+          { label: 'Vehículos', route: '/configuracion/Vehiculos' },
+          { label: 'Servicios', route: '/configuracion/Servicios' },
+          { label: 'Productos', route: '/configuracion/Productos' },
           // { label: 'Gestion de Items', route: '/configuracion/Items' },
           { label: 'Gestion de Empleados', route: '/configuracion/Empleados' },
           // { label: 'Gestion de Descuentos', route: '/configuracion/Descuentos' },

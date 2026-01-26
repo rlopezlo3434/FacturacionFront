@@ -1,0 +1,162 @@
+<div>
+  <!-- Buscador + menú -->
+  <div class="search-menu">
+    <div class="icon-menu">
+      <mat-icon (click)="openMenu()">menu</mat-icon>
+    </div>
+
+    <div class="input-wrapper">
+      <mat-icon class="input-icon">search</mat-icon>
+      <input [(ngModel)]="filtroTexto" type="text"
+        placeholder="Buscar por Marca o Modelo..."
+        class="input" />
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="header-secuence">
+    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+      <div class="selected">Gestión de Marcas</div>
+      <div class="subTitle">Administra marcas y modelos de vehículos</div>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem;">
+      <button class="btn btn-create" (click)="openCreateBrandDialog()">
+        <mat-icon>add</mat-icon> Nueva Marca
+      </button>
+
+      <button class="btn btn-create" [disabled]="!selectedBrand"
+        (click)="openCreateModelDialog()">
+        <mat-icon>add</mat-icon> Nuevo Modelo
+      </button>
+    </div>
+  </div>
+
+  <!-- Cards -->
+  <div class="container-card">
+    <div class="card">
+      <div class="card-title">Total Marcas</div>
+      <div class="card-value">{{ brands.length }}</div>
+      <div class="footer-card">Registradas</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Total Modelos</div>
+      <div class="card-value">{{ totalModels }}</div>
+      <div class="footer-card">Registrados</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Marca Seleccionada</div>
+      <div class="card-value">{{ selectedBrand?.name || '-' }}</div>
+      <div class="footer-card">Modelos: {{ models.length }}</div>
+    </div>
+  </div>
+
+  <!-- TABLAS: Marca + Modelos -->
+  <div class="table-container">
+    <div class="table-actions">
+      <div class="selected">Catálogo Vehicular</div>
+    </div>
+
+    <div class="grid-catalog">
+
+      <!-- TABLA MARCAS -->
+      <div class="catalog-panel">
+        <div class="panel-title">
+          <span>Marcas</span>
+        </div>
+
+        <div class="table-scroll">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Marca</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let brand of brands"
+                [class.selected-row]="selectedBrand?.id === brand.id"
+                (click)="selectBrand(brand)">
+
+                <td>
+                  <div class="cliente-info">
+                    <div class="avatar-circle">
+                      {{ getInitials(brand.name) }}
+                    </div>
+
+                    <div class="cliente-details">
+                      <div class="cliente-name">{{ brand.name }}</div>
+                      <div class="cliente-document">ID: {{ brand.id }}</div>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="chip activo" *ngIf="brand.isActive">Activo</span>
+                  <span class="chip suspendido" *ngIf="!brand.isActive">Inactivo</span>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TABLA MODELOS -->
+      <div class="catalog-panel">
+        <div class="panel-title">
+          <span>Modelos</span>
+          <span class="sub-info" *ngIf="selectedBrand">
+            de {{ selectedBrand.name }}
+          </span>
+        </div>
+
+        <div class="empty-state" *ngIf="!selectedBrand">
+          <mat-icon>info</mat-icon>
+          <p>Selecciona una marca para ver sus modelos</p>
+        </div>
+
+        <div class="table-scroll" *ngIf="selectedBrand">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Modelo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let model of models"
+                (click)="openEditModelDialog(model)">
+
+                <td>
+                  <div class="cliente-info">
+                    <div class="avatar-circle">
+                      {{ getInitials(model.name) }}
+                    </div>
+
+                    <div class="cliente-details">
+                      <div class="cliente-name">{{ model.name }}</div>
+                      <div class="cliente-document">ID: {{ model.id }}</div>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="chip activo" *ngIf="model.isActive">Activo</span>
+                  <span class="chip suspendido" *ngIf="!model.isActive">Inactivo</span>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,137 @@
+<h2 mat-dialog-title class="dialog-title">
+    Nuevo Presupuesto
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+    <!-- ✅ Sección Agregar -->
+    <div class="section">
+        <div class="subTitle">Agregar Productos y Servicios</div>
+
+        <div class="form-grid">
+
+            <!-- Buscar producto -->
+            <div class="form-field full">
+                <label class="label">Buscar Producto</label>
+                <input class="input" [(ngModel)]="searchProduct" (input)="filterProducts()"
+                    placeholder="Ej: PR0001, Filtro, P240..." />
+
+                <div class="dropdown" *ngIf="filteredProducts.length > 0">
+                    <div class="dropdown-item" *ngFor="let p of filteredProducts" (click)="addProduct(p)">
+                        <div class="drop-title">{{ p.code }} - {{ p.name }}</div>
+                        <div class="drop-sub">
+                            Stock: {{ p.quantity }} • Precio: {{ p.price | currency:'PEN':'symbol':'1.2-2' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buscar servicio -->
+            <div class="form-field full">
+                <label class="label">Buscar Servicio</label>
+                <input class="input" [(ngModel)]="searchService" (input)="filterServices()"
+                    placeholder="Ej: SV0001, Cambio de aceite..." />
+
+                <div class="dropdown" *ngIf="filteredServices.length > 0">
+                    <div class="dropdown-item" *ngFor="let s of filteredServices" (click)="addService(s)">
+                        <div class="drop-title">{{ s.code }} - {{ s.name }}</div>
+                        <div class="drop-sub">
+                            Precio base: {{ s.price | currency:'PEN':'symbol':'1.2-2' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ✅ Notas -->
+            <div class="form-field full" style="margin-bottom: 12px;">
+                <label class="label">Notas / Observaciones</label>
+
+                <textarea class="textarea" rows="3"
+                    placeholder="Ej: descuento aplicado, diagnóstico, condiciones del cliente..." [(ngModel)]="notes">
+                </textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Sección Detalle -->
+    <div class="section">
+        <div class="subTitle">Detalle del Presupuesto</div>
+
+        <div class="table-container">
+            <div class="table-scroll">
+                <div class="table-body detail-table">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Descripción</th>
+                                <th style="width:120px;">Cant.</th>
+                                <th style="width:150px;">Precio Unit.</th>
+                                <th style="width:150px;">Total</th>
+                                <th style="width:60px;"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr *ngFor="let it of items; let i = index">
+                                <td>
+                                    <span class="chip type-product" *ngIf="it.itemType === 1">Producto</span>
+                                    <span class="chip type-service" *ngIf="it.itemType === 2">Servicio</span>
+                                </td>
+
+                                <td>
+                                    <div class="item-title">{{ it.name }}</div>
+                                    <div class="item-sub" *ngIf="it.itemType === 1 && it.serialCode">
+                                        Serie: {{ it.serialCode }}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <input class="input-mini" type="number" min="1" [(ngModel)]="it.quantity"
+                                        (ngModelChange)="calcTotals()" />
+                                </td>
+
+                                <td>
+                                    <input class="input-mini" type="number" min="0" [(ngModel)]="it.unitPrice"
+                                        (ngModelChange)="calcTotals()" />
+                                </td>
+
+                                <td>
+                                    <strong>{{ it.totalPrice | currency:'PEN':'symbol':'1.2-2' }}</strong>
+                                </td>
+
+                                <td>
+                                    <button class="btn-remove-mini" type="button" (click)="removeItem(i)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr *ngIf="items.length === 0">
+                                <td colspan="6" class="empty-row">
+                                    Agrega productos o servicios para generar el presupuesto ✅
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ Total -->
+        <div class="total-box">
+            <div class="total-label">TOTAL</div>
+            <div class="total-value">{{ total | currency:'PEN':'symbol':'1.2-2' }}</div>
+        </div>
+    </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+    <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+
+    <button class="btn-primary" (click)="guardar()" [disabled]="items.length === 0">
+        Guardar Presupuesto
+    </button>
+</mat-dialog-actions>
