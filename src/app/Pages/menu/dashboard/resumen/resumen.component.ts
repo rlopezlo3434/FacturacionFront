@@ -234,24 +234,20 @@ export class ResumenComponent {
 
   cargarVentasDelMes() {
 
-    const hoy = new Date().toISOString().substring(0, 10); // YYYY-MM-DD
+    const hoy = new Date();
+  hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset()); // Ajuste local
+  const fechaHoy = hoy.toISOString().substring(0, 10);
 
 
-    // const hoy = new Date();
-    // hoy.setDate(hoy.getDate() - 1);   // 👈 restar 1 día
-
-    // const fecha = hoy.toISOString().substring(0, 10); // YYYY-MM-DD
-
-
-    this.dashboardService.getVentasMensuales(hoy)
+    this.dashboardService.getVentasMensuales(fechaHoy)
       .subscribe(res => {
         const hoy = new Date().getDate();
 
         this.chartData = {
-          labels: res.dias.slice(0, hoy),
+          labels: res.dias.slice(0, fechaHoy),
           datasets: [
             {
-              data: res.montosPorDia.slice(0, hoy),
+              data: res.montosPorDia.slice(0, fechaHoy),
               label: 'Monto diario',
               backgroundColor: this.getRepeatedColors(this.pastelColors, res.montosPorDia.length),
               borderColor: this.getRepeatedColors(this.pastelBorder, res.montosPorDia.length),

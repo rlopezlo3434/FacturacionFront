@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class ModalHijosDialogComponent {
   hijos: any[] = [];
-  newChild = { id: null, firstName: '', lastName: '', fechaCumpleanios: null };
+  newChild = { id: null, firstName: '', lastName: '', fechaCumpleanios: null, genero: '' };
   isAgregar: boolean = false;
   isEditar: boolean = false;
   hijoSeleccionado: any = null;
@@ -39,18 +39,19 @@ export class ModalHijosDialogComponent {
   }
 
   editarHijo(hijo: any) {
-    this.isEditar = true;
-    this.isAgregar = false;
+  this.isEditar = true;
+  this.isAgregar = false;
 
-    this.newChild = {
-      id: hijo.id,
-      firstName: hijo.firstName,
-      lastName: hijo.lastName,
-      fechaCumpleanios: hijo.fechaCumpleanios
-        ? hijo.fechaCumpleanios.substring(0, 10)
-        : null
-    };
-  }
+  this.newChild = {
+    id: hijo.id,
+    firstName: hijo.firstName,
+    lastName: hijo.lastName,
+    fechaCumpleanios: hijo.fechaCumpleanios
+      ? hijo.fechaCumpleanios.substring(0, 10)
+      : null,
+    genero: hijo.genero || ''   // ✅ NUEVO
+  };
+}
 
   updateHijo() {
     this.clienteService.updateChild(this.newChild).subscribe({
@@ -80,7 +81,8 @@ export class ModalHijosDialogComponent {
       id: null,
       firstName: '',
       lastName: '',
-      fechaCumpleanios: null
+      fechaCumpleanios: null,
+      genero: ''   // ✅ NUEVO
     };
   }
 
@@ -94,7 +96,8 @@ export class ModalHijosDialogComponent {
       firstName: this.newChild.firstName.trim(),
       lastName: this.newChild.lastName.trim(),
       fechaCumpleanios: this.newChild.fechaCumpleanios || null,
-      clientId: this.data.cliente.id
+      clientId: this.data.cliente.id,
+      genero: this.newChild.genero || ''   // ✅ NUEVO
 
     };
 
@@ -102,7 +105,7 @@ export class ModalHijosDialogComponent {
       next: (response) => {
         this.dialogRef.close(response);
 
-        this.newChild = { id: null, firstName: '', lastName: '', fechaCumpleanios: null };
+        this.newChild = { id: null, firstName: '', lastName: '', fechaCumpleanios: null, genero: '' };
       },
       error: (err) => {
         console.error('Error al agregar hijo:', err);

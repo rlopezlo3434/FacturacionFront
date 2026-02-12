@@ -36,31 +36,40 @@ export class DashboardService {
   }
 
   getTopServiciosDia(fecha: string) {
-    return this.http.get<any>(`${environment.apiBase}/dashboard/top-servicios-dia`, {headers: {
+    return this.http.get<any>(`${environment.apiBase}/dashboard/top-servicios-dia`, {
+      headers: {
         Authorization: `Bearer ${this.token}`
-      }, params: { fecha } });
+      }, params: { fecha }
+    });
   }
 
   getTopServiciosMes(fecha: string) {
-    return this.http.get<any>(`${environment.apiBase}/dashboard/top-servicios-mes`, {headers: {
+    return this.http.get<any>(`${environment.apiBase}/dashboard/top-servicios-mes`, {
+      headers: {
         Authorization: `Bearer ${this.token}`
-      }, params: { fecha } });
+      }, params: { fecha }
+    });
   }
 
   getTopServiciosDiaCantidad(fecha: string) {
-    return this.http.get<any>(`${environment.apiBase}/dashboard/top-servicios-dia-cantidad`, {headers: {
+    return this.http.get<any>(`${environment.apiBase}/dashboard/top-servicios-dia-cantidad`, {
+      headers: {
         Authorization: `Bearer ${this.token}`
-      }, params: { fecha } });
+      }, params: { fecha }
+    });
   }
 
   getTopServiciosMesCantidad(fecha: string) {
-    return this.http.get<any>(`${environment.apiBase}/dashboard/top-servicios-mes-cantidad`, {headers: {
+    return this.http.get<any>(`${environment.apiBase}/dashboard/top-servicios-mes-cantidad`, {
+      headers: {
         Authorization: `Bearer ${this.token}`
-      }, params: { fecha } });
+      }, params: { fecha }
+    });
   }
 
   getComparativoMensual(fecha: string) {
-    return this.http.get<any>(`${environment.apiBase}/dashboard/comparativo-mensual`, {headers: {
+    return this.http.get<any>(`${environment.apiBase}/dashboard/comparativo-mensual`, {
+      headers: {
         Authorization: `Bearer ${this.token}`
       },
       params: { fecha }
@@ -69,45 +78,72 @@ export class DashboardService {
 
   comparativoDiario(fecha: string) {
     return this.http.get<any>(
-      `${environment.apiBase}/dashboard/comparativo-diario-circle`, {headers: {
-        Authorization: `Bearer ${this.token}`
-      }, params: { fecha } }
+      `${environment.apiBase}/dashboard/comparativo-diario-circle`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }, params: { fecha }
+    }
     );
   }
 
   comparativoMensual(fecha: string) {
     return this.http.get<any>(
-      `${environment.apiBase}/dashboard/comparativo-mensual-circle`, {headers: {
-        Authorization: `Bearer ${this.token}`
-      }, params: { fecha } }
+      `${environment.apiBase}/dashboard/comparativo-mensual-circle`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }, params: { fecha }
+    }
     );
   }
 
   getProductividadPersonal(fecha: string) {
     return this.http.get<any[]>(
       `${environment.apiBase}/dashboard/productividad-personal`,
-      {headers: {
-        Authorization: `Bearer ${this.token}`
-      }, params: { fecha } }
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }, params: { fecha }
+      }
     );
   }
 
   contribucionEstilistaDia(fecha: string) {
-  return this.http.get<any[]>(
-    `${environment.apiBase}/dashboard/contribucion-estilista-dia`,
-    {headers: {
-        Authorization: `Bearer ${this.token}`
-      }, params: { fecha } }
-  );
-}
+    return this.http.get<any[]>(
+      `${environment.apiBase}/dashboard/contribucion-estilista-dia`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }, params: { fecha }
+      }
+    );
+  }
 
-contribucionEstilistaMes(fecha: string) {
-  return this.http.get<any[]>(
-    `${environment.apiBase}/dashboard/contribucion-estilista-mes`,
-    { headers: {
-        Authorization: `Bearer ${this.token}`
-      },params: { fecha } }
-  );
-}
+  contribucionEstilistaMes(fecha: string) {
+    return this.http.get<any[]>(
+      `${environment.apiBase}/dashboard/contribucion-estilista-mes`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }, params: { fecha }
+      }
+    );
+  }
+
+
+  getKpis(fecha: string) {
+    return this.http.get(`${environment.apiBase}/DashboardOwner/kpis`, { params: { fecha } });
+  }
+
+  ventasPorTienda(fecha: string) {
+    return this.http.get(`${environment.apiBase}/DashboardOwner/ventas-por-tienda`, { params: { fecha } });
+  }
+
+  ventasAcumuladas(fecha: string) {
+    return this.http.get(`${environment.apiBase}/DashboardOwner/ventas-acumuladas`, { params: { fecha } });
+  }
+
+  desviacionPorTienda(fecha: string) {
+    return this.http.get(`${environment.apiBase}/DashboardOwner/desviacion-por-tienda`, { params: { fecha } });
+  }
 
 }

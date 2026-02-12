@@ -13,61 +13,82 @@ export class LayoutComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
   usuariosOpen = false;
   menuItems: MenuItem[] = [];
+
+  userRole: string = '';
   constructor(private sidebarService: SidebarService, private router: Router) { }
 
+  ALL_MENU_ITEMS: MenuItem[] = [
+    {
+      label: 'Facturación',
+      name: 'facturacion',
+      icon: 'receipt_long',
+      children: [
+        { label: 'Generar Venta', route: '/facturacion/venta' },
+        { label: 'Caja', route: '/facturacion/caja' }
+      ],
+    },
+    {
+      label: 'Configuración',
+      name: 'configuracion',
+      icon: 'settings',
+      children: [
+        { label: 'Gestion de Cliente', route: '/configuracion/Clientes' },
+        { label: 'Gestion de Productos/Servicios', route: '/configuracion/Items' },
+        { label: 'Gestion de Empleados', route: '/configuracion/Empleados' },
+        { label: 'Gestion de Descuentos', route: '/configuracion/Descuentos' },
+      ],
+    },
+    {
+      label: 'Almacén',
+      name: 'almacen',
+      icon: 'house_siding',
+      children: [
+        { label: 'Kardex', route: '/configuracion/Almacen' }
+      ],
+    },
+    {
+      label: 'Dashboard',
+      name: 'dashboard',
+      icon: 'dashboard',
+      children: [
+        { label: 'Resumen', route: '/dashboard/resumen' },
+        { label: 'General', route: '/dashboard/general' }
+      ],
+    },
+  ];
+
   ngOnInit() {
+
     this.sidebarService.toggleSidenav$.subscribe(() => {
       this.sidenav.toggle();
     });
 
+    
+    const userStr = localStorage.getItem('user');
+    
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      console.log('Username:', user.username);
+      this.userRole = user.username; // Assuming the user object has a 'role' property
+    }
+    
+    
+    this.loadMenuByRole();
 
-    this.menuItems = [
-      // {
-      //   label: 'Ventas',
-      //   name: 'ventas',
-      //   icon: 'file_copy',
-      //   children: [{ label: 'Lista de Ventas', route: '/home/ventas' }],
-      // },
-      {
-        label: 'Facturación',
-        name: 'facturacion',
-        icon: 'receipt_long',
-        children: [
-          { label: 'Generar Venta', route: '/facturacion/venta' },
-          { label: 'Caja', route: '/facturacion/caja' }
-        ],
-      },
-      {
-        label: 'Configuración',
-        name: 'configuracion',
-        icon: 'settings',
-        children: [
-          { label: 'Gestion de Cliente', route: '/configuracion/Clientes' },
-          { label: 'Gestion de Items', route: '/configuracion/Items' },
-          { label: 'Gestion de Empleados', route: '/configuracion/Empleados' },
-          { label: 'Gestion de Descuentos', route: '/configuracion/Descuentos' },
-          // { label: 'Gestion de Almacén', route: '/configuracion/Almacen' }
-        ],
+  }
+  loadMenuByRole() {
 
-      },
-      {
-        label: 'Almacén',
-        name: 'almacen',
-        icon: 'house_siding',
-        children: [
-          { label: 'Kardex', route: '/configuracion/Almacen' }],
+    if (this.userRole === 'administradora.general') {
 
-      },
-      {
-        label: 'Dashboard',
-        name: 'dashboard',
-        icon: 'dashboard',
-        children: [
-          { label: 'Resumen', route: '/dashboard/resumen' }
-        ],
-      },
-    ];
+      // 🔐 SOLO DASHBOARD
+      this.menuItems = this.ALL_MENU_ITEMS.filter(
+        item => item.name === 'dashboard'
+      );
 
+    } else {
+      // Otros roles → menú completo
+      this.menuItems = this.ALL_MENU_ITEMS;
+    }
   }
 
   toggleUsuarios() {

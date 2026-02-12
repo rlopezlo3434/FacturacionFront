@@ -49,6 +49,8 @@ import { SeleccionEmpleadosModalComponent } from './Pages/menu/facturacion/selec
 import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
 import { ResumenComponent } from './Pages/menu/dashboard/resumen/resumen.component';
 import { BaseChartDirective } from 'ng2-charts';
+import { DashboardOwnerComponent } from './Pages/menu/dashboard/dashboard-owner/dashboard-owner.component';
+import { NgApexchartsModule } from "ng-apexcharts";
 
 @NgModule({
   declarations: [AppComponent,
@@ -77,8 +79,8 @@ import { BaseChartDirective } from 'ng2-charts';
     KardexModalComponent,
     SeleccionEmpleadosModalComponent,
     CajaComponent,
-    ResumenComponent
-
+    ResumenComponent,
+    DashboardOwnerComponent,
   ],
   imports: [
     BaseChartDirective,
@@ -96,6 +98,7 @@ import { BaseChartDirective } from 'ng2-charts';
     BrowserAnimationsModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    NgApexchartsModule,
     MatDialogModule,
     HttpClientModule,
     RouterModule.forRoot(routes)

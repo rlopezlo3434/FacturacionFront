@@ -1,0 +1,86 @@
+<div class="dashboard-owner">
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <span class="kpi-title">Ventas MTD (S/)</span>
+      <h2>{{ kpis?.ventasMtd | number:'1.0-0' }}</h2>
+      <span class="kpi-variation positive">
+        +{{ kpis?.ventasVariacion | number:'1.1-1' }}% vs mes ant.
+      </span>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-title"># Servicios MTD</span>
+      <h2>{{ kpis?.serviciosMtd }}</h2>
+      <span class="kpi-variation positive">
+        +{{ kpis?.serviciosVariacion | number:'1.1-1' }}% vs mes ant.
+      </span>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-title">Ticket Promedio</span>
+      <h2>S/ {{ kpis?.ticketPromedio | number:'1.1-1' }}</h2>
+      <span class="kpi-variation positive">
+        +{{ kpis?.ticketVariacion | number:'1.1-1' }}% vs mes ant.
+      </span>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-title">Desviación (S/)</span>
+      <h2>S/ {{ kpis?.desviacionSoles | number:'1.0-0' }}</h2>
+      <span class="kpi-subtitle">MTD vs mismo día mes ant.</span>
+    </div>
+  </div>
+
+  <!-- Gráficos fila 2 -->
+  <div class="grid-2">
+    <div class="card">
+      <h3>Ventas por tienda (MTD)</h3>
+      <apx-chart
+        [series]="ventasPorTiendaSeries"
+        [chart]="barChart"
+        [xaxis]="ventasPorTiendaXAxis"
+        [plotOptions]="plotOptionsBar"
+        [colors]="barColors">
+      </apx-chart>
+    </div>
+
+    <div class="card">
+      <h3>Servicios por tienda (MTD)</h3>
+      <apx-chart
+        [series]="serviciosPorTiendaSeries"
+        [chart]="barChart"
+        [xaxis]="serviciosPorTiendaXAxis"
+        [plotOptions]="plotOptionsBar"
+        [colors]="barColors">
+      </apx-chart>
+    </div>
+  </div>
+
+  <!-- Gráficos fila 3 -->
+  <div class="grid-2">
+    <div class="card">
+      <h3>Ventas acumuladas (Mes actual vs anterior)</h3>
+      <apx-chart
+        [series]="ventasAcumuladasSeries"
+        [chart]="lineChart"
+        [xaxis]="ventasAcumuladasXAxis"
+        [plotOptions]="plotOptionsBar"
+        [colors]="barColors">
+      </apx-chart>
+    </div>
+
+    <div class="card">
+      <h3>Desviación MTD por tienda</h3>
+      <apx-chart
+        [series]="desviacionSeries"
+        [chart]="barChart"
+        [xaxis]="desviacionXAxis"
+        [plotOptions]="plotOptionsBar"
+        [colors]="barColors">
+      </apx-chart>
+    </div>
+  </div>
+
+</div>

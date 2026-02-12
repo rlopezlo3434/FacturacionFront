@@ -336,7 +336,12 @@ export class FacturacionComponent {
     }
 
     const numeroDoc = this.venta.cliente?.documentIdentificationNumber || '';
-    const tipoDocumento = numeroDoc.length === 8 ? "1" : "6";
+    const tipoDocumento =
+      numeroDoc.length === 8
+        ? "1"
+        : numeroDoc.length === 11
+          ? "6"
+          : "4";
 
     const itemsParaEnviar = this.itemsSeleccionados.map(item => ({
       ...item,

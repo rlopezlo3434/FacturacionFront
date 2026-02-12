@@ -11,6 +11,7 @@ import { FacturacionComponent } from './Pages/menu/facturacion/facturacion.compo
 import { KardexComponent } from './Pages/menu/configuracion/kardex/kardex.component';
 import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
 import { ResumenComponent } from './Pages/menu/dashboard/resumen/resumen.component';
+import { DashboardOwnerComponent } from './Pages/menu/dashboard/dashboard-owner/dashboard-owner.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -46,7 +47,8 @@ export const routes: Routes = [
     path: 'dashboard',
     component: LayoutComponent,
     children: [
-      {path: 'resumen', component: ResumenComponent}
+      {path: 'resumen', component: ResumenComponent},
+      {path: 'general', component: DashboardOwnerComponent}
     ]
   }
 ];
