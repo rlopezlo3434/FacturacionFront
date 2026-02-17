@@ -1,4 +1,5 @@
 <div>
+
   <!-- SEARCH -->
   <div class="search-menu">
     <div class="icon-menu">
@@ -7,12 +8,7 @@
 
     <div class="input-wrapper">
       <mat-icon class="input-icon">search</mat-icon>
-      <input
-        [(ngModel)]="filtroTexto"
-        type="text"
-        placeholder="Buscar por Placa o Cliente..."
-        class="input"
-      />
+      <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Placa, Marca o Cliente..." class="input" />
     </div>
   </div>
 
@@ -23,7 +19,7 @@
       <div class="subTitle">Inventario de vehículos premium</div>
     </div>
 
-    <div style="display: flex; gap: 0.5rem;">
+    <div>
       <button class="btn btn-create" (click)="openCreateDialog()">
         <mat-icon>add</mat-icon> Nuevo Vehículo
       </button>
@@ -32,14 +28,15 @@
 
   <!-- CARDS RESUMEN -->
   <div class="container-card">
+
     <div class="card">
       <div class="card-title">Total de Vehículos</div>
       <div class="card-value">{{ vehiculos.length }}</div>
-      <div class="footer-card">En base de datos</div>
+      <div class="footer-card">En sistema</div>
     </div>
 
     <div class="card">
-      <div class="card-title">Activos</div>
+      <div class="card-title">Vehículos Activos</div>
       <div class="card-value">{{ getActivosCount() }}</div>
       <div class="footer-card">Disponibles</div>
     </div>
@@ -47,86 +44,119 @@
     <div class="card">
       <div class="card-title">Marca más frecuente</div>
       <div class="card-value">{{ marcaMasFrecuente || '-' }}</div>
-      <div class="footer-card">Top en lista</div>
-    </div>
-  </div>
-
-  <!-- LISTADO EN CARDS -->
-  <div class="cards-container">
-
-    <div
-      class="card-vehiculo"
-      *ngFor="let v of vehiculos | filtroVehiculo:filtroTexto"
-      (click)="openEditDialog(v)"
-    >
-
-      <!-- IMAGEN OPCIONAL -->
-      <div class="image">
-        <img
-          [src]="getVehicleImage(v)"
-          alt="Vehículo"
-          (error)="onImgError($event)"
-        />
-      </div>
-
-      <div class="card-details">
-
-        <!-- MODELO -->
-        <div class="card-description">
-          {{ v.model?.name }} <span class="muted">• {{ v.brand?.name }}</span>
-        </div>
-
-        <!-- Año / Color -->
-        <div class="card-anio-color">
-          {{ v.year }} • {{ v.color || 'Sin color' }}
-        </div>
-
-        <!-- Placa -->
-        <div class="card-subDetails">
-          <div class="icon">
-            <mat-icon>directions_car</mat-icon>
-            <div>Placa</div>
-          </div>
-          <div class="description-subDetail">{{ v.plate }}</div>
-        </div>
-
-        <!-- Dueño -->
-        <div class="card-subDetails">
-          <div class="icon">
-            <mat-icon>person</mat-icon>
-            <div>Cliente</div>
-          </div>
-          <div class="description-subDetail">
-            {{ v.owner?.name || 'Sin asignar' }}
-          </div>
-        </div>
-
-        <!-- Kilometraje -->
-        <div class="card-subDetails">
-          <div class="icon">
-            <mat-icon>speed</mat-icon>
-            <div>Kilometraje</div>
-          </div>
-          <div class="description-subDetail">
-            {{ v.currentMileageKm || 0 }} km
-          </div>
-        </div>
-
-        <!-- Estado -->
-        <div class="card-subDetails">
-          <div class="icon">
-            <mat-icon>verified</mat-icon>
-            <div>Estado</div>
-          </div>
-
-          <div class="description-subDetail">
-            <span class="chip activo" *ngIf="v.isActive">Activo</span>
-            <span class="chip suspendido" *ngIf="!v.isActive">Inactivo</span>
-          </div>
-        </div>
-
-      </div>
+      <div class="footer-card">Top vehículos</div>
     </div>
 
   </div>
+
+  <!-- TABLA -->
+  <div class="table-container">
+
+    <div class="table-actions">
+      <div class="selected">Lista de Vehículos</div>
+    </div>
+
+    <div class="table-scroll">
+      <div class="table-body">
+
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Vehículo</th>
+              <th>N° Serie</th>
+              <th>N° Vin</th>
+              <th>Cliente</th>
+              <th>Placa</th>
+              <th>Kilometraje</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              *ngFor="let v of vehiculos | filtroVehiculo:filtroTexto | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
+              (click)="openEditDialog(v)">
+
+              <!-- Vehículo -->
+              <td>
+                <div class="cliente-info">
+                  <mat-icon>directions_car</mat-icon>
+
+                  <div class="cliente-details">
+                    <div class="cliente-name">
+                      {{ v.model?.name }}
+                    </div>
+                    <div class="cliente-document">
+                      {{ v.brand?.name }} • {{ v.year }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- N° Serie -->
+              <td>
+                {{ v.serialNumber }}
+              </td>
+              <!-- N° Vin -->
+              <td>
+                {{ v.vin }}
+              </td>
+              <!-- Cliente -->
+              <td>
+                <div class="cliente-contact">
+                  <div class="cliente-email">
+                    <mat-icon>person</mat-icon>
+                    <div>{{ v.owner?.name || 'Sin asignar' }}</div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Placa -->
+              <td>
+                <strong>{{ v.plate }}</strong>
+              </td>
+
+              <!-- Kilometraje -->
+              <td>
+                <div style="display:flex; align-items:center; gap:0.3rem;">
+                  <mat-icon>speed</mat-icon>
+                  <div>{{ v.currentMileageKm || 0 }} km</div>
+                </div>
+              </td>
+
+              <!-- Estado -->
+              <td>
+                <span class="chip activo" *ngIf="v.isActive">Activo</span>
+                <span class="chip suspendido" *ngIf="!v.isActive">Inactivo</span>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <!-- PAGINACIÓN -->
+    <div class="pagination">
+      <span>Filas por página:</span>
+
+      <span>
+        {{ (paginaActual-1)*filasPorPagina+1 }} -
+        {{ paginaActual*filasPorPagina > vehiculos.length ? vehiculos.length : paginaActual*filasPorPagina }}
+        de {{ vehiculos.length }}
+      </span>
+
+      <button class="paginacion-icon" (click)="paginaAnterior()" [disabled]="paginaActual===1">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <button class="paginacion-icon" (click)="paginaSiguiente()"
+        [disabled]="paginaActual*filasPorPagina>=vehiculos.length">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+  </div>
+
 </div>

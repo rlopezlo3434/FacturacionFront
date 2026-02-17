@@ -63,6 +63,45 @@
     </div>
 
     <div class="section">
+        <div class="subTitle">Agregar Dirección adicional</div>
+        <!-- aquí luego metes tu lista -->
+        <div class="phone-list">
+
+            <!-- Lista de números -->
+            <div *ngFor="let num of cli.address; let i = index" class="address-item">
+
+                <!-- Contact name -->
+                <input class="input" placeholder="Nombre dirección" appUppercase [(ngModel)]="cli.address[i].addressName" />
+
+                <!-- Contact name -->
+                <input class="input" placeholder="Dirección"  appUppercase [(ngModel)]="cli.address[i].address" />
+
+                <!-- Principal -->
+                <label class="primary-check">
+                    <input type="radio" name="primaryAddress" appUppercase [checked]="cli.address[i].isPrimary"
+                        (change)="setPrimaryAddress(i)" />
+                    Principal
+                </label>
+                <!-- Número -->
+
+                <!-- Eliminar -->
+                <button class="btn-icon delete" type="button" (click)="removeAddress(i)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+
+            </div>
+
+            <!-- Botón agregar -->
+            <button class="btn-add" type="button" (click)="addAddress()">
+                <mat-icon>add_circle</mat-icon>
+                Agregar dirección
+            </button>
+
+        </div>
+    </div>
+
+
+    <div class="section">
         <div class="subTitle">Agregar Número adicional</div>
         <!-- aquí luego metes tu lista -->
         <div class="phone-list">
@@ -70,7 +109,7 @@
             <!-- Lista de números -->
             <div *ngFor="let num of cli.numbers; let i = index" class="phone-item">
 
-                <input class="input" placeholder="Nombre contacto (Opcional)"
+                <input class="input" placeholder="Nombre contacto (Opcional)" appUppercase
                     [(ngModel)]="cli.numbers[i].contactName" />
 
                 <!-- Tipo contacto -->

@@ -64,7 +64,9 @@
               <th>Código</th>
               <th>Producto</th>
               <th>Cantidad</th>
-              <th>Precio x Unidad</th>
+              <th>Und. Medida</th>
+              <th>Precio Costo</th>
+              <th>Precio Venta</th>
               <th>Código Serie</th>
               <th>Marca</th>
               <th>Multi Marca</th>
@@ -91,6 +93,8 @@
                 </span>
               </td>
 
+              <td>{{ p.unitMeasure?.name || '—' }}</td>
+              <td>{{ p.cost | currency:'PEN':'symbol':'1.2-2' }}</td>
               <td>{{ p.price | currency:'PEN':'symbol':'1.2-2' }}
 
 

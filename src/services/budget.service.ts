@@ -38,6 +38,12 @@ export class BudgetService {
     });
   }
 
+  saveItemApprovals(payload: any) {
+    return this.http.post(`${environment.apiBase}/VehicleBudget/approve-items`, payload, {
+      headers: this.getHeaders()
+    });
+  }
+
   // ✅ Aprobar presupuesto (deja 1 oficial)
   approveBudget(budgetId: number) {
     return this.http.put(`${environment.apiBase}/VehicleBudget/approve/${budgetId}`, {}, {

@@ -46,7 +46,9 @@ export class ModalClientesDialogComponent {
         ...n,
         type: n.type
       }))
-
+      this.cli.address = (this.cli.addresses || []).map((a: any) => ({
+        ...a
+      }))
       console.log(this.cli)
 
     } else {
@@ -100,6 +102,16 @@ export class ModalClientesDialogComponent {
     });
   }
 
+  addAddress() {
+    if (!this.cli.address) this.cli.address = [];
+
+    this.cli.address.push({
+      AddressName: '',
+      Address: '',
+      isPrimary: this.cli.address.length === 0
+    });
+  }
+
   removeNumber(index: number) {
     this.cli.numbers.splice(index, 1);
 
@@ -109,8 +121,23 @@ export class ModalClientesDialogComponent {
     }
   }
 
+  removeAddress(index: number) {
+    this.cli.address.splice(index, 1);
+
+    // Si borraron el principal y aún hay direcciones, setea otro como principal
+    if (this.cli.address.length > 0 && !this.cli.address.some((x: any) => x.isPrimary)) {
+      this.cli.address[0].isPrimary = true;
+    }
+  }
+
   setPrimary(index: number) {
     this.cli.numbers.forEach((x: any, i: number) => {
+      x.isPrimary = i === index;
+    });
+  }
+
+  setPrimaryAddress(index: number) {
+    this.cli.address.forEach((x: any, i: number) => {
       x.isPrimary = i === index;
     });
   }
@@ -127,7 +154,8 @@ export class ModalClientesDialogComponent {
       gender: genderSelected.id,
       email: this.cli.email,
       acceptsMarketing: this.cli.acceptsMarketing || false,
-      numbers: this.cli.numbers
+      numbers: this.cli.numbers,
+      addresses: this.cli.address
     };
 
     // creación o edición

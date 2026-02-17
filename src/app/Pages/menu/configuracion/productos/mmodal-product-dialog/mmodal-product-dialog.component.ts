@@ -10,15 +10,18 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrl: './mmodal-product-dialog.component.scss'
 })
 export class MmodalProductDialogComponent {
- product: any = {
+  product: any = {
     name: '',
     quantity: 0,
     price: 0,
+    cost: 0,
     serialCode: '',
     brandId: null,
-    isMultiBrand: false
+    isMultiBrand: false,
+    unitMeasureId: null
   };
 
+  unitMeasures: any[] = [];
   brands: any[] = [];
 
   constructor(
@@ -26,20 +29,24 @@ export class MmodalProductDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private productService: ProductosService,
     private brandService: CatalogosService,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar,
+    private catalogosService: CatalogosService
+  ) { }
 
   ngOnInit(): void {
     this.loadBrands();
-
+    this.loadUnitMeasures();
     if (this.data) {
       this.product = {
         name: this.data.name,
         quantity: this.data.quantity,
         price: this.data.price,
+        cost: this.data.cost,
         serialCode: this.data.serialCode,
         isMultiBrand: this.data.isMultiBrand,
-        brandId: this.data.brand?.id ?? null
+        brandId: this.data.brand?.id ?? null,
+        unitMeasureId: this.data.unitMeasure?.id ?? null,
+
       };
     }
   }
@@ -47,6 +54,17 @@ export class MmodalProductDialogComponent {
   loadBrands() {
     this.brandService.getBrands().subscribe((res: any) => {
       this.brands = res?.data || res || [];
+    });
+  }
+
+  unitMeasureName(unitMeasureId: number): string {
+    const um = this.unitMeasures.find(x => x.id === unitMeasureId);
+    return um ? um.name : 'N/A';
+  }
+
+  loadUnitMeasures() {
+    this.catalogosService.getUnitMeasure().subscribe((res: any) => {
+      this.unitMeasures = res?.data || [];
     });
   }
 
@@ -60,6 +78,8 @@ export class MmodalProductDialogComponent {
     const payload = {
       name: this.product.name,
       quantity: Number(this.product.quantity),
+      cost: Number(this.product.cost),
+      unitMeasureId: this.product.unitMeasureId ? this.product.unitMeasureId : null,
       price: Number(this.product.price),
       serialCode: this.product.serialCode || null,
       isMultiBrand: this.product.isMultiBrand,

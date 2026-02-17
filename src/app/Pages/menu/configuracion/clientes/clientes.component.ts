@@ -60,7 +60,8 @@ export class ClientesComponent {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(ModalClientesDialogComponent, {
-      width: '1600px',
+      width: '1000px',
+      maxWidth: '80vw',
       panelClass: 'full-modal'
     });
 
@@ -80,6 +81,13 @@ export class ClientesComponent {
 
     const primary = contacts.find(x => x.isPrimary);
     return (primary?.number || contacts[0]?.number || "").toString();
+  }
+
+  getPrimaryAddress(addresses: any[]): string {
+    if (!addresses || addresses.length === 0) return "";
+
+    const primary = addresses.find(x => x.isPrimary);
+    return (primary?.address || addresses[0]?.address || "").toString();
   }
 
   getInitials(fullName: string): string {
@@ -132,6 +140,7 @@ export class ClientesComponent {
       }
     });
   }
+  
   updateMarketing(cliente: any) {
     console.log(cliente)
     this.clienteService.updateMarketing(cliente.id, cliente.acceptsMarketing).subscribe({
@@ -180,7 +189,8 @@ export class ClientesComponent {
 
   openEditDialog(item: any) {
     const dialogRef = this.dialog.open(ModalClientesDialogComponent, {
-      width: '2000px',
+      width: '1000px',
+      maxWidth: '80vw',
       data: item
     });
 

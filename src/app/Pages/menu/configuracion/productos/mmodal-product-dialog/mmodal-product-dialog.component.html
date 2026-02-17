@@ -12,33 +12,44 @@
       <!-- Nombre -->
       <div class="form-field full">
         <label class="label">Nombre *</label>
-        <input class="input" type="text"
-          placeholder="Ej: Filtro de aceite"
-          [(ngModel)]="product.name" />
+        <input class="input" type="text" appUppercase placeholder="Ej: Filtro de aceite" [(ngModel)]="product.name" />
       </div>
 
       <!-- Cantidad -->
       <div class="form-field">
         <label class="label">Cantidad *</label>
-        <input class="input" type="number"
-          placeholder="Ej: 15"
-          [(ngModel)]="product.quantity" />
-      </div>
-
-      <!-- Cantidad -->
-      <div class="form-field">
-        <label class="label">Precio Unidad *</label>
-        <input class="input" type="number"
-          placeholder="Ej: 15"
-          [(ngModel)]="product.price" />
+        <input class="input" type="number" placeholder="Ej: 15" [(ngModel)]="product.quantity" />
       </div>
 
       <!-- Código serie -->
       <div class="form-field">
         <label class="label">Código Serie</label>
-        <input class="input" type="text"
-          placeholder="Ej: P240"
-          [(ngModel)]="product.serialCode" />
+        <input class="input" type="text" placeholder="Ej: P240" [(ngModel)]="product.serialCode" />
+      </div>
+
+      <!-- Precio -->
+      <div class="form-field">
+        <label class="label">Precio Venta *</label>
+        <input class="input" type="number" placeholder="Ej: 15" [(ngModel)]="product.price" />
+      </div>
+
+      <!-- Costo -->
+      <div class="form-field">
+        <label class="label">Costo *</label>
+        <input class="input" type="number" placeholder="Ej: 15" [(ngModel)]="product.cost" />
+      </div>
+
+      
+
+      <!-- UnidadMedida -->
+      <div class="form-field">
+        <label class="label">Unidad Medida</label>
+        <select class="select" [(ngModel)]="product.unitMeasureId">
+          <option [ngValue]="null" disabled>Seleccionar</option>
+          <option *ngFor="let um of unitMeasures" [ngValue]="um.id">
+            {{ um.name }}
+          </option>
+        </select>
       </div>
 
       <!-- MultiMarca -->
@@ -75,8 +86,7 @@
 <mat-dialog-actions class="dialog-actions" align="end">
   <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
 
-  <button class="btn-primary"
-    (click)="guardar()"
+  <button class="btn-primary" (click)="guardar()"
     [disabled]="!product.name || product.quantity === null || product.quantity < 0 || (!product.isMultiBrand && !product.brandId)">
     {{ data ? 'Actualizar' : 'Crear' }}
   </button>

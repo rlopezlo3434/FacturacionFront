@@ -13,7 +13,7 @@ export class FiltroClientePipe implements PipeTransform {
     texto = texto.toLowerCase();
 
     return clientes.filter(item => {
-      const matchesTexto = item.firstName.toLowerCase().includes(texto) || item.lastName.toLowerCase().includes(texto) || item.documentIdentificationNumber.toString().includes(texto);
+      const matchesTexto = item.names.toLowerCase().includes(texto) || item.documentIdentificationNumber.toString().includes(texto);
       const matchesEstado = estado ? item.isActive === (estado === 'true') : true;
       const matchesGenero = genero ? item.gender === genero : true;
       const matchesTipo = true; // No hay filtro por tipo en clientes, siempre es true

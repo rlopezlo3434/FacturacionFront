@@ -162,9 +162,16 @@
   gap: 12px;
 }
 
+.address-item {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr ;
+  gap: 10px;
+  align-items: center;
+}
+
 .phone-item {
   display: grid;
-  grid-template-columns: 1fr 0.8fr 1fr 1fr 0.3fr;
+  grid-template-columns: 1.2fr 0.8fr 1fr 0.5fr 0.5fr;
   gap: 10px;
   align-items: center;
 }
@@ -216,4 +223,10 @@
 
 .btn-icon.delete mat-icon {
   color: #d32f2f;
+}
+
+.btn-icon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

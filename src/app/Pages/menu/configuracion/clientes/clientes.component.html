@@ -5,7 +5,7 @@
         </div>
         <div class="input-wrapper">
             <mat-icon class="input-icon">search</mat-icon>
-            <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Nombre, Apellido o DNI..."
+            <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Nombre, Apellido o DNI..." appUppercase
                 class="input" />
         </div>
     </div>
@@ -61,7 +61,7 @@
                             <th>Cliente</th>
                             <th>Contacto</th>
                             <th>Ultimo Servicio</th>
-                            <th>Próxima Cita</th>
+                            <!-- <th>Próxima Cita</th> -->
                             <th>Servicios</th>
                             <th>Gasto Total</th>
                             <th>Estado</th>
@@ -80,7 +80,8 @@
                                             {{ cli.names }}
                                         </div>
                                         <div class="cliente-document">
-                                            {{cli.documentIdentificationType.name}}: {{ cli.documentIdentificationNumber }}
+                                            {{cli.documentIdentificationType.name}}: {{ cli.documentIdentificationNumber
+                                            }}
                                         </div>
                                     </div>
                                 </div>
@@ -119,21 +120,40 @@
                                     </div>
                                 </div>
                             </td>
-                           
+
                             <td>
+                                <div class="cliente-address">
+                                    <mat-icon>house</mat-icon>
+
+                                    <div class="phone-main">
+                                        {{ getPrimaryAddress(cli.addresses) || 'Sin dirección' }}
+                                    </div>
+
+                                    <button (click)="$event.stopPropagation()" *ngIf="cli.addresses?.length > 1"
+                                        mat-button [matMenuTriggerFor]="addressesMenu" class="phone-more-btn">
+                                        +{{ cli.addresses.length - 1 }} más
+                                    </button>
+
+                                    <mat-menu #addressesMenu="matMenu">
+                                        <button mat-menu-item *ngFor="let c of cli.addresses">
+                                            <mat-icon>house</mat-icon>
+
+                                            <span>
+                                                <strong *ngIf="c.isPrimary">Principal</strong>
+                                                <strong *ngIf="!c.isPrimary">{{ c.addressName }}</strong>
+                                                : {{ c.address }}
+                                            </span>
+                                        </button>
+                                    </mat-menu>
+                                </div>
+                            </td>
+                            <!-- <td>
                                 <div style="display: flex; align-items: center; gap: 0.3rem;">
                                     <mat-icon>calendar_month</mat-icon>
                                     <div>20-09-2025</div>
 
                                 </div>
-                            </td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 0.3rem;">
-                                    <mat-icon>calendar_month</mat-icon>
-                                    <div>20-09-2025</div>
-
-                                </div>
-                            </td>
+                            </td> -->
                             <td>
                                 12
                             </td>
@@ -152,7 +172,7 @@
         </div>
         <div class="pagination">
             <span>Filas por página: </span>
-            
+
             <span>{{(paginaActual-1)*filasPorPagina+1}} -
                 {{paginaActual*filasPorPagina > clientes.length ? clientes.length : paginaActual*filasPorPagina}}
                 de {{clientes.length}}</span>

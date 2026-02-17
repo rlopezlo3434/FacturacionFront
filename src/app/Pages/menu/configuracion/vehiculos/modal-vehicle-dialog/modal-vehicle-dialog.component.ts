@@ -14,6 +14,8 @@ export class ModalVehicleDialogComponent {
 vehicle: any = {
     id: 0,
     plate: '',
+    serialNumber: '',
+    vin: '',
     brandId: null,
     modelId: null,
     year: null,
@@ -47,6 +49,8 @@ vehicle: any = {
       this.vehicle = {
         id: this.data.id,
         plate: this.data.plate,
+        serialNumber: this.data.serialNumber,
+        vin: this.data.vin,
         modelId: this.data.model?.id ?? this.data.modelId,
         year: this.data.year,
         color: this.data.color,
@@ -109,6 +113,8 @@ vehicle: any = {
 
     const payload = {
       plate: this.vehicle.plate.trim().toUpperCase(),
+      serialNumber: this.vehicle.serialNumber.trim().toUpperCase(),
+      vin: this.vehicle.vin.trim().toUpperCase(),
       establishmentId: user?.establishment.id,
       brandId: this.vehicle.brandId,
       modelId: this.vehicle.modelId,

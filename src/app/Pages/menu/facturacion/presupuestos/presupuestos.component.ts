@@ -74,6 +74,7 @@ export class PresupuestosComponent {
     });
 
     dialogRef.afterClosed().subscribe(ok => {
+      console.log('Dialog closed with result:', ok);
       if (ok) this.loadBudgets();
     });
   }
@@ -92,7 +93,7 @@ export class PresupuestosComponent {
   }
 
   generateWorkOrder() {
-    this.workOrderService.createFromIntake(this.intakeId).subscribe({
+    this.workOrderService.generateFromIntake(this.intakeId).subscribe({
       next: (res: any) => {
         this.snackBar.open(res?.message || 'Orden de Trabajo creada', '', {
           duration: 3000,

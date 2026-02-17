@@ -76,10 +76,38 @@
     </div>
   </div>
 
-  <!-- ✅ Observaciones -->
   <div class="section" *ngIf="intake?.notes">
     <div class="subTitle">Observaciones Generales</div>
     <div class="notes-box">{{ intake?.notes }}</div>
+  </div>
+
+  <div class="section" *ngIf="intake?.images?.length">
+    <div class="subTitle">Registro Fotográfico</div>
+
+    <div class="images-grid">
+      <div class="image-box" *ngFor="let img of intake.images">
+        <img [src]="apiBaseUrl + img.imageUrl" />
+      </div>
+    </div>
+  </div>
+
+  <div class="section" *ngIf="intake?.imagesDiagram?.length">
+    <div class="subTitle">Diagramas de Marcaciones</div>
+    <div style="display: flex; gap:0.5rem; align-items: center; ">
+      <div class="diagram-container" *ngIf="getDiagram(1)">
+        <div class="diagram-overlay">
+          <img class="base" [src]="baseImageUrl1" />
+          <img class="marks" [src]="apiBaseUrl + getDiagram(1).markedImageUrl" />
+        </div>
+      </div>
+  
+      <div class="diagram-container" *ngIf="getDiagram(2)">
+        <div class="diagram-overlay">
+          <img class="base" [src]="baseImageUrl2" />
+          <img class="marks" [src]="apiBaseUrl + getDiagram(2).markedImageUrl" />
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ✅ Inventario -->

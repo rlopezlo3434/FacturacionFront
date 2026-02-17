@@ -17,8 +17,14 @@ export class VehicleIntakeService {
     });
   }
 
-  createIntake(payload: any) {
-    return this.http.post(`${environment.apiBase}/VehicleIntakes`, payload, {
+  // createIntake(payload: any) {
+  //   return this.http.post(`${environment.apiBase}/VehicleIntakes`, payload, {
+  //     headers: { Authorization: `Bearer ${this.token}` }
+  //   });
+  // }
+
+  createIntake(formData: FormData) {
+    return this.http.post(`${environment.apiBase}/VehicleIntakes`, formData, {
       headers: { Authorization: `Bearer ${this.token}` }
     });
   }
@@ -30,8 +36,8 @@ export class VehicleIntakeService {
   }
 
   getIntakeDetail(id: number) {
-  return this.http.get(`${environment.apiBase}/VehicleIntakes/${id}`, {
-    headers: { Authorization: `Bearer ${this.token}` }
-  });
-}
+    return this.http.get(`${environment.apiBase}/VehicleIntakes/${id}`, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    });
+  }
 }

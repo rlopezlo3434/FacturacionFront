@@ -23,6 +23,37 @@ export class ModalBudgetDetailDialogComponent {
     this.loadDetail();
   }
 
+  recalcItem(it: any) {
+    const qty = Number(it.quantity || 0);
+    const price = Number(it.unitPrice || 0);
+    const discount = Number(it.discount || 0);
+
+    const gross = qty * price;
+
+    if (discount > gross) {
+      it.discount = gross;
+    }
+
+    it.totalPrice = gross - it.discount;
+
+    this.recalcTotal();
+  }
+
+  recalcTotal() {
+    this.budget.total = this.budget.items
+      .filter((i: any) => i.isApproved)
+      .reduce(((sum: any, i: any) => sum + i.totalPrice), 0);
+  }
+
+  toggleApprove(it: any) {
+    if (!it.isApproved) {
+      // opcional: resetear descuento si desmarcan
+      // it.discount = 0;
+    }
+
+    this.recalcTotal();
+  }
+
   loadDetail() {
     this.loading = true;
 
@@ -43,22 +74,56 @@ export class ModalBudgetDetailDialogComponent {
     });
   }
 
-  aprobar() {
-    if (!this.budget?.id) return;
+  // aprobar() {
+  //   if (!this.budget?.id) return;
 
-    this.budgetService.approveBudget(this.budget.id).subscribe({
-      next: (res: any) => {
-        this.snackBar.open(res?.message || 'Presupuesto aprobado', '', {
+  //   this.budgetService.approveBudget(this.budget.id).subscribe({
+  //     next: (res: any) => {
+  //       this.snackBar.open(res?.message || 'Presupuesto aprobado', '', {
+  //         duration: 3000,
+  //         horizontalPosition: 'right',
+  //         verticalPosition: 'top',
+  //         panelClass: ['success-snackbar']
+  //       });
+
+  //       this.dialogRef.close(true); // ✅ refresca la pantalla de presupuestos
+  //     },
+  //     error: (err) => {
+  //       this.snackBar.open(err.error?.message || 'Error al aprobar presupuesto', '', {
+  //         duration: 3000,
+  //         horizontalPosition: 'right',
+  //         verticalPosition: 'top',
+  //         panelClass: ['error-snackbar']
+  //       });
+  //     }
+  //   });
+  // }
+
+  aprobar() {
+    const payload = {
+      budgetId: this.budget.id,
+      items: this.budget.items.map((it: any) => ({
+        itemid: it.id,
+        isApproved: it.isApproved,
+        quantity: it.quantity,
+        unitPrice: it.unitPrice,
+        discount: it.discount,
+        totalPrice: it.totalPrice
+      }))
+    };
+
+    this.budgetService.saveItemApprovals(payload).subscribe({
+      next: () => {
+        this.snackBar.open('Aprobaciones guardadas correctamente', '', {
           duration: 3000,
           horizontalPosition: 'right',
           verticalPosition: 'top',
           panelClass: ['success-snackbar']
         });
-
-        this.dialogRef.close(true); // ✅ refresca la pantalla de presupuestos
+        this.dialogRef.close(true);
       },
-      error: (err) => {
-        this.snackBar.open(err.error?.message || 'Error al aprobar presupuesto', '', {
+      error: () => {
+        this.snackBar.open('Error al guardar aprobaciones', '', {
           duration: 3000,
           horizontalPosition: 'right',
           verticalPosition: 'top',

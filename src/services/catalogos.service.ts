@@ -32,4 +32,9 @@ export class CatalogosService {
   getModelsByBrand(brandId: number) {
     return this.http.get<any>(`${environment.apiBase}/Catalogo/brands/${brandId}/models`, {});
   }
+
+  getUnitMeasure() {
+    return this.http.get<any>(`${environment.apiBase}/Catalogo/unit-measures`, {});
+  }
+  
 }

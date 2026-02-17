@@ -68,6 +68,7 @@
                                 <th>Descripción</th>
                                 <th style="width:120px;">Cant.</th>
                                 <th style="width:150px;">Precio Unit.</th>
+                                <th style="width:140px;">Descuento</th>
                                 <th style="width:150px;">Total</th>
                                 <th style="width:60px;"></th>
                             </tr>
@@ -96,11 +97,16 @@
                                     <input class="input-mini" type="number" min="0" [(ngModel)]="it.unitPrice"
                                         (ngModelChange)="calcTotals()" />
                                 </td>
-
+                                <td>
+                                    <input class="input-mini" type="number" min="0" [(ngModel)]="it.discount"
+                                        (ngModelChange)="calcTotals()" placeholder="0.00" />
+                                    <div *ngIf="it.discount > 0" class="discount-label">
+                                        Descuento aplicado
+                                    </div>
+                                </td>
                                 <td>
                                     <strong>{{ it.totalPrice | currency:'PEN':'symbol':'1.2-2' }}</strong>
                                 </td>
-
                                 <td>
                                     <button class="btn-remove-mini" type="button" (click)="removeItem(i)">
                                         <mat-icon>delete</mat-icon>
@@ -134,4 +140,5 @@
     <button class="btn-primary" (click)="guardar()" [disabled]="items.length === 0">
         Guardar Presupuesto
     </button>
+
 </mat-dialog-actions>

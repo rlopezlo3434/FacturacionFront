@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ProductosService } from '../../../../../services/productos.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MmodalProductDialogComponent } from './mmodal-product-dialog/mmodal-product-dialog.component';
+import { CatalogosService } from '../../../../../services/catalogos.service';
 
 @Component({
   selector: 'app-productos',
@@ -10,8 +11,10 @@ import { MmodalProductDialogComponent } from './mmodal-product-dialog/mmodal-pro
 })
 export class ProductosComponent {
 
-   filtroTexto = '';
+  filtroTexto = '';
   productos: any[] = [];
+  unitMeasures: any[] = [];
+
 
   paginaActual = 1;
   filasPorPagina = 10;
@@ -20,14 +23,15 @@ export class ProductosComponent {
 
   constructor(
     private productService: ProductosService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private catalogosService: CatalogosService
+  ) { }
 
   ngOnInit(): void {
     this.loadProducts();
   }
 
-  openMenu() {}
+  openMenu() { }
 
   loadProducts() {
     this.productService.getProducts().subscribe((res: any) => {

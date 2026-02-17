@@ -29,6 +29,8 @@ export class IntakeComponent implements OnInit {
   paginaActual = 1;
   filasPorPagina = 10;
 
+  
+
   constructor(private intakeService: VehicleIntakeService, private dialog: MatDialog, private sidebarService: SidebarService,
     private router: Router
   ) { }
@@ -50,9 +52,12 @@ export class IntakeComponent implements OnInit {
   openEditIntakeDialog(intake: any) { }
   confirmDeleteIntake(intake: any) { }
 
+
+
   openCreateIntakeDialog() {
     const dialogRef = this.dialog.open(ModalIntakeDialogComponent, {
-      width: '850px',
+      width: '1500px',
+      maxWidth: '80vw',
       disableClose: true,
       data: {
         // vehicleId: vehicle?.id,

@@ -94,6 +94,13 @@
 
 }
 
+.cliente-address{
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 500;
+}
+
 .phone-more-btn {
   min-width: auto !important;
   padding: 0 8px !important;

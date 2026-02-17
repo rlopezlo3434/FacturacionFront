@@ -17,6 +17,12 @@ export class WorkOrderService {
     });
   }
 
+  generateFromIntake(intakeId: number) {
+    return this.http.post(`${environment.apiBase}/WorkOrder/from-intake/${intakeId}`, {}, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    });
+  }
+
   getWorkOrderByIntake(intakeId: number) {
     return this.http.get(`${environment.apiBase}/WorkOrder/intake/${intakeId}`, {
       headers: { Authorization: `Bearer ${this.token}` }

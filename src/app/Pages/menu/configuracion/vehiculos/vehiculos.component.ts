@@ -59,6 +59,10 @@ export class VehiculosComponent {
     if (this.paginaActual > 1) this.paginaActual--;
   }
 
+  paginaSiguiente() {
+    if (this.paginaActual * this.filasPorPagina < this.vehiculos.length) this.paginaActual++;
+  }
+
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(ModalVehicleDialogComponent, {

@@ -32,6 +32,32 @@
         />
       </div>
 
+       <!-- N Serie -->
+      <div class="form-field">
+        <label class="label">N° Serie *</label>
+       <input
+          type="text"
+          class="input"
+          placeholder="Ej: JTJJM7FX9J000000"
+          appUppercase
+          [(ngModel)]="vehicle.serialNumber"
+          (input)="vehicle.serialNumber = vehicle.serialNumber.toUpperCase()"
+        />
+      </div>
+
+      <!-- N VIN -->
+      <div class="form-field">
+        <label class="label">N° Vin *</label>
+        <input
+          type="text"
+          class="input"
+          appUppercase
+          placeholder="Ej: JTJJM7FX9J000000"
+          [(ngModel)]="vehicle.vin"
+          (input)="vehicle.vin = vehicle.vin.toUpperCase()"
+        />
+      </div>
+
       <!-- Marca -->
       <div class="form-field">
         <label class="label">Marca *</label>
@@ -53,6 +79,8 @@
           </option>
         </select>
       </div>
+
+     
 
       <!-- Color -->
       <div class="form-field">

@@ -4,13 +4,11 @@
 
 <mat-dialog-content class="dialog-content">
 
-    <!-- ✅ SECCIÓN: Datos -->
     <div class="section">
         <div class="subTitle">Datos del Internamiento</div>
 
         <div class="form-grid">
 
-            <!-- Vehículo -->
             <div class="form-field">
                 <label class="label">Vehículo *</label>
 
@@ -75,14 +73,53 @@
                     [(ngModel)]="intake.observations"></textarea>
             </div>
 
+            <!-- Imagenes -->
+            <div class="form-field full">
+                <div class="subTitle">Registro Fotográfico</div>
+
+                <div class="image-upload-box">
+
+                    <input type="file" accept="image/*" multiple hidden #imageInput
+                        (change)="onImagesSelected($event)" />
+
+                    <button class="btn-upload" (click)="imageInput.click()">
+                        <mat-icon>photo_camera</mat-icon>
+                        Agregar imágenes
+                    </button>
+
+                    <div class="images-preview" *ngIf="imagePreviews.length > 0">
+                        <div class="image-item" *ngFor="let img of imagePreviews; let i = index">
+                            <img [src]="img" />
+                            <button class="remove-img" (click)="removeImage(i)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="canvas-wrapper">
+                <img [src]="baseImageUrl" draggable="false">
+
+                <canvas #canvas1 (mousedown)="startDraw($event, 1)" (mousemove)="draw($event, 1)"
+                    (mouseup)="stopDraw(1)" (mouseleave)="stopDraw(1)" (touchstart)="startDraw($event, 1)"
+                    (touchmove)="draw($event, 1)" (touchend)="stopDraw(1)"></canvas>
+            </div>
+            <div class="canvas-wrapper">
+                <img [src]="baseImageUrl2" draggable="false">
+
+                <canvas #canvas2 (mousedown)="startDraw($event, 2)" (mousemove)="draw($event, 2)"
+                    (mouseup)="stopDraw(2)" (mouseleave)="stopDraw(2)" (touchstart)="startDraw($event, 2)"
+                    (touchmove)="draw($event, 2)" (touchend)="stopDraw(2)"></canvas>
+            </div>
+
         </div>
     </div>
 
-    <!-- ✅ SECCIÓN: Inventario -->
     <div class="section">
         <div class="subTitle">Inventario del Vehículo</div>
 
-        <!-- ✅ Grupo 1 -->
         <div class="inventory-group" *ngIf="inventoryVehiculo.length > 0">
             <div class="group-title">Inventario del Vehículo</div>
 
@@ -109,7 +146,6 @@
             </div>
         </div>
 
-        <!-- ✅ Grupo 2 -->
         <div class="inventory-group" *ngIf="inventoryAccesorios.length > 0">
             <div class="group-title">Accesorios</div>
 

@@ -43,7 +43,7 @@
     <div class="form-grid">
         <div class="form-field full" style="margin-bottom: 12px;">
             <label class="label">Notas / Observaciones</label>
-    
+
             <textarea class="textarea" rows="3"
                 placeholder="Ej: descuento aplicado, diagnóstico, condiciones del cliente..." [(ngModel)]="budget.notes"
                 disabled>
@@ -66,7 +66,9 @@
                                 <th>Descripción</th>
                                 <th>Cant.</th>
                                 <th>Precio Unit.</th>
+                                <th>Descuento</th>
                                 <th>Total</th>
+                                <th>Aprobar</th>
                             </tr>
                         </thead>
 
@@ -84,12 +86,32 @@
                                     </div>
                                 </td>
 
-                                <td>{{ it.quantity }}</td>
+                                <td><input class="input-mini" type="number" min="1" [disabled]="it.isApproved"
+                                        [(ngModel)]="it.quantity" (ngModelChange)="recalcItem(it)" /></td>
 
-                                <td>{{ it.unitPrice | currency:'PEN':'symbol':'1.2-2' }}</td>
+                                <td><input class="input-mini" type="number" min="0" [disabled]="it.isApproved"
+                                        [(ngModel)]="it.unitPrice" (ngModelChange)="recalcItem(it)" /></td>
 
+                                <!-- ✅ DESCUENTO -->
+                                <td>
+                                    <input class="input-mini" type="number" min="0" [disabled]="it.isApproved"
+                                        [(ngModel)]="it.discount" (ngModelChange)="recalcItem(it)" />
+                                </td>
+
+                                <!-- ✅ TOTAL -->
                                 <td>
                                     <strong>{{ it.totalPrice | currency:'PEN':'symbol':'1.2-2' }}</strong>
+
+                                    <div *ngIf="it.discount > 0" class="discount-label">
+                                        Descuento aplicado
+                                    </div>
+                                </td>
+
+                                <!-- ✅ APROBAR -->
+                                <td>
+                                    <!-- <input type="checkbox" [(ngModel)]="it.isApproved"  /> -->
+                                    <mat-checkbox [(ngModel)]="it.isApproved"
+                                        (change)="toggleApprove(it)"></mat-checkbox>
                                 </td>
 
                             </tr>
@@ -120,8 +142,8 @@
 
     <button class="btn-cancelar" (click)="cancelar()">Cerrar</button>
 
-    <button class="btn-primary" *ngIf="budget && !budget.isOfficial" (click)="aprobar()">
-        Aprobar Presupuesto
+    <button class="btn-primary" (click)="aprobar()">
+        Guardar Aprobaciones
     </button>
 
 </mat-dialog-actions>

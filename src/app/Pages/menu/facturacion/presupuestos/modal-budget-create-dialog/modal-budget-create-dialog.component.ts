@@ -95,6 +95,7 @@ export class ModalBudgetCreateDialogComponent {
       name: `${p.code} - ${p.name}`,
       quantity: 1,
       unitPrice: Number(p.price || 0),
+      discount: 0,
       totalPrice: Number(p.price || 0)
     });
 
@@ -113,7 +114,8 @@ export class ModalBudgetCreateDialogComponent {
       name: `${s.code} - ${s.name}`,
       quantity: 1,
       unitPrice: Number(s.price || 0),
-      totalPrice: Number(s.price || 0)
+      totalPrice: Number(s.price || 0),
+      discount: Number(s.discount || 0),
     });
 
     this.searchService = '';
@@ -129,11 +131,20 @@ export class ModalBudgetCreateDialogComponent {
   // ✅ Calcular totales
   calcTotals() {
     this.total = 0;
+
     for (const it of this.items) {
       const qty = Number(it.quantity || 0);
       const price = Number(it.unitPrice || 0);
+      const discount = Number(it.discount || 0);
 
-      it.totalPrice = qty * price;
+      const gross = qty * price;
+
+      // 🛑 seguridad: descuento no mayor al total bruto
+      const appliedDiscount = discount > gross ? gross : discount;
+
+      it.discount = appliedDiscount;
+      it.totalPrice = gross - appliedDiscount;
+
       this.total += it.totalPrice;
     }
   }
@@ -148,7 +159,8 @@ export class ModalBudgetCreateDialogComponent {
         productId: x.productId,
         serviceMasterId: x.serviceMasterId,
         quantity: Number(x.quantity),
-        unitPrice: Number(x.unitPrice)
+        unitPrice: Number(x.unitPrice),
+        discount: x.discount,
       }))
     };
 
