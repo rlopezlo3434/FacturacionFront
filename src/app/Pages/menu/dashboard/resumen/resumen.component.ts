@@ -235,8 +235,8 @@ export class ResumenComponent {
   cargarVentasDelMes() {
 
     const hoy = new Date();
-  hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset()); // Ajuste local
-  const fechaHoy = hoy.toISOString().substring(0, 10);
+    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset()); // Ajuste local
+    const fechaHoy = hoy.toISOString().substring(0, 10);
 
 
     this.dashboardService.getVentasMensuales(fechaHoy)
@@ -414,13 +414,9 @@ export class ResumenComponent {
   }
 
   cargarComparativosCircles(): void {
-    // const hoy = new Date();
-    // // si quieres mandar ayer:
-    // hoy.setDate(hoy.getDate() - 1);
+    const hoy = this.obtenerFechaLocal();
 
-    // const fecha = hoy.toISOString().substring(0, 10);
-    const hoy = new Date().toISOString().substring(0, 10); // YYYY-MM-DD
-
+    console.log('Fecha para comparativos:', hoy);
     this.dashboardService.comparativoDiario(hoy).subscribe((res: any) => {
       this.compDiario = res;
 
@@ -463,6 +459,16 @@ export class ResumenComponent {
     });
   }
 
+  private obtenerFechaLocal(): string {
+    const hoy = new Date();
+
+    const year = hoy.getFullYear();
+    const month = String(hoy.getMonth() + 1).padStart(2, '0');
+    const day = String(hoy.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
   cargarProductividad() {
     const hoy = new Date().toISOString().substring(0, 10);
 
@@ -473,13 +479,11 @@ export class ResumenComponent {
   }
 
   cargarContribucion() {
-     const hoy = new Date();
-    // si quieres mandar ayer:
-    hoy.setDate(hoy.getDate());
 
-    const fecha = hoy.toISOString().substring(0, 10);
+    const hoy = this.obtenerFechaLocal();
 
-    this.dashboardService.contribucionEstilistaDia(fecha).subscribe(res => {
+
+    this.dashboardService.contribucionEstilistaDia(hoy).subscribe(res => {
       this.totalDia = res.reduce((s, x) => s + x.importe, 0);
 
       this.donutDiaData = {
@@ -491,7 +495,7 @@ export class ResumenComponent {
       };
     });
 
-    this.dashboardService.contribucionEstilistaMes(fecha).subscribe(res => {
+    this.dashboardService.contribucionEstilistaMes(hoy).subscribe(res => {
       this.totalMes = res.reduce((s, x) => s + x.importe, 0);
 
       this.donutMesData = {

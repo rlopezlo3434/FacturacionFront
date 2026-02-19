@@ -63,16 +63,16 @@ export class LayoutComponent {
       this.sidenav.toggle();
     });
 
-    
+
     const userStr = localStorage.getItem('user');
-    
+
     if (userStr) {
       const user = JSON.parse(userStr);
       console.log('Username:', user.username);
       this.userRole = user.username; // Assuming the user object has a 'role' property
     }
-    
-    
+
+
     this.loadMenuByRole();
 
   }
@@ -80,14 +80,31 @@ export class LayoutComponent {
 
     if (this.userRole === 'administradora.general') {
 
-      // 🔐 SOLO DASHBOARD
-      this.menuItems = this.ALL_MENU_ITEMS.filter(
-        item => item.name === 'dashboard'
-      );
-
+      // 🔐 SOLO DASHBOARD SIN "General"
+      this.menuItems = this.ALL_MENU_ITEMS
+        .filter(item => item.name === 'dashboard')
+        .map(item => ({
+          ...item,
+          children: item.children?.filter(
+            child => child.label == 'General'
+          )
+        }));
+       console.log('Menu para administradora.general:', this.menuItems);
     } else {
-      // Otros roles → menú completo
-      this.menuItems = this.ALL_MENU_ITEMS;
+
+      // 👤 OTROS ROLES → TODO MENOS "Dashboard > General"
+      this.menuItems = this.ALL_MENU_ITEMS.map(item => {
+        if (item.name === 'dashboard') {
+          return {
+            ...item,
+            children: item.children?.filter(
+              child => child.route !== '/dashboard/general'
+            )
+          };
+        }
+        return item;
+      });
+
     }
   }
 

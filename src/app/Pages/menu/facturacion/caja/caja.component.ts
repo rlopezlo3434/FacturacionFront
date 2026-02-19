@@ -123,8 +123,8 @@ export class CajaComponent implements OnInit {
     });
   }
 
-  cajaDiario(){
-    
+  cajaDiario() {
+
     this.cajaService.cajaDiario(this.cajas[0].id, this.fechaHoy).subscribe(blob => {
       const a = document.createElement('a');
       const objectUrl = URL.createObjectURL(blob);
@@ -135,8 +135,8 @@ export class CajaComponent implements OnInit {
     });
   }
 
-  reporteCajaMensual(){
-    this.cajaService.reporteCajaMensual().subscribe(blob => {
+  reporteCajaMensual() {
+    this.cajaService.reporteCajaMensual(this.fechaHoy).subscribe(blob => {
       const a = document.createElement('a');
       const objectUrl = URL.createObjectURL(blob);
       a.href = objectUrl;

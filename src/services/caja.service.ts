@@ -55,27 +55,34 @@ export class CajaService {
   }
 
   cajaDiario(caja: number, fecha?: string): Observable<Blob> {
-  let params: any = {};
+    let params: any = {};
 
-  if (fecha) {
-    params.fecha = fecha;
+    if (fecha) {
+      params.fecha = fecha;
+    }
+
+    return this.http.get(
+      `${environment.apiBase}/caja/excel/${caja}`,
+      {
+        params,
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        },
+        responseType: 'blob'
+      }
+    );
   }
 
-  return this.http.get(
-    `${environment.apiBase}/caja/excel/${caja}`,
-    {
-      params,
-      headers: {
-        Authorization: `Bearer ${this.token}`
-      },
-      responseType: 'blob'
+
+  reporteCajaMensual(fecha: string): Observable<Blob> {
+    let params: any = {};
+
+    if (fecha) {
+      params.fecha = fecha;
     }
-  );
-}
 
-
-  reporteCajaMensual(): Observable<Blob> {
     return this.http.get(`${environment.apiBase}/caja/excel-mensual`, {
+      params,
       responseType: 'blob',
       headers: {
         Authorization: `Bearer ${this.token}`
