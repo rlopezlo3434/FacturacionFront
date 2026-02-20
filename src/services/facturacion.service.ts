@@ -56,7 +56,7 @@ export class FacturacionService {
       params: {
         fecha: fecha
       },
-      responseType: 'blob' 
+      responseType: 'blob'
     });
   }
 
@@ -129,4 +129,18 @@ export class FacturacionService {
       }
     });
   }
+
+  generateFromIntake(intakeId: number) {
+    return this.http.post(
+      `${environment.apiBase}/facturacion/create-from-intake/${intakeId}`,
+      {}
+    );
+  }
+
+  getApprovedItems() {
+    return this.http.get<any>(
+      `${environment.apiBase}/facturacion/approved-items`
+    );
+  }
+
 }

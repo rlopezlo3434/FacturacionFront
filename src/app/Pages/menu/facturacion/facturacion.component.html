@@ -1,13 +1,11 @@
-<div style="display: flex; align-items: center; justify-content: space-between;">
+<!-- <div style="display: flex; align-items: center; justify-content: space-between;">
     <h2>Facturación</h2>
     <div><input class="input" type="date" [(ngModel)]="fechaHoy" (change)="loadVentas()"></div>
 </div>
 <div class="container-fac">
     <div style="flex: 1;">
         <div class="tipoComprobante">
-            <!-- <div class="btn-reporte" (click)="reporteDiario()">
-            Reporte Diario
-        </div> -->
+           
             <div class="form-group">
                 <select [(ngModel)]="venta.metodo_pago" name="metodo_pago" class="input">
                     <option value="" disabled selected>Método de pago</option>
@@ -19,8 +17,7 @@
                 </select>
             </div>
             <div style="display: flex; gap: 0.5rem;">
-                <!-- <label>Tipo de comprobante:</label> -->
-                <div><input class="input" type="date" [(ngModel)]="fechaBoleteoHoy"></div>
+      
 
                 <select [(ngModel)]="venta.serieSeleccionada" class="input">
                     <option value="" disabled selected>Seleccione una serie</option>
@@ -30,15 +27,8 @@
                 </select>
             </div>
         </div>
-        <!-- Contenedor del input (relative solo aquí) -->
-        <div class="addClient">
-            <div (click)="mostrarCliente()" class="input-wrapper input"
-                style="flex: 1; display: flex; align-items: center;">
-                <mat-icon class="input-icon">person</mat-icon>
-                <!-- Texto fijo -->
-                <div style="flex: 1; padding: 0 1.7rem;">Agregar Cliente</div>
-            </div>
-        </div>
+
+       
         <div *ngIf="!agregarCliente">
             <div style="position: relative;">
                 <div class="input-wrapper">
@@ -48,14 +38,12 @@
                         (blur)="ocultarListaConRetardo()" />
                 </div>
 
-                <!-- Lista desplegable de productos -->
                 <div *ngIf="mostrarLista && itemsFiltrados.length > 0" class="dropdown-list">
                     <div *ngFor="let item of itemsFiltrados" class="dropdown-item" (mousedown)="seleccionarItem(item)">
                         <div [ngStyle]="{
             'border-left': '3px solid ' + (item.isActive ? '#28a745' : '#ccc'),
             'padding-left': '0.4rem'
         }">
-                            <!-- <div><strong>{{ item.item }}</strong> {{ item.code }}</div> -->
                             <div>
                                 {{ item.description }} -
                                 <span style="font-weight: 500;">{{ item.value | currency:'S/.' }}</span>
@@ -65,9 +53,6 @@
                 </div>
             </div>
 
-
-
-            <!-- Cliente seleccionado -->
             <div *ngIf="searchCliente"
                 style="margin-top: 1rem; display: flex; align-items: center; justify-content: space-between;">
                 <div><strong>Cliente:</strong> {{ venta.cliente?.firstName }} {{ venta.cliente?.lastName }}</div>
@@ -118,11 +103,12 @@
             <div>
                 Descuentos Disponibles:
                 <select class="input" [(ngModel)]="promoTarjeta" (change)="onPromoChange()">
-                    <option [ngValue]="0" >% 0</option>
-                    <option *ngFor="let promo of promociones" [ngValue]="promo.descuentoAplicado"> % {{ promo.descuentoAplicado }}</option>
+                    <option [ngValue]="0">% 0</option>
+                    <option *ngFor="let promo of promociones" [ngValue]="promo.descuentoAplicado"> % {{
+                        promo.descuentoAplicado }}</option>
                 </select>
             </div>
-            <!-- Lista de items seleccionados (fuera del relative) -->
+     
             <div style="margin-top: 1rem; text-align: right;">
                 <div>Subtotal (sin IGV): <strong>{{ subtotalGeneral | currency:'S/.' }}</strong></div>
                 <div>IGV (18%): <strong>{{ igvGeneral | currency:'S/.' }}</strong></div>
@@ -152,56 +138,7 @@
 
         </div>
         <div *ngIf="agregarCliente">
-            <!-- <div style="display: flex; gap: 1rem;">
-                <div class="tipoCliente" [class.seleccionado]="tipoClienteSeleccionado === 'empresa'"
-                    (click)="toggleTipoCliente('empresa')">
-                    Empresa
-                </div>
-
-                <div class="tipoCliente" [class.seleccionado]="tipoClienteSeleccionado === 'persona'"
-                    (click)="toggleTipoCliente('persona')">
-                    Persona
-                </div>
-            </div>
-
-            <div style="margin: 1rem 0;">
-                <div class="form-grid">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <input style="flex: 1" type="text" class="input" placeholder="Número de Identificación *"
-                            [(ngModel)]="cli.documentIdentificationNumber" />
-
-                        <mat-icon class="info-icon" (click)="consultarDocumento()"
-                            matTooltip="Seleccione el tipo de documento antes de ingresar el número.">
-                            info
-                        </mat-icon>
-                    </div>
-
-                    <select class="select" [(ngModel)]="cli.documentIdentificationType">
-                        <option value="" disabled selected>Tipo de Documento *</option>
-                        <option value="DNI">DNI</option>
-                        <option value="RUC">RUC</option>
-                        <option value="CARNET_EXTRANJERIA">Carnet de Extranjería</option>
-                    </select>
-
-                    <input type="text" class="input" placeholder="Nombre(s) *" [(ngModel)]="cli.firstName" />
-
-                    <input type="text" class="input" placeholder="Apellido(s) *" [(ngModel)]="cli.lastName" />
-
-                    <select class="select" [(ngModel)]="cli.gender">
-                        <option value="" disabled selected>Género *</option>
-                        <option value="M">Masculino</option>
-                        <option value="F">Femenino</option>
-                    </select>
-
-                    <input type="email" class="input" placeholder="Correo Electrónico" [(ngModel)]="cli.email" />
-
-                    <label class="checkbox-label">
-                        <input type="checkbox" [(ngModel)]="cli.acceptsMarketing" />
-                        Promociones
-                    </label>
-                </div>
-            </div> -->
-            <!-- Buscador de cliente -->
+           
             <div *ngIf="!searchCliente" style="position: relative; margin-top: 0.5rem;">
                 <div class="input-wrapper">
                     <mat-icon class="input-icon">person</mat-icon>
@@ -225,34 +162,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="empleado-selector" style="position: relative; margin-top: 0.5rem;">
-                <div class="input-wrapper">
-                    <mat-icon class="input-icon">badge</mat-icon>
-                    <input type="text" placeholder="Buscar empleado..." class="input" [(ngModel)]="empleadoBuscado"
-                        (input)="filtrarEmpleados()" (focus)="mostrarListaEmpleados = true"
-                        (blur)="ocultarListaConRetardoEmpleados()" />
-                </div>
-                <div *ngIf="mostrarListaEmpleados && empleadosFiltrados.length > 0" class="dropdown-list2">
-                    <div *ngFor="let emp of empleadosFiltrados" class="dropdown-item2"
-                        (mousedown)="seleccionarEmpleado(emp)">
-                        <div [ngStyle]="{
-                        'border-left': '3px solid ' + (emp.isActive ? '#28a745' : '#ccc'),
-                        'padding-left': '0.4rem'
-                        }">
-                            <div>{{ emp.firstName }} {{ emp.lastName }}</div>
-                            <div><strong>Cargo</strong> - {{ emp.roleName }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div *ngIf="empleadosSeleccionados.length > 0" class="chips-container">
-                    <div class="chip" *ngFor="let emp of empleadosSeleccionados">
-                        {{ emp.firstName }} {{ emp.lastName }}
-                        <mat-icon class="delete-icon" (click)="eliminarEmpleado(emp)">close</mat-icon>
-                    </div>
-                </div>
-
-
-            </div> -->
         </div>
     </div>
     <div class="container2">
@@ -304,7 +213,7 @@
                     <button class="btn-more" [matMenuTriggerFor]="menuOpciones">
                         <mat-icon>more_vert</mat-icon>
                     </button>
-                    <!-- Opciones del menú -->
+    
                     <mat-menu #menuOpciones="matMenu">
 
                         <button mat-menu-item (click)="downloadPDF(v.linkPdf)">
@@ -318,29 +227,224 @@
                         </button>
 
                     </mat-menu>
-                    <!-- <button (click)="anularComprobante(v)" class="btn-anular">
-                        Anular
-                    </button> -->
                 </div>
             </div>
         </div>
 
     </div>
 </div>
+ -->
 
-<!-- SECCIÓN: PROMOCIONES -->
-<!-- <div class="form-row">
-    <label>Promoción / Descuento:</label>
-    <select class="input" [(ngModel)]="venta.promocionSeleccionada" (change)="aplicarDescuento()">
-        <option value="">Sin promoción</option>
-        <option *ngFor="let promo of promociones" [ngValue]="promo">{{ promo.name }} ({{ promo.value | currency:'PEN'
-            }})</option>
-    </select>
-</div> -->
+<div class="billing-container">
+
+    <!-- ================= HEADER ================= -->
+    <div class="top-bar">
+
+        <div class="search-wrapper">
+            <mat-icon>search</mat-icon>
+            <input type="text" placeholder="Buscar por Internamiento" [(ngModel)]="searchText" />
+        </div>
+
+        <div class="top-actions">
+            <!-- <button class="btn-outline">
+                <mat-icon>filter_list</mat-icon>
+                Filtros
+            </button> -->
+
+            <button class="btn-outline">
+                <mat-icon>refresh</mat-icon>
+                Actualizar
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <div class="content-grid">
+
+        <!-- ===================================================== -->
+        <!-- ✅ ITEMS APROBADOS -->
+        <!-- ===================================================== -->
+        <div class="items-section">
+
+            <div class="section-header">
+                <div class="title">
+                    <mat-icon>inventory_2</mat-icon>
+                    Items de Presupuestos Aprobados
+                </div>
+
+                <div class="badge">
+                    {{ itemsSeleccionados.length }} items seleccionables
+                </div>
+            </div>
+
+            <table class="custom-table">
+
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>CÓDIGO / PRESUP.</th>
+                        <th>DESCRIPCIÓN</th>
+                        <th>TIPO</th>
+                        <th>CANT.</th>
+                        <th>PRECIO UNIT.</th>
+                        <th>DESCUENTO</th>
+                        <th>SUBTOTAL</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr *ngFor="let it of invoiceItems | invoiceFilter: searchText">
+
+                        <!-- checkbox -->
+                        <td>
+                            <mat-checkbox [(ngModel)]="it.selected" (change)="recalculateInvoice()">
+                            </mat-checkbox>
+                        </td>
+
+                        <!-- código -->
+                        <td>
+                            <strong>{{ it.intakeCode  }}</strong>
+                        </td>
+
+                        <!-- descripción -->
+                        <td>
+                            {{ it.description  }}
+                        </td>
+
+                        <!-- tipo -->
+                        <td>
+                            <span class="chip product" *ngIf="it.itemType === 1">
+                                PRODUCTO
+                            </span>
+
+                            <span class="chip service" *ngIf="it.itemType === 2">
+                                SERVICIO
+                            </span>
+                        </td>
+
+                        <!-- cantidad -->
+                        <td>{{ it.quantity }}</td>
+
+                        <!-- precio -->
+                        <td>
+                            {{ it.unitPrice | currency:'PEN':'symbol':'1.2-2' }}
+                        </td>
+
+                        <td>
+                            {{ it.discount | currency:'PEN':'symbol':'1.2-2' }}
+                        </td>
+
+                        <!-- subtotal -->
+                        <td class="price">
+                            {{ it.subTotal  | currency:'PEN':'symbol':'1.2-2' }}
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <!-- footer tabla -->
+            <div class="table-footer">
+                Mostrando {{ invoiceItems.length }} items encontrados
+            </div>
+
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- ✅ PANEL DERECHO -->
+        <!-- ===================================================== -->
+        <div class="summary-panel">
+
+            <!-- CLIENTE -->
+            <div class="card">
+
+                <div class="card-title">
+                    <mat-icon>person</mat-icon>
+                    <div>
+                        INFORMACIÓN DEL CLIENTE
+                    </div>
+                </div>
+
+                <div class="client-box">
+                    <div class="label">Nombre / Razón Social</div>
+                    <div class="value">
+                        {{ client?.name }}
+                    </div>
+
+                    <div class="label">RUC</div>
+                    <div class="value">
+                        {{ client?.document }}
+                    </div>
+
+                    <a class="change-link">Cambiar</a>
+                </div>
+
+                <div class="doc-type">
+                    <button [class.active]="documentType==='FACTURA'" (click)="setDocumentType('FACTURA')">
+                        Factura
+                    </button>
+
+                    <button [class.active]="documentType==='BOLETA'" (click)="setDocumentType('BOLETA')">
+                        Boleta
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- TOTAL -->
+            <div class="card total-card">
+                <div class="principal">
+                    <div class="total-title">
+                        TOTAL A FACTURAR
+                    </div>
+
+                    <div class="total-amount">
+                        {{ total | currency:'PEN':'symbol':'1.2-2' }}
+                    </div>
+                </div>
+                <div class="secundario">
+                    <div class="totals-detail">
+
+                        <div>
+                            <span>Subtotal</span>
+                            <span>{{ subTotal | currency:'PEN' }}</span>
+                        </div>
+
+                        <div>
+                            <span>IGV (18%)</span>
+                            <span>{{ igv | currency:'PEN' }}</span>
+                        </div>
+
+                        <div class="net">
+                            <span>Total Neto</span>
+                            <strong>
+                                {{ total | currency:'PEN' }}
+                            </strong>
+                        </div>
+
+                    </div>
+                    <div class="info-text">
+                        <mat-icon>info</mat-icon>
+                        <div>Se generará un solo comprobante para todos los items seleccionados</div>
+                    </div>
+
+                    <button class="btn-primary full" (click)="imprimirVenta()">
+                        <mat-icon>receipt</mat-icon>
+
+                        GENERAR COMPROBANTE
+                    </button>
+
+                </div>
 
 
-<!-- BOTONES -->
-<!-- <div style="text-align: right; margin-top: 1rem;">
-    <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
-    <button class="btn-primary" (click)="guardarVenta()">Guardar Venta</button>
-</div> -->
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

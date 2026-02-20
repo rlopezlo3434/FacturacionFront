@@ -76,6 +76,7 @@ import { ModalWorkOrderDetailDialogComponent } from './Pages/menu/facturacion/or
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ModalIntakeDetailDialogComponent } from './Pages/menu/facturacion/intake/modal-intake-detail-dialog/modal-intake-detail-dialog.component';
 import { UppercaseDirective } from '../shared/uppercase.directive';
+import { InvoiceFilterPipe } from "./pipes/invoice-filter.pipe";
 
 
 registerLocaleData(localeEsPe);
@@ -153,7 +154,8 @@ registerLocaleData(localeEsPe);
     ProductFilterPipe,
     BudgetFilterPipe,
     WorOrderFilerPipe,
-    UppercaseDirective
+    UppercaseDirective,
+    InvoiceFilterPipe
 ],
   providers: [provideAnimationsAsync(), { provide: LOCALE_ID, useValue: 'es-PE' }],
   bootstrap: [AppComponent],

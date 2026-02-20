@@ -35,7 +35,7 @@ export class LayoutComponent {
         children: [
           { label: 'Internamiento Vehículos', route: '/facturacion/intake' },
           { label: 'Ordenes de Trabajo', route: '/facturacion/orden-trabajo/intake' },
-          { label: 'Generar Venta', route: '/facturacion/venta' },
+          { label: 'Facturación', route: '/facturacion/venta' },
           // { label: 'Caja', route: '/facturacion/caja' }
         ],
       },

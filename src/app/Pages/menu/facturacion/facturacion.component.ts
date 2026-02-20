@@ -55,6 +55,22 @@ export class FacturacionComponent {
   tipoClienteSeleccionado: string | null = null;
   cli: any = {};
 
+
+  selectedItems = [];
+  searchText = '';
+  client = {
+    name: 'CONSTRUCTORA DEL NORTE S.A.C.',
+    document: '20456789123'
+  };
+
+  documentType = 'FACTURA';
+
+  subTotal = 0;
+  igv = 0;
+  total = 0;
+  serie: string = 'F002';
+  invoiceItems: any[] = [];
+
   constructor(
     private clienteService: ClienteService,
     private facturacionService: FacturacionService,
@@ -72,12 +88,45 @@ export class FacturacionComponent {
   }
 
   ngOnInit() {
-    this.loadItems();
-    this.getChildren();
-    this.loadEmpleados();
+    // this.loadItems();
+    // this.getChildren();
+    // this.loadEmpleados();
     this.loadVentas();
     this.seriesComprobantes();
+    this.loadApprovedItems();
+  }
 
+
+  loadApprovedItems() {
+    this.facturacionService
+      .getApprovedItems()
+      .subscribe(res => {
+        this.invoiceItems = res.data;
+        this.recalculateInvoice();
+
+      });
+  }
+
+  recalculateInvoice() {
+
+    this.itemsSeleccionados =
+      this.invoiceItems.filter(x => x.selected)
+        .map(x => ({
+          ...x,
+          codigo: x.intakeCode,
+          description: x.description,
+          value: x.subTotal,
+          cantidad: x.quantity,
+        }));
+    console.log('Items seleccionados:', this.itemsSeleccionados);
+    const selected =
+      this.invoiceItems.filter((x: any) => x.selected);
+
+    this.subTotal =
+      selected.reduce((a: any, b: any) => a + b.subTotal, 0);
+
+    this.igv = this.subTotal * 0.18;
+    this.total = this.subTotal + this.igv;
   }
 
   mostrarCliente() {
@@ -144,58 +193,8 @@ export class FacturacionComponent {
     });
   }
 
-  seleccionarItem(item: any) {
-    const existe = this.itemsSeleccionados.find(i => i.code === item.code);
-    if (existe) return;
+ 
 
-    const nuevoItem = { ...item, cantidad: 1 };
-    this.calcularTotalesItem(nuevoItem);
-    this.itemsSeleccionados.push(nuevoItem);
-    this.itemBuscado = '';
-    this.mostrarLista = false;
-  }
-
-  seleccionarCliente(cliente: any) {
-    this.venta.cliente = cliente.client;
-    console.log(this.venta.cliente);
-    this.searchCliente = true;
-    this.clienteBuscado = '';
-    this.mostrarLista2 = false;
-    this.agregarCliente = false;
-
-    this.facturacionService.descuentosCliente(this.venta.cliente.documentIdentificationNumber).subscribe({
-      next: (res: any) => {
-        this.promociones = [
-          { descuentoAplicado: res.descuentoAplicado }
-        ];
-
-        console.log('Descuentos disponibles:', this.promociones);
-      }
-    });
-  }
-
-  eliminarCliente() {
-    this.venta.cliente = null;
-    this.searchCliente = false;
-    this.clienteBuscado = '';
-  }
-
-  calcularTotalesItem(item: ItemVenta) {
-    const precioConIgv = item.value || 0;
-    const cantidad = item.cantidad || 1;
-    const precioSinIgv = precioConIgv / 1.18;
-
-    item.subtotal = +(precioSinIgv * cantidad).toFixed(2);
-    item.igv = +(item.subtotal * 0.18).toFixed(2);
-    item.total = +(precioConIgv * cantidad).toFixed(2);
-  }
-
-  filtrarEmpleados() {
-    const filtro = this.empleadoBuscado.toLowerCase();
-    this.empleadosFiltrados = this.empleados.filter(e =>
-      `${e.firstName} ${e.lastName}`.toLowerCase().includes(filtro)
-    );
-  }
 
   seleccionarEmpleado(empleado: any) {
     if (!this.empleadosSeleccionados.some(e => e.id === empleado.id)) {
@@ -285,66 +284,44 @@ export class FacturacionComponent {
     });
   }
 
+  setDocumentType(type: 'FACTURA' | 'BOLETA') {
+
+    this.documentType = type;
+
+    if (type === 'FACTURA') {
+      this.serie = 'F002';
+    } else {
+      this.serie = 'B002';
+    }
+  }
+
   imprimirVenta() {
     this.isLoading = true;
-    const servicios = this.itemsSeleccionados.filter(item => item.item === "Servicio");
 
-    console.log('Items seleccionados para la venta:', this.itemsSeleccionados);
-    const sinEmpleados = servicios.some(item =>
-      !item.empleados || item.empleados.length === 0
-    );
-
-    if (sinEmpleados) {
-      this.snackBar.open(
-        'Cada servicio debe tener al menos un empleado asignado.',
-        '',
-        {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-          panelClass: ['error-snackbar']
-        }
-      );
-      this.isLoading = false;
-
-      return;
-    }
-
-    if (this.venta.metodo_pago === '') {
-      this.snackBar.open(
-        'Debe seleccionar un método de pago.',
-        '',
-        {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-          panelClass: ['error-snackbar']
-        }
-      );
-      this.isLoading = false;
-      return;
-    }
-
+    const items = 
+      this.invoiceItems.filter(x => x.selected)
+        .map(x => ({
+          ...x,
+          code: x.intakeCode,
+          description: x.description,
+          value: x.subTotal,
+          cantidad: x.quantity,
+        }));
     const numeroDoc = this.venta.cliente?.documentIdentificationNumber || '';
     const tipoDocumento = numeroDoc.length === 8 ? "1" : "6";
-
-    const itemsParaEnviar = this.itemsSeleccionados.map(item => ({
-      ...item,
-      empleados: item.empleados || []
-    }));
-
+    console.log('Número de documento del cliente:', items);
     const resumenVenta = {
-      items: itemsParaEnviar,
-      subtotalGeneral: this.subtotalGeneral.toFixed(2),
-      igvGeneral: this.igvGeneral.toFixed(2),
-      totalGeneral: this.totalGeneral.toFixed(2),
+      items: items,
+      // subtotalGeneral: this.subtotalGeneral.toFixed(2),
+      // igvGeneral: this.igvGeneral.toFixed(2),
+      // totalGeneral: this.totalGeneral.toFixed(2),
       observaciones: this.venta.observaciones || '',
       tipo_de_comprobante: this.venta.serieSeleccionada.tipoComprobante,
       cliente_numero: this.venta.cliente?.documentIdentificationNumber || '',
       cliente_nombre: this.venta.cliente?.firstName + ' ' + this.venta.cliente?.lastName,
-      serie: this.venta.serieSeleccionada.serie,
+      serie: this.serie,
       cliente_tipo_documento: tipoDocumento,
-      metodo_pago: this.venta.metodo_pago || '',
+      metodo_pago: this.venta.metodo_pago || 'EFECTIVO',
       fecha_emision: this.fechaBoleteoHoy
     };
 
@@ -434,21 +411,6 @@ export class FacturacionComponent {
     if (this.venta.promocionSeleccionada) this.aplicarDescuento();
   }
 
-  actualizarTotales(item: ItemVenta) {
-    this.calcularTotalesItem(item);
-  }
-
-  get subtotalGeneral() {
-    return this.itemsSeleccionados.reduce((acc, i) => acc + (i.subtotal || 0), 0);
-  }
-
-  get igvGeneral() {
-    return this.itemsSeleccionados.reduce((acc, i) => acc + (i.igv || 0), 0);
-  }
-
-  get totalGeneral() {
-    return this.itemsSeleccionados.reduce((acc, i) => acc + (i.total || 0), 0);
-  }
 
 
   reporteDiario() {
@@ -488,28 +450,28 @@ export class FacturacionComponent {
   }
 
   aplicarDescuento() {
-  const descuento = Number(this.promoTarjeta) || 0;
+    const descuento = Number(this.promoTarjeta) || 0;
 
-  this.itemsSeleccionados.forEach(item => {
-    const precioConIgv = item.value;
-    const cantidad = item.cantidad;
+    this.itemsSeleccionados.forEach(item => {
+      const precioConIgv = item.value;
+      const cantidad = item.cantidad;
 
-    // total sin descuento
-    const totalOriginal = precioConIgv * cantidad;
+      // total sin descuento
+      const totalOriginal = precioConIgv * cantidad;
 
-    // aplicar descuento
-    const totalConDescuento = +(totalOriginal * (1 - descuento / 100)).toFixed(2);
+      // aplicar descuento
+      const totalConDescuento = +(totalOriginal * (1 - descuento / 100)).toFixed(2);
 
-    // recalcular valores sin IGV
-    const subtotal = +(totalConDescuento / 1.18).toFixed(2);
-    const igv = +(subtotal * 0.18).toFixed(2);
+      // recalcular valores sin IGV
+      const subtotal = +(totalConDescuento / 1.18).toFixed(2);
+      const igv = +(subtotal * 0.18).toFixed(2);
 
-    // asignar nuevos valores al item
-    item.total = totalConDescuento;
-    item.subtotal = subtotal;
-    item.igv = igv;
-  });
-}
+      // asignar nuevos valores al item
+      item.total = totalConDescuento;
+      item.subtotal = subtotal;
+      item.igv = igv;
+    });
+  }
 
 
   onPromoChange() {
@@ -522,15 +484,15 @@ export class FacturacionComponent {
   }
 
   quitarDescuento() {
-  this.itemsSeleccionados.forEach(item => {
-    const precioConIgv = item.value;
-    const cantidad = item.cantidad;
+    this.itemsSeleccionados.forEach(item => {
+      const precioConIgv = item.value;
+      const cantidad = item.cantidad;
 
-    item.subtotal = +((precioConIgv / 1.18) * cantidad).toFixed(2);
-    item.igv = +(item.subtotal * 0.18).toFixed(2);
-    item.total = +(precioConIgv * cantidad).toFixed(2);
-  });
-}
+      item.subtotal = +((precioConIgv / 1.18) * cantidad).toFixed(2);
+      item.igv = +(item.subtotal * 0.18).toFixed(2);
+      item.total = +(precioConIgv * cantidad).toFixed(2);
+    });
+  }
 
   guardarVenta() {
     console.log('Venta guardada:', this.venta);

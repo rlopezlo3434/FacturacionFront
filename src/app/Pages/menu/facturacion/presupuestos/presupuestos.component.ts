@@ -6,6 +6,7 @@ import { ModalBudgetCreateDialogComponent } from './modal-budget-create-dialog/m
 import { ModalBudgetDetailDialogComponent } from './modal-budget-detail-dialog/modal-budget-detail-dialog.component';
 import { WorkOrderService } from '../../../../../services/work-order.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { FacturacionService } from '../../../../../services/facturacion.service';
 
 @Component({
   selector: 'app-presupuestos',
@@ -27,7 +28,8 @@ export class PresupuestosComponent {
     private dialog: MatDialog,
     private workOrderService: WorkOrderService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private facturacionService: FacturacionService
   ) { }
 
   ngOnInit(): void {
@@ -115,4 +117,30 @@ export class PresupuestosComponent {
       }
     });
   }
+
+  generateInvoice() {
+
+  this.facturacionService.generateFromIntake(this.intakeId)
+    .subscribe({
+      next: (resp:any) => {
+
+        this.snackBar.open(
+          resp.message || 'Se crearon items para facturar correctamente.',
+          '',
+          { duration: 3000 }
+        );
+
+        // opcional navegar
+        this.router.navigate(['/facturacion/venta', resp.invoiceId]);
+
+      },
+      error: err => {
+        this.snackBar.open(
+          err.error?.message || 'No se pudo generar los items para facturar.',
+          '',
+          { duration: 3000 }
+        );
+      }
+    });
+}
 }
