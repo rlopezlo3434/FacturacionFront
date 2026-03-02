@@ -1,26 +1,33 @@
-/* ===== LAYOUT PRINCIPAL ===== */
 
-.dashboard-grid{
-  display:flex;
-  gap:20px;
-  width:100%;
-}
+/* ===============================
+   LAYOUT PRINCIPAL
+================================ */
+
+// .dashboard-grid{
+//   display:grid;
+//   grid-template-columns: 1.3fr 2fr;
+//   gap:20px;
+//   width:100%;
+// }
 
 
-/* ===== TARJETAS ===== */
+/* ===============================
+   TARJETAS
+================================ */
 
 .card{
   background:#fff;
   border-radius:12px;
   padding:16px;
-  box-shadow:0 6px 16px rgba(0,0,0,.08);
+  // box-shadow:0 6px 16px rgba(0,0,0,.08);
   display:flex;
   flex-direction:column;
-  align-items: center;
+  width:100%;
+  min-width:0;
 }
 
 .card-title{
-  font-size:18px;
+  font-size:1.5rem;
   font-weight:700;
   text-align:center;
   margin-bottom:12px;
@@ -32,39 +39,45 @@
 }
 
 .title{
-    font-size: 1rem;
-    font-weight: 600;
+  font-size:1rem;
+  font-weight:600;
 }
 
 
-/* ===== BLOQUES SUPERIORES ===== */
+/* ===============================
+   BLOQUES IZQUIERDA
+================================ */
 
 .bloques{
   display:flex;
   flex-direction:column;
   gap:20px;
+  height:100%;
 }
 
 
-/* ===== INTERIOR CARD ===== */
+/* ===============================
+   INTERIOR CARD
+================================ */
 
 .card-body{
   display:flex;
-  justify-content:space-between;
+  justify-content:center;
   align-items:center;
   gap:20px;
+  flex-wrap:wrap;
 }
 
 
-/* ===== GRÁFICOS ===== */
+/* ===============================
+   CHARTS
+================================ */
 
-.chart{
-  height:160px;
-}
-
+.chart,
+.chart-wrapper,
 .chart-wrapper2{
-    width:100%;
-    height:300px;
+  width:100%;
+  height:250px;
 }
 
 canvas{
@@ -73,12 +86,27 @@ canvas{
 }
 
 
-/* ===== INFO LATERAL ===== */
+/* ===============================
+   INFO LATERAL
+================================ */
 
 .side-info{
   display:flex;
+  justify-content:center;
   text-align:center;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.info-block{
+  display:flex;
+  align-items: center;
   gap: 1rem;
+}
+.info-block .title{
+  font-size:1.5rem;
+  font-weight:600;
+  // color: #888;
 }
 
 .info-block small{
@@ -86,9 +114,6 @@ canvas{
   font-size:11px;
 }
 
-.info-block{
-    margin: 0;
-}
 .value{
   font-size:22px;
   font-weight:700;
@@ -96,20 +121,26 @@ canvas{
 }
 
 
-/* ===== TOP SERVICIOS ===== */
+/* ===============================
+   TOP SERVICIOS
+================================ */
 
 .top-grid{
-  display:flex;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
   gap:20px;
-  margin-bottom:20px;
+  width:100%;
 }
 
 
-/* ===== COMPARATIVO GRID ===== */
+/* ===============================
+   COMPARATIVOS
+================================ */
 
 .comparativo-grid{
   margin-top:20px;
-  display:flex;
+  display:grid;
+  grid-template-columns:2fr 1fr;
   gap:20px;
 }
 
@@ -120,6 +151,7 @@ canvas{
 }
 
 .circle-wrapper{
+  position:relative;
   height:260px;
 }
 
@@ -135,13 +167,27 @@ canvas{
   font-size:20px;
   font-weight:700;
 }
-.pct.up{ color:#2ecc71; }
-.pct.down{ color:#e74c3c; }
+
+.pct.up{
+  color:#2ecc71;
+}
+
+.pct.down{
+  color:#e74c3c;
+}
+
+
+/* ===============================
+   TABLA PRODUCTIVIDAD
+================================ */
 
 .tabla-productividad{
   width:100%;
   border-collapse:collapse;
   font-size:14px;
+  display:block;
+  overflow-x:auto;
+  white-space:nowrap;
 }
 
 .tabla-productividad thead{
@@ -174,30 +220,128 @@ canvas{
   color:#888;
 }
 
-.circle-wrapper{
-  position: relative;
-  height: 260px;
-}
 
-.center-text{
-  font-size: 20px;
-  font-weight: 700;
-}
-
-
-@media(max-width:900px){
-  .comparativo-circles{ grid-template-columns:1fr; }
-}
-
-/* ===== RESPONSIVE ===== */
+/* ===============================
+   RESPONSIVE - LAPTOP/TABLET
+================================ */
 
 @media(max-width:1100px){
 
-//   .dashboard-grid{
-//     grid-template-columns:1fr;
-//   }
+  .dashboard-grid{
+    grid-template-columns:1fr;
+  }
 
-//   .comparativo-grid{
-//     grid-template-columns:1fr;
-//   }
+  .comparativo-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+
+/* ===============================
+   RESPONSIVE - TABLET
+================================ */
+
+@media(max-width:768px){
+
+  .card-body{
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .top-grid{
+    grid-template-columns:1fr;
+  }
+
+  .comparativo-circles{
+    grid-template-columns:1fr;
+  }
+
+  .chart,
+  .chart-wrapper,
+  .chart-wrapper2{
+    height:200px;
+  }
+
+}
+
+
+/* ===============================
+   RESPONSIVE - MOBILE
+================================ */
+
+@media(max-width:480px){
+
+  .card{
+    padding:12px;
+  }
+
+  .card-title{
+    font-size:16px;
+  }
+
+  .value{
+    font-size:18px;
+  }
+
+  .pct{
+    font-size:16px;
+  }
+
+  .side-info{
+    gap:10px;
+  }
+
+}
+
+
+
+
+.period-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.period-selector label {
+  font-weight: 600;
+  color: #444;
+  font-size: 14px;
+}
+
+.period-selector select {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  background-color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+/* Hover */
+.period-selector select:hover {
+  border-color: #1976d2;
+}
+
+/* Focus */
+.period-selector select:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25,118,210,0.15);
+}
+
+/* estilo moderno */
+.period-selector select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image:
+    url("data:image/svg+xml;utf8,<svg fill='%23666' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 18px;
+  padding-right: 30px;
 }

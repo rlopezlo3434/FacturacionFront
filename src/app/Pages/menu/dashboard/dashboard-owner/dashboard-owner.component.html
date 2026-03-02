@@ -37,23 +37,15 @@
   <div class="grid-2">
     <div class="card">
       <h3>Ventas por tienda (MTD)</h3>
-      <apx-chart
-        [series]="ventasPorTiendaSeries"
-        [chart]="barChart"
-        [xaxis]="ventasPorTiendaXAxis"
-        [plotOptions]="plotOptionsBar"
-        [colors]="barColors">
+      <apx-chart *ngIf="chartReady4" [series]="ventasPorTiendaSeries" [chart]="barChart" [xaxis]="ventasPorTiendaXAxis"
+        [plotOptions]="plotOptionsBar" [colors]="barColors">
       </apx-chart>
     </div>
 
     <div class="card">
       <h3>Servicios por tienda (MTD)</h3>
-      <apx-chart
-        [series]="serviciosPorTiendaSeries"
-        [chart]="barChart"
-        [xaxis]="serviciosPorTiendaXAxis"
-        [plotOptions]="plotOptionsBar"
-        [colors]="barColors">
+      <apx-chart *ngIf="chartReady2" [series]="serviciosPorTiendaSeries" [chart]="barChart"
+        [xaxis]="serviciosPorTiendaXAxis" [plotOptions]="plotOptionsBar" [colors]="barColors">
       </apx-chart>
     </div>
   </div>
@@ -62,25 +54,35 @@
   <div class="grid-2">
     <div class="card">
       <h3>Ventas acumuladas (Mes actual vs anterior)</h3>
-      <apx-chart
-        [series]="ventasAcumuladasSeries"
-        [chart]="lineChart"
-        [xaxis]="ventasAcumuladasXAxis"
-        [plotOptions]="plotOptionsBar"
-        [colors]="barColors">
+      <apx-chart *ngIf="chartReady3" [series]="ventasAcumuladasSeries" [chart]="lineChart"
+        [xaxis]="ventasAcumuladasXAxis" [plotOptions]="plotOptionsBar" [colors]="barColors">
       </apx-chart>
     </div>
 
     <div class="card">
       <h3>Desviación MTD por tienda</h3>
-      <apx-chart
-        [series]="desviacionSeries"
-        [chart]="barChart"
-        [xaxis]="desviacionXAxis"
-        [plotOptions]="plotOptionsBar"
-        [colors]="barColors">
+      <apx-chart *ngIf="chartReady4" [series]="desviacionSeries" [chart]="barChart" [xaxis]="desviacionXAxis"
+        [plotOptions]="plotOptionsBar" [colors]="barColors">
       </apx-chart>
     </div>
   </div>
+
+  <div class="footer-container">
+  <div class="footer">
+    <div>Estilista</div>
+    <div>Cnt. Servicios</div>
+    <div>Monto Total</div>
+    <div>Establecimiento</div>
+  </div>
+
+  <div>
+    <div *ngFor="let item of topEstilistas" class="footer-row">
+      <div>{{ item.estilista }}</div>
+      <div>{{ item.cantidad }}</div>
+      <div>S/ {{ item.importe | number:'1.0-0' }}</div>
+      <div>{{ item.establecimiento }}</div>
+    </div>
+  </div>
+</div>
 
 </div>

@@ -107,6 +107,17 @@ export class DashboardService {
     );
   }
 
+  getProductividadPersonalMasivo(fecha: string) {
+    return this.http.get<any[]>(
+      `${environment.apiBase}/dashboard/productividad-personal-Masivo`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }, params: { fecha }
+      }
+    );
+  }
+
   contribucionEstilistaDia(fecha: string) {
     return this.http.get<any[]>(
       `${environment.apiBase}/dashboard/contribucion-estilista-dia`,

@@ -8,12 +8,21 @@ import { ApexAxisChartSeries, ApexChart, ApexPlotOptions, ApexXAxis } from 'ng-a
   styleUrl: './dashboard-owner.component.scss'
 })
 export class DashboardOwnerComponent {
-// =========================
+  // =========================
   // KPIs
   // =========================
   kpis: any;
   fecha: string = new Date().toISOString().substring(0, 10);
+  chartReady = false;
+  chartReady2= false;
+  chartReady3 = false;
+  chartReady4 = false;
 
+  topEstilistas: any[] = [
+    { estilista: 'Estilista 1', cantidad: 1200, importe: 15000, establecimiento: 'Establecimiento A' },
+    { estilista: 'Estilista 2', cantidad: 1100, importe: 14000, establecimiento: 'Establecimiento B' },
+    { estilista: 'Estilista 3', cantidad: 900, importe: 12000, establecimiento: 'Establecimiento C' }
+  ];
   // =========================
   // CHART CONFIG
   // =========================
@@ -62,7 +71,7 @@ export class DashboardOwnerComponent {
   desviacionSeries: ApexAxisChartSeries = [];
   desviacionXAxis: ApexXAxis = { categories: [] };
 
-   barColors: string[] = [
+  barColors: string[] = [
     '#008FFB',
     '#00E396',
     '#FEB019',
@@ -74,7 +83,7 @@ export class DashboardOwnerComponent {
 
   constructor(
     private dashboardService: DashboardService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadDashboard();
@@ -88,6 +97,7 @@ export class DashboardOwnerComponent {
     this.loadVentasPorTienda();
     this.loadVentasAcumuladas();
     this.loadDesviacionPorTienda();
+    this.loadProductividadPersonalMasiva();
   }
 
   // =========================
@@ -97,6 +107,7 @@ export class DashboardOwnerComponent {
     this.dashboardService.getKpis(this.fecha)
       .subscribe(res => {
         this.kpis = res;
+        this.chartReady = true;
       });
   }
 
@@ -109,22 +120,23 @@ export class DashboardOwnerComponent {
 
         this.ventasPorTiendaSeries = [{
           name: 'Ventas',
-          data: data.map((x:any) => x.total)
+          data: data.map((x: any) => x.total)
         }];
 
         this.ventasPorTiendaXAxis = {
-          categories: data.map((x:any) => x.tienda)
+          categories: data.map((x: any) => x.tienda)
         };
 
         // Si quieres reutilizar para servicios (placeholder)
         this.serviciosPorTiendaSeries = [{
           name: 'Servicios',
-          data: data.map((x:any) => Math.round(x.total / 50)) // estimado
+          data: data.map((x: any) => Math.round(x.total / 50)) // estimado
         }];
 
         this.serviciosPorTiendaXAxis = {
-          categories: data.map((x:any) => x.tienda)
+          categories: data.map((x: any) => x.tienda)
         };
+        this.chartReady2 = true;
       });
   }
 
@@ -138,17 +150,18 @@ export class DashboardOwnerComponent {
         this.ventasAcumuladasSeries = [
           {
             name: 'Mes Actual',
-            data: data.map((x:any) => x.mesActual)
+            data: data.map((x: any) => x.mesActual)
           },
           {
             name: 'Mes Anterior',
-            data: data.map((x:any) => x.mesAnterior)
+            data: data.map((x: any) => x.mesAnterior)
           }
         ];
 
         this.ventasAcumuladasXAxis = {
-          categories: data.map((x:any) => `Día ${x.dia}`)
+          categories: data.map((x: any) => `Día ${x.dia}`)
         };
+        this.chartReady3 = true;
       });
   }
 
@@ -161,12 +174,25 @@ export class DashboardOwnerComponent {
 
         this.desviacionSeries = [{
           name: 'Desviación S/',
-          data: data.map((x:any) => x.diferencia)
+          data: data.map((x: any) => x.diferencia)
         }];
 
         this.desviacionXAxis = {
-          categories: data.map((x:any) => x.tienda)
+          categories: data.map((x: any) => x.tienda)
         };
+        this.chartReady4 = true;
+      });
+  }
+
+  loadProductividadPersonalMasiva(){
+    this.dashboardService.getProductividadPersonalMasivo(this.fecha)
+      .subscribe((data: any) => {
+        this.topEstilistas = data.map((x: any) => ({
+          estilista: x.empleado,
+          importe: x.importe,
+          cantidad: x.cantidad,
+          establecimiento: x.establecimiento
+        }));
       });
   }
 }

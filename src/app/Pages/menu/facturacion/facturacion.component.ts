@@ -472,7 +472,7 @@ export class FacturacionComponent {
       const a = document.createElement('a');
       const objectUrl = URL.createObjectURL(blob);
       a.href = objectUrl;
-      a.download = `ReporteDiario_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      a.download = `ReporteMensual.xlsx`;
       a.click();
       URL.revokeObjectURL(objectUrl);
     });
@@ -483,7 +483,7 @@ export class FacturacionComponent {
       const a = document.createElement('a');
       const objectUrl = URL.createObjectURL(blob);
       a.href = objectUrl;
-      a.download = `ReporteDiario_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      a.download = `ReporteDiario.xlsx`;
       a.click();
       URL.revokeObjectURL(objectUrl);
     });

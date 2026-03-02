@@ -1,59 +1,63 @@
 <div class="dashboard-grid">
+  <div class="period-selector">
+    <label>Periodo:</label>
 
+    <select [(ngModel)]="mesSeleccionado" (change)="cambiarPeriodo()">
+      <option *ngFor="let m of meses" [value]="m.value">
+        {{ m.label }}
+      </option>
+    </select>
+  </div>
   <!-- IZQUIERDA — BLOQUES MONTOS + SERVICIOS -->
   <div class="bloques">
 
     <!-- BLOQUE MONTOS -->
     <div class="card">
       <div class="card-title">
-        Monto <small>(soles)</small>
+        Venta diaria
       </div>
+      <div class="side-info">
+        <div class="info-block">
+          <div class="title">Día</div>
+          <div class="value">S/ {{ totalHoySoles | number:'1.2-2' }}</div>
+        </div>
 
+        <div class="info-block">
+          <div class="title">Mes</div>
+          <div class="value">S/ {{ totalMesSoles | number:'1.2-2' }}</div>
+        </div>
+      </div>
       <div class="card-body">
         <div class="chart">
-          <canvas baseChart [data]="chartData" [type]="'bar'"></canvas>
+          <canvas baseChart [data]="chartData" [type]="'bar'" [options]="chartOptions"></canvas>
         </div>
 
-        <div class="side-info">
-          <div class="info-block">
-            <div class="title">Día</div>
-            <small>(soles)</small>
-            <div class="value">{{ totalHoySoles | number:'1.2-2' }}</div>
-          </div>
 
-          <div class="info-block">
-            <div class="title">Mes</div>
-            <small>(acum. soles)</small>
-            <div class="value">{{ totalMesSoles | number:'1.2-2' }}</div>
-          </div>
-        </div>
       </div>
     </div>
 
     <!-- BLOQUE SERVICIOS -->
     <div class="card">
       <div class="card-title">
-        Servicios <small>(número)</small>
+        Servicios por día (#)
       </div>
+      <div class="side-info">
+        <div class="info-block">
+          <div class="title">Por Día:</div>
+          <div class="value">{{ totalHoyServicios }}</div>
+        </div>
 
+        <div class="info-block">
+          <div class="title">Por Mes:</div>
+          <div class="value">{{ totalMesServicios }}</div>
+        </div>
+      </div>
       <div class="card-body">
         <div class="chart">
-          <canvas baseChart [data]="chartServiciosData" [type]="'bar'"></canvas>
+          <canvas baseChart [data]="chartServiciosData" [type]="'bar'" [options]="chartOptions"></canvas>
         </div>
 
-        <div class="side-info">
-          <div class="info-block">
-            <div class="title">Día</div>
-            <small>(# servicios)</small>
-            <div class="value">{{ totalHoyServicios }}</div>
-          </div>
 
-          <div class="info-block">
-            <div class="title">Mes</div>
-            <small>(acum #)</small>
-            <div class="value">{{ totalMesServicios }}</div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -65,21 +69,23 @@
 
       <div class="card">
         <div class="card-title">
-          SERVICIOS DEL DIA <small>(soles)</small>
+          Ventas del día (S/)
         </div>
 
         <div class="chart-wrapper">
-          <canvas baseChart [type]="'bar'" [data]="chartTopDia" [options]="{indexAxis:'y'}"></canvas>
+          <canvas baseChart [type]="'bar'" [data]="chartTopDia"
+            [options]="{indexAxis:'y', plugins:{legend:{display:false}}}"></canvas>
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">
-          SERVICIOS DEL MES <small>(acum. soles)</small>
+          Ventas del mes (S/)
         </div>
 
         <div class="chart-wrapper">
-          <canvas baseChart [type]="'bar'" [data]="chartTopMes" [options]="{indexAxis:'y'}"></canvas>
+          <canvas baseChart [type]="'bar'" [data]="chartTopMes"
+            [options]="{indexAxis:'y', plugins:{legend:{display:false}}}"></canvas>
         </div>
       </div>
 
@@ -89,21 +95,23 @@
 
       <div class="card">
         <div class="card-title">
-          SERVICIOS DEL DIA <small>(cantidad)</small>
+          Ventas del día (#)
         </div>
 
         <div class="chart-wrapper">
-          <canvas baseChart [type]="'bar'" [data]="chartTopDiaCantidad" [options]="{indexAxis:'y'}"></canvas>
+          <canvas baseChart [type]="'bar'" [data]="chartTopDiaCantidad"
+            [options]="{indexAxis:'y', plugins:{legend:{display:false}}}"></canvas>
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">
-          SERVICIOS DEL MES <small>(cantidad)</small>
+          Ventas del mes (#)
         </div>
 
         <div class="chart-wrapper">
-          <canvas baseChart [type]="'bar'" [data]="chartTopMesCantidad" [options]="{indexAxis:'y'}"></canvas>
+          <canvas baseChart [type]="'bar'" [data]="chartTopMesCantidad"
+            [options]="{indexAxis:'y', plugins:{legend:{display:false}}}"></canvas>
         </div>
       </div>
 
@@ -118,9 +126,9 @@
 <div class="comparativo-grid">
 
   <div class="card">
-    <div class="card-title">Comparativo mensual (Soles)</div>
+    <div class="card-title">Comparativo mensual (S/)</div>
     <div class="chart-wrapper2">
-      <canvas baseChart [type]="'bar'" [data]="chartComparativoData"></canvas>
+      <canvas baseChart [type]="'bar'" [data]="chartComparativoData" [options]="chartOptions"></canvas>
     </div>
   </div>
   <div class="comparativo-circles">
@@ -203,43 +211,3 @@
     </tbody>
   </table>
 </div>
-
-<!-- <div class="top-grid">
-
-  <div class="card">
-    <div class="card-title">
-      Día <small>(soles)</small>
-    </div>
-
-    <div class="circle-wrapper">
-      <canvas baseChart
-        [type]="'doughnut'"
-        [data]="donutDiaData"
-        [options]="donutOptions">
-      </canvas>
-
-      <div class="center-text">
-        {{ totalDia | number:'1.2-2' }} <small>S/</small>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">
-      Mes <small>(Acum soles)</small>
-    </div>
-
-    <div class="circle-wrapper">
-      <canvas baseChart
-        [type]="'doughnut'"
-        [data]="donutMesData"
-        [options]="donutOptions">
-      </canvas>
-
-      <div class="center-text">
-        {{ totalMes | number:'1.2-2' }} <small>S/</small>
-      </div>
-    </div>
-  </div>
-
-</div> -->

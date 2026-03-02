@@ -129,6 +129,11 @@ export class ResumenComponent {
 
 
   chartOptions = {
+    plugins: {
+      legend: {
+        display: false // ✅ elimina "Ventas"
+      }
+    },
     responsive: true,
     maintainAspectRatio: false,   // 👈 IMPORTANTE
 
@@ -218,36 +223,49 @@ export class ResumenComponent {
   ];
 
   productividad: any[] = [];
+  mesSeleccionado: number = new Date().getMonth();
 
+  meses = [
+    { value: 0, label: 'Enero' },
+    { value: 1, label: 'Febrero' },
+    { value: 2, label: 'Marzo' },
+    { value: 3, label: 'Abril' },
+    { value: 4, label: 'Mayo' },
+    { value: 5, label: 'Junio' },
+    { value: 6, label: 'Julio' },
+    { value: 7, label: 'Agosto' },
+    { value: 8, label: 'Septiembre' },
+    { value: 9, label: 'Octubre' },
+    { value: 10, label: 'Noviembre' },
+    { value: 11, label: 'Diciembre' }
+  ];
   constructor(private dashboardService: DashboardService) { }
   ngOnInit(): void {
-    this.cargarVentasDelMes();
-    this.cargarServiciosMes();
-    this.cargarTopServicios();
-    this.cargarTopServiciosCantidad();
-    this.cargarComparativo();
-    this.cargarComparativosCircles();
-    this.cargarProductividad();
-    this.cargarContribucion();
+    this.cambiarPeriodo();
+    // this.cargarVentasDelMes();
+    // this.cargarServiciosMes();
+    // this.cargarTopServicios();
+    // this.cargarTopServiciosCantidad();
+    // this.cargarComparativo();
+    // this.cargarComparativosCircles();
+    // this.cargarProductividad();
+    // this.cargarContribucion();
 
   }
 
-  cargarVentasDelMes() {
+  cargarVentasDelMes(fecha?: string) {
+    console.log('Cargando ventas del mes para fecha:', fecha);
+    const hoy = fecha || this.obtenerFechaLocal(); // YYYY-MM-DD
 
-    const hoy = new Date();
-    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset()); // Ajuste local
-    const fechaHoy = hoy.toISOString().substring(0, 10);
-
-
-    this.dashboardService.getVentasMensuales(fechaHoy)
+    this.dashboardService.getVentasMensuales(hoy)
       .subscribe(res => {
         const hoy = new Date().getDate();
 
         this.chartData = {
-          labels: res.dias.slice(0, fechaHoy),
+          labels: res.dias.slice(0, hoy),
           datasets: [
             {
-              data: res.montosPorDia.slice(0, fechaHoy),
+              data: res.montosPorDia.slice(0, hoy),
               label: 'Monto diario',
               backgroundColor: this.getRepeatedColors(this.pastelColors, res.montosPorDia.length),
               borderColor: this.getRepeatedColors(this.pastelBorder, res.montosPorDia.length),
@@ -263,13 +281,13 @@ export class ResumenComponent {
       });
   }
 
-  cargarServiciosMes() {
+  cargarServiciosMes(fecha?: string) {
 
     // const hoy = new Date();
     // hoy.setDate(hoy.getDate() - 1);
     // const fecha = hoy.toISOString().substring(0, 10);
 
-    const hoy = new Date().toISOString().substring(0, 10); // YYYY-MM-DD
+    const hoy = fecha || this.obtenerFechaLocal(); // YYYY-MM-DD
 
     this.dashboardService.getServiciosMensuales(hoy)
       .subscribe(res => {
@@ -293,13 +311,9 @@ export class ResumenComponent {
       });
   }
 
-  cargarTopServicios() {
+  cargarTopServicios(fecha?: string) {
 
-    const hoy = new Date().toISOString().substring(0, 10);
-
-    // const hoy = new Date();
-    // hoy.setDate(hoy.getDate() - 1);
-    // const fecha = hoy.toISOString().substring(0, 10);
+    const hoy = fecha || this.obtenerFechaLocal();
 
     this.dashboardService.getTopServiciosDia(hoy)
       .subscribe(res => {
@@ -337,13 +351,9 @@ export class ResumenComponent {
 
   }
 
-  cargarTopServiciosCantidad() {
+  cargarTopServiciosCantidad(fecha?: string) {
 
-    // const hoy = new Date();
-    // hoy.setDate(hoy.getDate() - 1);
-    // const fecha = hoy.toISOString().substring(0, 10);
-
-    const hoy = new Date().toISOString().substring(0, 10); // YYYY-MM-DD
+    const hoy = fecha || this.obtenerFechaLocal();
 
     this.dashboardService.getTopServiciosDiaCantidad(hoy)
       .subscribe(res => {
@@ -381,10 +391,9 @@ export class ResumenComponent {
       );
   }
 
-  cargarComparativo() {
+  cargarComparativo(fecha?: string) {
 
-    const hoy = new Date().toISOString().substring(0, 10);
-
+    const hoy = fecha || this.obtenerFechaLocal();
     this.dashboardService.getComparativoMensual(hoy)
       .subscribe(res => {
 
@@ -413,8 +422,8 @@ export class ResumenComponent {
       });
   }
 
-  cargarComparativosCircles(): void {
-    const hoy = this.obtenerFechaLocal();
+  cargarComparativosCircles(fecha?: string): void {
+    const hoy = fecha || this.obtenerFechaLocal();
 
     console.log('Fecha para comparativos:', hoy);
     this.dashboardService.comparativoDiario(hoy).subscribe((res: any) => {
@@ -459,28 +468,64 @@ export class ResumenComponent {
     });
   }
 
-  private obtenerFechaLocal(): string {
-    const hoy = new Date();
+  private obtenerFechaLocal(fecha?: Date): string {
 
-    const year = hoy.getFullYear();
-    const month = String(hoy.getMonth() + 1).padStart(2, '0');
-    const day = String(hoy.getDate()).padStart(2, '0');
+    const f = fecha ?? new Date();
+
+    const year = f.getFullYear();
+    const month = String(f.getMonth() + 1).padStart(2, '0');
+    const day = String(f.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
   }
 
-  cargarProductividad() {
-    const hoy = new Date().toISOString().substring(0, 10);
 
+  cambiarPeriodo() {
+
+    const hoy = new Date();
+
+    const year = hoy.getFullYear();
+    const diaActual = hoy.getDate();
+
+    const ultimoDiaMes = new Date(
+      year,
+      this.mesSeleccionado + 1,
+      0
+    ).getDate();
+
+    const diaFinal = Math.min(diaActual, ultimoDiaMes);
+
+    const nuevaFecha = new Date(
+      year,
+      this.mesSeleccionado,
+      diaFinal
+    );
+
+    const fechaApi = this.obtenerFechaLocal(nuevaFecha);
+
+    // ✅ AQUÍ interactúan realmente
+    this.cargarVentasDelMes(fechaApi);
+    this.cargarServiciosMes(fechaApi);
+    this.cargarTopServicios(fechaApi);
+    this.cargarTopServiciosCantidad(fechaApi);
+    this.cargarComparativo(fechaApi);
+    this.cargarComparativosCircles(fechaApi);
+    this.cargarProductividad(fechaApi);
+    this.cargarContribucion(fechaApi);
+  }
+
+  cargarProductividad(fecha?: string) {
+    // const hoy = new Date().toISOString().substring(0, 10);
+    const hoy = fecha || this.obtenerFechaLocal();
     this.dashboardService.getProductividadPersonal(hoy)
       .subscribe(res => {
         this.productividad = res;
       });
   }
 
-  cargarContribucion() {
+  cargarContribucion(fecha?: string) {
 
-    const hoy = this.obtenerFechaLocal();
+    const hoy = fecha || this.obtenerFechaLocal();
 
 
     this.dashboardService.contribucionEstilistaDia(hoy).subscribe(res => {

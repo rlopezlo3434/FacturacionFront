@@ -54,7 +54,7 @@ export class CajaService {
     });
   }
 
-  cajaDiario(caja: number, fecha?: string): Observable<Blob> {
+  cajaDiario(fecha?: string): Observable<Blob> {
     let params: any = {};
 
     if (fecha) {
@@ -62,7 +62,7 @@ export class CajaService {
     }
 
     return this.http.get(
-      `${environment.apiBase}/caja/excel/${caja}`,
+      `${environment.apiBase}/caja/excel`,
       {
         params,
         headers: {
