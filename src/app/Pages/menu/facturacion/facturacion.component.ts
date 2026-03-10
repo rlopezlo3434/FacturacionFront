@@ -302,6 +302,7 @@ export class FacturacionComponent {
       this.invoiceItems.filter(x => x.selected)
         .map(x => ({
           ...x,
+          id: x.budgetItemId,
           code: x.intakeCode,
           description: x.description,
           value: x.subTotal,

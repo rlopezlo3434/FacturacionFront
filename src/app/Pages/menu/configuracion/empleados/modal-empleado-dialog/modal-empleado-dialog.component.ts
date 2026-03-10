@@ -20,49 +20,66 @@ export class ModalEmpleadoDialogComponent {
     private empleadosService: EmpleadosService,
     private snackBar: MatSnackBar
   ) {
+
     const userString = localStorage.getItem('user');
     const user = userString ? JSON.parse(userString) : null;
     this.roleCode = user?.roleCode;
+
     if (data) {
-      // Editar
-      this.emp = { ...data };
-    } else {
-      // Crear
+      console.log('Datos recibidos para edición:', data);
       this.emp = {
-        name: '',
-        lastName: '',
-        typeGender: '',
-        documentIdentificationType: '',
-        documentNumber: '',
-        email: '',
-        username: '',
-        roleCode: '',
+        id: data.id,
+        names: data.names,
+        documentIdentificationType: data.documentIdentificationType === 'Dni' ? 'DNI' : data.documentIdentificationType === 'Ruc' ? 'RUC' : 'CARNET_EXTRANJERIA',
+        documentIdentificationNumber: data.documentNumber,
+        email: data.email,
+        gender: data.typeGender === 'Male' ? 'M' : 'F',
+        roleCode: data.roleCode
       };
+
+    } else {
+
+      this.emp = {
+        names: '',
+        documentIdentificationType: '',
+        documentIdentificationNumber: '',
+        email: '',
+        gender: '',
+        roleCode: '',
+        username: ''
+      };
+
     }
+
   }
 
-  guardar() {
-    const empleado = {
-      firstName: this.emp.name,
-      lastName: this.emp.lastName,
-      documentIdentificationNumber: this.emp.documentNumber,
+   guardar() {
+
+    const request = {
+
+      names: this.emp.names,
       documentIdentificationType: this.emp.documentIdentificationType,
-      gender: this.emp.typeGender,
+      documentIdentificationNumber: this.emp.documentIdentificationNumber,
       email: this.emp.email,
+      gender: this.emp.gender,
       roleCode: this.emp.roleCode,
-      password: this.password || undefined,
-      username: !this.data ? this.emp.username : undefined
+      password: this.password || undefined
+
     };
 
-    // creación o edición
     const accion = this.data
-      ? this.empleadosService.updateEmpleado(this.emp.id, empleado)
-      : this.empleadosService.createEmpleado(empleado);
+      ? this.empleadosService.updateEmpleado(this.emp.id, request)
+      : this.empleadosService.createEmpleado({
+          ...request,
+          username: this.emp.username
+        });
 
     const mensajeAccion = this.data ? 'actualizado' : 'creado';
 
     accion.subscribe({
+
       next: (response: any) => {
+
         const success = response?.success;
         const message = response?.message || `Empleado ${mensajeAccion} correctamente`;
 
@@ -74,17 +91,28 @@ export class ModalEmpleadoDialogComponent {
         });
 
         if (success) this.dialogRef.close(true);
+
       },
+
       error: (error) => {
-        console.error(`Error al ${mensajeAccion} empleado:`, error);
-        this.snackBar.open(error.error?.message || `Error al ${mensajeAccion} empleado`, '', {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-          panelClass: ['error-snackbar']
-        });
+
+        console.error(`Error al ${mensajeAccion} empleado`, error);
+
+        this.snackBar.open(
+          error.error?.message || `Error al ${mensajeAccion} empleado`,
+          '',
+          {
+            duration: 3000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar']
+          }
+        );
+
       }
+
     });
+
   }
 
   cancelar() {

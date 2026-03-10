@@ -1,80 +1,175 @@
 <div>
-    <div class="header-secuence">
-        <div class="color">Configuración</div>
-        <mat-icon class="color">chevron_right</mat-icon>
-        <div class="selected">Gestión de empleados</div>
-    </div>
-    <div class="subTitle">Lista de empleados</div>
-    <div class="filtersContainer">
+    <!-- BUSCADOR -->
+    <div class="search-menu">
+        <div class="icon-menu">
+            <mat-icon (click)="openMenu()">menu</mat-icon>
+        </div>
+
         <div class="input-wrapper">
             <mat-icon class="input-icon">search</mat-icon>
-            <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Nombre, Apellido o DNI..." class="input" />
-        </div>
-        <div>
-            <select class="select" [(ngModel)]="filtroEstado">
-                <option value="" disabled selected>Estado</option>
-                <option [value]="true">Activo</option>
-                <option [value]="false">Suspendido</option>
-            </select>
+            <input
+                [(ngModel)]="filtroTexto"
+                type="text"
+                placeholder="Buscar por Nombre o DNI..."
+                class="input"
+            />
         </div>
     </div>
+
+    <!-- HEADER -->
+    <div class="header-secuence">
+        <div style="display:flex; flex-direction:column; gap:0.4rem; margin-bottom: 1rem;">
+            <div class="selected">Gestión de Empleados</div>
+            <div class="subTitle">Administra el personal de tu empresa</div>
+        </div>
+
+        <div>
+            <button class="btn btn-create" (click)="openCreateDialog()">
+                <mat-icon>add</mat-icon>
+                Nuevo Empleado
+            </button>
+        </div>
+    </div>
+
+    <!-- CARDS -->
+    <!-- <div class="container-card">
+
+        <div class="card">
+            <div class="card-title">Total de Empleados</div>
+            <div class="card-value">{{ empleados.length }}</div>
+            <div class="footer-card">Registrados en el sistema</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Empleados Activos</div>
+            <div class="card-value">
+                {{ empleados.filter(e => e.isActive).length }}
+            </div>
+            <div class="footer-card">Disponibles actualmente</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Suspendidos</div>
+            <div class="card-value">
+                {{ empleados.filter(e => !e.isActive).length }}
+            </div>
+            <div class="footer-card">Acceso bloqueado</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Roles</div>
+            <div class="card-value">
+                {{ empleados.length }}
+            </div>
+            <div class="footer-card">Usuarios del sistema</div>
+        </div>
+
+    </div> -->
+
+    <!-- TABLA -->
     <div class="table-container">
         <div class="table-actions">
-            <div class="table-actions-container">
-                <button class="btn btn-create" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREAR EMPLEADO</button>
-            </div>
-            <div class="table-actions-container">
-                <button (click)="removerFiltros()" class="btn btn-remove"><mat-icon>delete</mat-icon> REMOVER FILTROS</button>
-            </div>
+            <div class="selected">Lista de Empleados</div>
         </div>
         <div class="table-scroll">
             <div class="table-body">
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th style="text-align: center;">Nro Documento</th>
-                            <th style="text-align: center;">Usuario</th>
-                            <th style="text-align: center;">Nombres</th>
-                            <th style="text-align: center;">Apellidos</th>
-                            <th style="text-align: center;">Género</th>
-                            <th style="text-align: center;">Correo</th>
-                            <th style="text-align: center;">Estado</th>
+                            <th>Empleado</th>
+                            <th>Usuario</th>
+                            <th>Contacto</th>
+                            <th>Rol</th>
+                            <th>Género</th>
+                            <th>Estado</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr
-                            *ngFor="let emp of empleados | filtroEmpleado:filtroTexto:filtroEstado | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)" (click)="openEditDialog(emp)">
-                            <td style="text-align: center;">{{ emp.documentNumber }}</td>
-                            <td style="text-align: center;">{{ emp.username }}</td>
-                            <td style="text-align: center;">{{ emp.name }}</td>
-                            <td style="text-align: center;">{{ emp.lastName }}</td>
-                            <td style="text-align: center;">{{ emp.gender }}</td>
-                            <td style="text-align: center;">{{ emp.email }}</td>
-                            <td style="text-align: center;">
-                                <select class="select" [disabled]="roleCode === 'COLLAB'" [(ngModel)]="emp.isActive" 
-                                (click)="$event.stopPropagation()" (change)="updateEstado(emp)">
-                                    <option [ngValue]="true">Activo</option>
-                                    <option [ngValue]="false">Suspendido</option>
-                                </select>
+                        *ngFor="let emp of empleados 
+                        | filtroEmpleado:filtroTexto:filtroEstado 
+                        | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
+                        (click)="openEditDialog(emp)"
+                        >
+                            <!-- EMPLEADO -->
+                            <td>
+                                <div class="cliente-info">
+                                    <div class="avatar-circle">
+                                        {{ getInitials(emp.names) }}
+                                    </div>
+                                    <div class="cliente-details">
+                                        <div class="cliente-name">
+                                            {{ emp.names }}
+                                        </div>
+                                        <div class="cliente-document">
+                                            {{ emp.documentIdentificationType }} :
+                                            {{ emp.documentNumber }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <!-- USERNAME -->
+                            <td>
+                                {{ emp.username }}
+                            </td>
+                            <!-- CONTACTO -->
+                            <td>
+                                <div class="cliente-contact">
+                                    <div class="cliente-email">
+                                        <mat-icon>email</mat-icon>
+                                        {{ emp.email }}
+                                    </div>
+                                </div>
+
+                            </td>
+                            <!-- ROL -->
+                            <td>
+                                {{ emp.roleName }}
+                            </td>
+                            <!-- GENERO -->
+                            <td>
+                                {{ emp.gender }}
+                            </td>
+                            <!-- ESTADO -->
+                            <td>
+                                <span
+                                    *ngIf="emp.isActive"
+                                    class="chip activo"
+                                    (click)="$event.stopPropagation()"
+                                >
+                                    Activo
+                                </span>
+                                <span
+                                    *ngIf="!emp.isActive"
+                                    class="chip suspendido"
+                                    (click)="$event.stopPropagation()"
+                                >
+                                    Suspendido
+                                </span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <!-- PAGINACION -->
         <div class="pagination">
-            <span>Filas por página: </span>
-            <select class="select" [(ngModel)]="filasPorPagina">
-                <option *ngFor="let size of [5,10,20]" [value]="size">{{ size }}</option>
-            </select>
-            <span>{{(paginaActual-1)*filasPorPagina+1}} -
+            <span>
+                {{(paginaActual-1)*filasPorPagina+1}} -
                 {{paginaActual*filasPorPagina > empleados.length ? empleados.length : paginaActual*filasPorPagina}}
-                de {{empleados.length}}</span>
-            <button class="paginacion-icon" (click)="paginaAnterior()"
-                [disabled]="paginaActual===1"><mat-icon>chevron_left</mat-icon></button>
-            <button class="paginacion-icon" (click)="paginaSiguiente()"
-                [disabled]="paginaActual*filasPorPagina>=empleados.length"><mat-icon>chevron_right</mat-icon></button>
+                de {{empleados.length}}
+            </span>
+            <button class="paginacion-icon"
+                (click)="paginaAnterior()"
+                [disabled]="paginaActual===1">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+            <button class="paginacion-icon"
+                (click)="paginaSiguiente()"
+                [disabled]="paginaActual*filasPorPagina>=empleados.length">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
         </div>
     </div>
-
 </div>

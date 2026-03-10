@@ -3,6 +3,7 @@ import { ModalEmpleadoDialogComponent } from './modal-empleado-dialog/modal-empl
 import { MatDialog } from '@angular/material/dialog';
 import { EmpleadosService } from '../../../../../services/empleados.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SidebarService } from '../../../../../services/sidebar.service';
 @Component({
   selector: 'app-empleados',
   templateUrl: './empleados.component.html',
@@ -20,7 +21,7 @@ export class EmpleadosComponent {
 
   roleCode: string | null = null;
 
-  constructor(private dialog: MatDialog, private empleadosService: EmpleadosService, private snackBar: MatSnackBar) {
+  constructor(private dialog: MatDialog, private empleadosService: EmpleadosService, private snackBar: MatSnackBar, private sidebarService: SidebarService) {
     const userString = localStorage.getItem('user');
     const user = userString ? JSON.parse(userString) : null;
     this.roleCode = user?.roleCode;
@@ -30,6 +31,25 @@ export class EmpleadosComponent {
     this.loadEmpleados();
   }
 
+  openMenu() {
+    this.sidebarService.toggleSidenav();
+  }
+
+  getInitials(fullName: string): string {
+    if (!fullName) return "";
+
+    const words = fullName
+      .trim()
+      .split(/\s+/)
+      .filter(w => w.length > 0);
+
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+
+    // Si tiene 1 palabra: 2 primeras letras
+    return words[0].substring(0, 2).toUpperCase();
+  }
   loadEmpleados() {
     this.empleadosService.getEmpleadosByEstablishment().subscribe(data => {
       this.empleados = data;
