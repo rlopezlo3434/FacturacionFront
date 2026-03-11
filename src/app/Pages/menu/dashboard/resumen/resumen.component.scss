@@ -132,7 +132,24 @@ canvas{
   width:100%;
 }
 
+.top-grid.one-column{
+  grid-template-columns: 1fr;
+}
 
+.dashboard-container{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+/* cuando solo mostramos mensual */
+.dashboard-container.solo-mes{
+  flex-direction:row;
+}
+
+.dashboard-container.solo-mes .top-grid{
+  flex:1;
+}
 /* ===============================
    COMPARATIVOS
 ================================ */
@@ -148,6 +165,10 @@ canvas{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:20px;
+}
+
+.comparativo-circles.one-column{
+  grid-template-columns:1fr;
 }
 
 .circle-wrapper{

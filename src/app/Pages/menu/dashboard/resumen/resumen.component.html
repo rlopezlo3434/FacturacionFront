@@ -17,7 +17,7 @@
         Venta diaria
       </div>
       <div class="side-info">
-        <div class="info-block">
+        <div class="info-block"  *ngIf="mostrarTotalHoy">
           <div class="title">Día</div>
           <div class="value">S/ {{ totalHoySoles | number:'1.2-2' }}</div>
         </div>
@@ -42,7 +42,7 @@
         Servicios por día (#)
       </div>
       <div class="side-info">
-        <div class="info-block">
+        <div class="info-block" *ngIf="mostrarTotalHoy">
           <div class="title">Por Día:</div>
           <div class="value">{{ totalHoyServicios }}</div>
         </div>
@@ -64,10 +64,10 @@
   </div>
 
   <!-- DERECHA — TOP SERVICIOS -->
-  <div style="display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center;">
-    <div class="top-grid">
+  <div class="dashboard-container" [ngClass]="{'solo-mes': !mostrarTotalHoy}">
+    <div class="top-grid" [ngClass]="{'one-column': !mostrarTotalHoy}">
 
-      <div class="card">
+      <div class="card" *ngIf="mostrarTotalHoy">
         <div class="card-title">
           Ventas del día (S/)
         </div>
@@ -91,10 +91,10 @@
 
     </div>
 
-    <div class="top-grid">
+    <div class="top-grid" [ngClass]="{'one-column': !mostrarTotalHoy}">
 
-      <div class="card">
-        <div class="card-title">
+      <div class="card" *ngIf="mostrarTotalHoy">
+        <div class="card-title" >
           Ventas del día (#)
         </div>
 
@@ -131,10 +131,10 @@
       <canvas baseChart [type]="'bar'" [data]="chartComparativoData" [options]="chartOptions"></canvas>
     </div>
   </div>
-  <div class="comparativo-circles">
+  <div class="comparativo-circles" [ngClass]="{'one-column': !mostrarTotalHoy}">
 
     <!-- Diario -->
-    <div class="card">
+    <div class="card" *ngIf="mostrarTotalHoy">
       <div class="card-title">
         Comparativo Diario <small>(Hoy vs Ayer)</small>
       </div>

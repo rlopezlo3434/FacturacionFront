@@ -109,6 +109,7 @@ export class ClientesComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      console.log('Resultado del diálogo de números:', result);
       if (result) {
         // si modificó los números, podrías refrescar la lista
         this.loadClientes();

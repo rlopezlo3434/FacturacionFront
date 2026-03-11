@@ -1,5 +1,13 @@
 <div class="dashboard-owner">
+  <div class="period-selector">
+    <label>Periodo:</label>
 
+    <select [(ngModel)]="mesSeleccionado" (change)="cambiarPeriodo()">
+      <option *ngFor="let m of meses" [value]="m.value">
+        {{ m.label }}
+      </option>
+    </select>
+  </div>
   <!-- KPIs -->
   <div class="kpi-grid">
     <div class="kpi-card">
@@ -68,21 +76,21 @@
   </div>
 
   <div class="footer-container">
-  <div class="footer">
-    <div>Estilista</div>
-    <div>Cnt. Servicios</div>
-    <div>Monto Total</div>
-    <div>Establecimiento</div>
-  </div>
+    <div class="footer">
+      <div>Estilista</div>
+      <div>Cnt. Servicios</div>
+      <div>Monto Total</div>
+      <div>Establecimiento</div>
+    </div>
 
-  <div>
-    <div *ngFor="let item of topEstilistas" class="footer-row">
-      <div>{{ item.estilista }}</div>
-      <div>{{ item.cantidad }}</div>
-      <div>S/ {{ item.importe | number:'1.0-0' }}</div>
-      <div>{{ item.establecimiento }}</div>
+    <div>
+      <div *ngFor="let item of topEstilistas" class="footer-row">
+        <div>{{ item.estilista }}</div>
+        <div>{{ item.cantidad }}</div>
+        <div>S/ {{ item.importe | number:'1.0-0' }}</div>
+        <div>{{ item.establecimiento }}</div>
+      </div>
     </div>
   </div>
-</div>
 
 </div>

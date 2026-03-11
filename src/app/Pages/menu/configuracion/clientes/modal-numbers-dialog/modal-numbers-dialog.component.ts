@@ -1,5 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { forkJoin } from 'rxjs';
+import { ClienteService } from '../../../../../../services/cliente.service';
 
 @Component({
   selector: 'app-modal-numbers-dialog',
@@ -12,24 +14,55 @@ export class ModalNumbersDialogComponent {
 
   constructor(
     private dialogRef: MatDialogRef<ModalNumbersDialogComponent>,
+    private clientService: ClienteService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
+    console.log('Datos recibidos en el diálogo:', data);
     this.numbers = [...(data.cliente.numbers || [])];
   }
 
   addNumber() {
-    if (this.newNumber.trim() !== '') {
-      this.numbers.push(this.newNumber.trim());
-      this.newNumber = '';
-    }
+    if (!this.newNumber || this.newNumber.trim() === '') return;
+
+    this.numbers.push(this.newNumber.trim());
+    this.newNumber = '';
   }
 
   removeNumber(index: number) {
-    this.numbers.splice(index, 1);
+
+    const number = this.numbers[index];
+
+    this.clientService
+      .deleteClientNumber(this.data.cliente.id, number)
+      .subscribe({
+        next: () => {
+          this.numbers.splice(index, 1);
+          this.dialogRef.close(true);
+        },
+        error: () => {
+          alert('Error al eliminar número');
+        }
+      });
+
   }
 
   save() {
-    this.dialogRef.close(this.numbers);
+
+    const nuevos = this.numbers.filter(
+      n => !this.data.cliente.numbers.includes(n)
+    );
+
+    const requests = nuevos.map(num =>
+      this.clientService.createClientNumber(this.data.cliente.id, {
+        number: num
+      })
+    );
+
+    forkJoin(requests).subscribe({
+      next: () => this.dialogRef.close(true),
+      error: () => alert('Error al guardar números')
+    });
+
   }
 
   cancel() {

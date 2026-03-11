@@ -18,6 +18,24 @@ export class DashboardOwnerComponent {
   chartReady3 = false;
   chartReady4 = false;
 
+  mesSeleccionado: number = new Date().getMonth();
+
+  meses = [
+    { value: 0, label: 'Enero' },
+    { value: 1, label: 'Febrero' },
+    { value: 2, label: 'Marzo' },
+    { value: 3, label: 'Abril' },
+    { value: 4, label: 'Mayo' },
+    { value: 5, label: 'Junio' },
+    { value: 6, label: 'Julio' },
+    { value: 7, label: 'Agosto' },
+    { value: 8, label: 'Septiembre' },
+    { value: 9, label: 'Octubre' },
+    { value: 10, label: 'Noviembre' },
+    { value: 11, label: 'Diciembre' }
+  ];
+
+
   topEstilistas: any[] = [
     { estilista: 'Estilista 1', cantidad: 1200, importe: 15000, establecimiento: 'Establecimiento A' },
     { estilista: 'Estilista 2', cantidad: 1100, importe: 14000, establecimiento: 'Establecimiento B' },
@@ -86,24 +104,24 @@ export class DashboardOwnerComponent {
   ) { }
 
   ngOnInit(): void {
-    this.loadDashboard();
+    this.loadDashboard(this.fecha);
   }
 
   // =========================
   // LOAD ALL
   // =========================
-  loadDashboard(): void {
-    this.loadKpis();
-    this.loadVentasPorTienda();
-    this.loadVentasAcumuladas();
-    this.loadDesviacionPorTienda();
-    this.loadProductividadPersonalMasiva();
+  loadDashboard(fecha?: string): void {
+    this.loadKpis(fecha);
+    this.loadVentasPorTienda(fecha);
+    this.loadVentasAcumuladas(fecha);
+    this.loadDesviacionPorTienda(fecha);
+    this.loadProductividadPersonalMasiva(fecha);
   }
 
   // =========================
   // KPIs
   // =========================
-  loadKpis(): void {
+  loadKpis(fecha?: string): void {
     this.dashboardService.getKpis(this.fecha)
       .subscribe(res => {
         this.kpis = res;
@@ -114,7 +132,7 @@ export class DashboardOwnerComponent {
   // =========================
   // Ventas por tienda
   // =========================
-  loadVentasPorTienda(): void {
+  loadVentasPorTienda(fecha?: string): void {
     this.dashboardService.ventasPorTienda(this.fecha)
       .subscribe((data: any) => {
 
@@ -140,10 +158,42 @@ export class DashboardOwnerComponent {
       });
   }
 
+  cambiarPeriodo() {
+
+  const hoy = new Date();
+
+  const year = hoy.getFullYear();
+  const diaActual = hoy.getDate();
+
+  const ultimoDiaMes = new Date(
+    year,
+    this.mesSeleccionado + 1,
+    0
+  ).getDate();
+
+  const diaFinal = Math.min(diaActual, ultimoDiaMes);
+
+  const nuevaFecha = new Date(
+    year,
+    this.mesSeleccionado,
+    diaFinal
+  );
+
+  const fechaApi = nuevaFecha.toISOString().substring(0, 10);
+
+  console.log('Fecha seleccionada:', fechaApi);
+
+  // 🔹 guardar fecha seleccionada
+  this.fecha = fechaApi;
+
+  // 🔹 recargar dashboard completo
+  this.loadDashboard(fechaApi);
+}
+
   // =========================
   // Ventas acumuladas
   // =========================
-  loadVentasAcumuladas(): void {
+  loadVentasAcumuladas(fecha?: string): void {
     this.dashboardService.ventasAcumuladas(this.fecha)
       .subscribe((data: any) => {
 
@@ -168,7 +218,7 @@ export class DashboardOwnerComponent {
   // =========================
   // Desviación por tienda
   // =========================
-  loadDesviacionPorTienda(): void {
+  loadDesviacionPorTienda(fecha?: string): void {
     this.dashboardService.desviacionPorTienda(this.fecha)
       .subscribe((data: any) => {
 
@@ -184,7 +234,7 @@ export class DashboardOwnerComponent {
       });
   }
 
-  loadProductividadPersonalMasiva(){
+  loadProductividadPersonalMasiva(fecha?: string){
     this.dashboardService.getProductividadPersonalMasivo(this.fecha)
       .subscribe((data: any) => {
         this.topEstilistas = data.map((x: any) => ({

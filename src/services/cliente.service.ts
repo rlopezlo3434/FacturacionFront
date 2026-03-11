@@ -73,6 +73,26 @@ export class ClienteService {
     );
   }
 
+  createClientNumber(id: number, params: any) {
+    return this.http.post<any>(`${environment.apiBase}/Client/clientNumber/${id}`, params,
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      }
+    );
+  }
+
+  deleteClientNumber(clientId: number, number: string) {
+    return this.http.delete(
+      `${environment.apiBase}/Client/clientNumber/${clientId}/${number}`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      }
+    }
+    );
+  }
+
 
   createChildren(params: any) {
     return this.http.post(`${environment.apiBase}/Client/children`, params, {
@@ -98,7 +118,7 @@ export class ClienteService {
     });
   }
 
-  downloadReporteClientes(){
+  downloadReporteClientes() {
     return this.http.get(`${environment.apiBase}/Facturacion/reporte-Clientes`, {
       headers: {
         Authorization: `Bearer ${this.token}`

@@ -239,6 +239,9 @@ export class ResumenComponent {
     { value: 10, label: 'Noviembre' },
     { value: 11, label: 'Diciembre' }
   ];
+
+  mostrarTotalHoy = true;
+
   constructor(private dashboardService: DashboardService) { }
   ngOnInit(): void {
     this.cambiarPeriodo();
@@ -255,17 +258,26 @@ export class ResumenComponent {
 
   cargarVentasDelMes(fecha?: string) {
     console.log('Cargando ventas del mes para fecha:', fecha);
-    const hoy = fecha || this.obtenerFechaLocal(); // YYYY-MM-DD
+    const fechaConsulta = fecha || this.obtenerFechaLocal(); // YYYY-MM-DD
 
-    this.dashboardService.getVentasMensuales(hoy)
+    this.dashboardService.getVentasMensuales(fechaConsulta)
       .subscribe(res => {
-        const hoy = new Date().getDate();
+        const fechaObj = new Date(fechaConsulta);
+        const hoy = new Date();
+
+        const esMesActual =
+          fechaObj.getMonth() === hoy.getMonth() &&
+          fechaObj.getFullYear() === hoy.getFullYear();
+
+        this.mostrarTotalHoy = esMesActual;
+        // si es mes actual solo hasta hoy, si no todo el mes
+        const diasMostrar = esMesActual ? hoy.getDate() : res.dias.length;
 
         this.chartData = {
-          labels: res.dias.slice(0, hoy),
+          labels: res.dias.slice(0, diasMostrar),
           datasets: [
             {
-              data: res.montosPorDia.slice(0, hoy),
+              data: res.montosPorDia.slice(0, diasMostrar),
               label: 'Monto diario',
               backgroundColor: this.getRepeatedColors(this.pastelColors, res.montosPorDia.length),
               borderColor: this.getRepeatedColors(this.pastelBorder, res.montosPorDia.length),
@@ -283,24 +295,28 @@ export class ResumenComponent {
 
   cargarServiciosMes(fecha?: string) {
 
-    // const hoy = new Date();
-    // hoy.setDate(hoy.getDate() - 1);
-    // const fecha = hoy.toISOString().substring(0, 10);
+    const fechaConsulta = fecha || this.obtenerFechaLocal(); // YYYY-MM-DD
 
-    const hoy = fecha || this.obtenerFechaLocal(); // YYYY-MM-DD
-
-    this.dashboardService.getServiciosMensuales(hoy)
+    this.dashboardService.getServiciosMensuales(fechaConsulta)
       .subscribe(res => {
-        const hoy = new Date().getDate();
-        const diaHoy = hoy;
+         const fechaObj = new Date(fechaConsulta);
+        const hoy = new Date();
+
+        const esMesActual =
+          fechaObj.getMonth() === hoy.getMonth() &&
+          fechaObj.getFullYear() === hoy.getFullYear();
+
+        this.mostrarTotalHoy = esMesActual;
+        // si es mes actual solo hasta hoy, si no todo el mes
+        const diasMostrar = esMesActual ? hoy.getDate() : res.dias.length;
         this.chartServiciosData = {
-          labels: res.dias.slice(0, diaHoy),
+          labels: res.dias.slice(0, diasMostrar),
           datasets: [
             {
-              data: res.serviciosPorDia.slice(0, diaHoy),
+              data: res.serviciosPorDia.slice(0, diasMostrar),
               label: 'Servicios por día',
-              backgroundColor: this.getRepeatedColors(this.pastelColors, diaHoy),
-              borderColor: this.getRepeatedColors(this.pastelBorder, diaHoy),
+              backgroundColor: this.getRepeatedColors(this.pastelColors, diasMostrar),
+              borderColor: this.getRepeatedColors(this.pastelBorder, diasMostrar),
               borderWidth: 1,
               borderRadius: 5
             }
