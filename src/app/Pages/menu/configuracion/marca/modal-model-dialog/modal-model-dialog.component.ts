@@ -63,6 +63,8 @@ export class ModalModelDialogComponent {
   }
 
   guardar() {
+    this.model.name = this.model.name?.toUpperCase();
+    
     const payload = {
       name: this.model.name.trim(),
       isActive: this.model.isActive,

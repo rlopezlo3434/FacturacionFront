@@ -16,6 +16,12 @@ export class FacturacionService {
     this.tokenDecolect = environment.tokenDecolect;
   }
 
+  private getHeaders() {
+    return {
+      Authorization: `Bearer ${this.token}`
+    };
+  }
+
   getItems() {
     return this.http.get<any[]>(`${environment.apiBase}/facturacion/items/by-establishment`, {
       headers: {
@@ -88,6 +94,13 @@ export class FacturacionService {
       params: {
         fecha: fecha
       }
+    });
+  }
+
+  getFacturaPDF(id:number) {
+    return this.http.get(`${environment.apiBase}/Pdf/${id}/factura`, {
+      headers: this.getHeaders(),
+      responseType: 'blob'
     });
   }
 

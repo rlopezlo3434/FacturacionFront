@@ -1,0 +1,73 @@
+<h2 mat-dialog-title class="dialog-title">
+    {{ data ? 'Editar Proveedor' : 'Nuevo Proveedor' }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+    <div class="section">
+        <div class="subTitle">Información del Proveedor</div>
+
+        <div class="form-grid">
+
+            <!-- RUC -->
+            <div class="form-field">
+                <label class="label">RUC *</label>
+
+                <div class="search-field">
+                    <input type="text" class="input" placeholder="Ej: 20123456789" maxlength="11"
+                        [(ngModel)]="prov.ruc" />
+
+                    <button class="icon-btn" type="button" (click)="consultarDocumento()">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Razón Social -->
+            <div class="form-field full">
+                <label class="label">Razón Social *</label>
+                <input type="text" class="input" placeholder="Ej: Importaciones SAC" appUppercase
+                    [(ngModel)]="prov.razonSocial" />
+            </div>
+
+            <!-- Número -->
+            <div class="form-field">
+                <label class="label">Número de contacto</label>
+                <input type="text" class="input" placeholder="Ej: 987654321" [(ngModel)]="prov.numero" />
+            </div>
+
+            <!-- Estado -->
+            <div class="form-field">
+                <label class="label">Estado</label>
+
+                <select class="select" [(ngModel)]="prov.activo">
+
+                    <option [ngValue]="true">
+                        Activo
+                    </option>
+
+                    <option [ngValue]="false">
+                        Inactivo
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+    </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+
+    <button class="btn-cancelar" (click)="cancelar()">
+        Cancelar
+    </button>
+
+    <button class="btn-primary" (click)="guardar()" [disabled]="!prov.ruc || !prov.razonSocial">
+        {{ data ? 'Actualizar' : 'Crear' }}
+    </button>
+
+</mat-dialog-actions>

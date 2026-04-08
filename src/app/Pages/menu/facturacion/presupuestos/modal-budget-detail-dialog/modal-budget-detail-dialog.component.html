@@ -45,7 +45,7 @@
             <label class="label">Notas / Observaciones</label>
 
             <textarea class="textarea" rows="3"
-                placeholder="Ej: descuento aplicado, diagnóstico, condiciones del cliente..." [(ngModel)]="budget.notes"
+                placeholder="Ej: descuento aplicado, diagnóstico, condiciones del cliente..." [ngModel]="budget?.notes"
                 disabled>
                     </textarea>
         </div>
@@ -73,14 +73,23 @@
                         </thead>
 
                         <tbody>
-                            <tr *ngFor="let it of budget?.items">
+                            <tr *ngFor="let it of groupedBudgetItems; trackBy: trackByGroupedItem">
+                                <td *ngIf="it.isPackageHeader" colspan="7" class="package-header-cell">
+                                    <div class="package-header-row">
+                                        <div>
+                                            <div class="package-title">{{ it.packageDescription }}</div>
+                                            <div class="package-sub">{{ it.packageItemsCount }} items incluidos</div>
+                                        </div>
+                                    </div>
+                                </td>
 
-                                <td>
+                                <ng-container *ngIf="!it.isPackageHeader">
+                                <td [class.package-child-cell]="it.isPackageChild">
                                     <span class="chip type-product" *ngIf="it.itemType === 1">Producto</span>
                                     <span class="chip type-service" *ngIf="it.itemType === 2">Servicio</span>
                                 </td>
 
-                                <td>
+                                <td >
                                     <div class="item-title">
                                         {{ it.product?.name || it.service?.name }}
                                     </div>
@@ -113,10 +122,11 @@
                                     <mat-checkbox [(ngModel)]="it.isApproved"
                                         (change)="toggleApprove(it)"></mat-checkbox>
                                 </td>
+                                </ng-container>
 
                             </tr>
 
-                            <tr *ngIf="!budget?.items || budget?.items?.length === 0">
+                            <tr *ngIf="groupedBudgetItems.length === 0">
                                 <td colspan="5" class="empty-row">
                                     No hay items registrados
                                 </td>

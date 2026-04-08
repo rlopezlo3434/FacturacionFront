@@ -11,6 +11,12 @@ export class WorkOrderService {
 
   constructor(private http: HttpClient) {}
 
+  private getHeaders() {
+    return {
+      Authorization: `Bearer ${this.token}`
+    };
+  }
+
   createFromIntake(intakeId: number) {
     return this.http.post(`${environment.apiBase}/WorkOrder/create-from-intake/${intakeId}`, {}, {
       headers: { Authorization: `Bearer ${this.token}` }
@@ -44,6 +50,13 @@ export class WorkOrderService {
   updateItemStatus(payload: any) {
     return this.http.put(`${environment.apiBase}/WorkOrder/update-items`, payload, {
       headers: { Authorization: `Bearer ${this.token}` }
+    });
+  }
+
+  getWorkOrderPDF(intakeId: number) {
+    return this.http.get(`${environment.apiBase}/Pdf/${intakeId}/ordenTrabajo`, {
+      headers: this.getHeaders(),
+      responseType: 'blob'
     });
   }
 }

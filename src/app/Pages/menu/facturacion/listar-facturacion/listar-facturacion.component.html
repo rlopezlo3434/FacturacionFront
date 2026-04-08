@@ -1,0 +1,146 @@
+<div>
+
+  <!-- BUSCADOR -->
+  <div class="search-menu">
+
+    <div class="icon-menu">
+      <mat-icon (click)="openMenu()">menu</mat-icon>
+    </div>
+
+    <div class="input-wrapper">
+      <mat-icon class="input-icon">search</mat-icon>
+      <input [(ngModel)]="searchText" type="text" placeholder="Buscar por cliente, número o documento..."
+        class="input" />
+    </div>
+
+  </div>
+
+
+  <!-- HEADER -->
+  <div class="header-secuence">
+
+    <div class="header-text">
+      <div class="selected">Facturación</div>
+      <div class="subTitle">Gestión y control de facturas emitidas</div>
+    </div>
+
+    <button class="btn btn-create" (click)="openCreateInvoice()">
+      <mat-icon>add</mat-icon>
+      Nueva Factura
+    </button>
+
+  </div>
+
+
+  <!-- CARDS -->
+  <!-- <div class="container-card">
+
+    <div class="card">
+      <div class="card-title">Facturas del mes</div>
+      <div class="card-value">{{ invoices.length }}</div>
+      <div class="footer-card">+12 esta semana</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Total Facturado</div>
+      <div class="card-value">
+        {{ totalFacturado | currency:'PEN':'symbol':'1.2-2' }}
+      </div>
+      <div class="footer-card">Monto acumulado</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Facturas Pendientes</div>
+      <div class="card-value">{{ facturasPendientes }}</div>
+      <div class="footer-card">Por cobrar</div>
+    </div>
+
+  </div> -->
+
+
+  <!-- TABLA -->
+  <div class="table-container">
+
+    <div class="table-actions">
+      <div class="selected">Lista de Facturas</div>
+    </div>
+
+
+    <div class="table-scroll">
+      <div class="table-body">
+
+        <table class="custom-table">
+
+          <thead>
+            <tr>
+              <th>Factura</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Total</th>
+              <th>PDF</th>
+              <th>CDR</th>
+              <th>XML</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let inv of invoices | invoiceFilter: searchText">
+
+              <td>
+                <strong>{{ inv.serie }} - {{ inv.numero }}</strong>
+              </td>
+
+              <td>
+                {{ inv.clienteNombre }} - {{ inv.clienteNumero }}
+              </td>
+
+              <td>
+                {{ inv.fecha  }}
+              </td>
+
+              <td>
+                {{ inv.total | currency:'PEN':'symbol':'1.2-2' }}
+              </td>
+
+              <td>
+                <i class="fa-solid fa-file-pdf" style="color: rgb(230, 144, 144); cursor: pointer;" (click)="$event.stopPropagation(); generarFactura(inv) "></i>
+              </td>
+
+              <td>
+                <i class="fa-solid fa-file-circle-check" style="color: rgb(100, 180, 100)"></i>
+              </td>
+
+              <td>
+                <i class="fa-solid fa-file-code" style="color: rgb(100, 121, 180)"></i>
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+    </div>
+
+
+    <!-- PAGINACION -->
+    <div class="pagination">
+
+      <span>Filas por página</span>
+
+      <button class="paginacion-icon">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <button class="paginacion-icon">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

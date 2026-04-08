@@ -75,6 +75,9 @@ export class MmodalProductDialogComponent {
   }
 
   guardar() {
+
+    this.product.name = this.product.name?.toUpperCase();
+
     const payload = {
       name: this.product.name,
       quantity: Number(this.product.quantity),

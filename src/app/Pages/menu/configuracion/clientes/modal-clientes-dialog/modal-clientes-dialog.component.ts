@@ -115,7 +115,6 @@ export class ModalClientesDialogComponent {
   removeNumber(index: number) {
     this.cli.numbers.splice(index, 1);
 
-    // Si borraron el principal y aún hay números, setea otro como principal
     if (this.cli.numbers.length > 0 && !this.cli.numbers.some((x: any) => x.isPrimary)) {
       this.cli.numbers[0].isPrimary = true;
     }
@@ -124,7 +123,6 @@ export class ModalClientesDialogComponent {
   removeAddress(index: number) {
     this.cli.address.splice(index, 1);
 
-    // Si borraron el principal y aún hay direcciones, setea otro como principal
     if (this.cli.address.length > 0 && !this.cli.address.some((x: any) => x.isPrimary)) {
       this.cli.address[0].isPrimary = true;
     }
@@ -158,7 +156,6 @@ export class ModalClientesDialogComponent {
       addresses: this.cli.address
     };
 
-    // creación o edición
     const accion = this.data
       ? this.clienteService.updateCliente(this.cli.id, cliente)
       : this.clienteService.createCliente(cliente);
@@ -218,16 +215,31 @@ export class ModalClientesDialogComponent {
                 panelClass: ['error-snackbar']
               }
             );
-            return; // IMPORTANTE: detener el flujo
+            return;
           }
 
           const fullName = `${response?.first_name ?? ''} ${response?.first_last_name ?? ''}`.trim();
 
           this.cli.names = fullName || response?.razon_social || '';
-          // 2️⃣ Si sí existen datos, llenar el formulario
-          // this.cli.names = response.first_name + ' ' + response.first_last_name || response.razon_social || '';
-          // this.cli.lastName = response.first_last_name || '';
 
+          if (response?.direccion) {
+
+            if (!this.cli.address) {
+              this.cli.address = [];
+            }
+
+            const yaExiste = this.cli.address.some(
+              (a: any) => a.address === response.direccion
+            );
+
+            if (!yaExiste) {
+              this.cli.address.push({
+                addressName: 'FISCAL', 
+                address: response.direccion,
+                isPrimary: this.cli.address.length === 0 
+              });
+            }
+          }
           this.snackBar.open(
             'Datos del documento cargados correctamente',
             '',
@@ -240,7 +252,6 @@ export class ModalClientesDialogComponent {
           );
         },
 
-        // 3️⃣ Si es un error HTTP (404, 500, etc.)
         error: (err) => {
           this.snackBar.open(
             'Error al consultar el documento',

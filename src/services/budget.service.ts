@@ -24,6 +24,13 @@ export class BudgetService {
     });
   }
 
+  getBudgetPDF(budgetId: number) {
+    return this.http.get(`${environment.apiBase}/Pdf/${budgetId}/presupuesto`, {
+      headers: this.getHeaders(),
+      responseType: 'blob' 
+    });
+  }
+
   // ✅ Detalle de presupuesto (cabecera + items)
   getBudgetDetail(budgetId: number) {
     return this.http.get(`${environment.apiBase}/VehicleBudget/${budgetId}`, {

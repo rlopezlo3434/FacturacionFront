@@ -27,6 +27,8 @@ export class ModalBrandDialogComponent {
   }
 
   guardar() {
+    this.brand.name = this.brand.name?.toUpperCase();
+    
     const payload = {
       name: this.brand.name.trim()
     };

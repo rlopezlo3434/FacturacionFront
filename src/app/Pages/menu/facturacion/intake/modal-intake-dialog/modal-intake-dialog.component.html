@@ -1,5 +1,5 @@
 <h2 mat-dialog-title class="dialog-title">
-    Nuevo Internamiento
+    {{ isEditMode ? 'Editar Internamiento' : 'Nuevo Internamiento' }}
 </h2>
 
 <mat-dialog-content class="dialog-content">
@@ -15,7 +15,7 @@
                 <div class="combo-box">
                     <input type="text" class="input" placeholder="Buscar por placa o modelo..."
                         [(ngModel)]="vehicleSearch" (focus)="showVehicleDropdown = true; filterVehiclesNative()"
-                        (input)="filterVehiclesNative()" />
+                        (input)="filterVehiclesNative()" [disabled]="isLoadingDetail" />
 
                     <div class="dropdown" *ngIf="showVehicleDropdown && filteredVehicles.length > 0">
                         <button type="button" class="dropdown-item" *ngFor="let v of filteredVehicles"
@@ -25,18 +25,15 @@
                         </button>
                     </div>
 
-                    <!-- ✅ cuando no hay resultados -->
                     <div class="dropdown empty" *ngIf="showVehicleDropdown && filteredVehicles.length === 0">
                         <div class="empty-text">No se encontraron vehículos</div>
                     </div>
                 </div>
             </div>
 
-
-            <!-- Cliente -->
             <div class="form-field">
                 <label class="label">Cliente *</label>
-                <select class="select" [(ngModel)]="intake.clientId">
+                <select class="select" [(ngModel)]="intake.clientId" [disabled]="isLoadingDetail">
                     <option [ngValue]="null" disabled>Seleccionar</option>
                     <option *ngFor="let c of clients" [ngValue]="c.id">
                         {{ c.names }}
@@ -44,48 +41,56 @@
                 </select>
             </div>
 
-            <!-- Modo -->
             <div class="form-field">
                 <label class="label">Modo de Internamiento *</label>
-                <select class="select" [(ngModel)]="intake.mode">
+                <select class="select" [(ngModel)]="intake.mode" [disabled]="isLoadingDetail">
                     <option [ngValue]="1">Recepción en Taller</option>
                     <option [ngValue]="2">Recojo a Domicilio</option>
                 </select>
             </div>
 
-            <!-- Kilometraje -->
             <div class="form-field">
                 <label class="label">Kilometraje (km) *</label>
-                <input type="number" class="input" placeholder="Ej: 35500" [(ngModel)]="intake.mileageKm" />
+                <input type="number" class="input" placeholder="Ej: 35500" [(ngModel)]="intake.mileageKm"
+                    [disabled]="isLoadingDetail" />
             </div>
 
-            <!-- Dirección (solo domicilio) -->
             <div class="form-field full" *ngIf="intake.mode === 2">
                 <label class="label">Dirección de Recojo *</label>
                 <input type="text" class="input" placeholder="Ej: Av. Los Olivos 123 - SJL"
-                    [(ngModel)]="intake.pickupAddress" />
+                    [(ngModel)]="intake.pickupAddress" [disabled]="isLoadingDetail" />
             </div>
 
-            <!-- Observaciones -->
+            <div class="form-field full">
+                <label class="label">Servicios (separar con coma)</label>
+                <textarea class="textarea2" appUppercase
+                    placeholder="Ej: Mantenimiento menor Toyota, lavado de camioneta..."
+                    [(ngModel)]="intake.services" [disabled]="isLoadingDetail"></textarea>
+            </div>
+
             <div class="form-field full">
                 <label class="label">Observaciones Generales</label>
-                <textarea class="textarea" placeholder="Ej: Rayón en puerta derecha, revisar luces..."
-                    [(ngModel)]="intake.observations"></textarea>
+                <textarea class="textarea" appUppercase placeholder="Ej: Rayón en puerta derecha..."
+                    [(ngModel)]="intake.observations" [disabled]="isLoadingDetail"></textarea>
             </div>
 
-            <!-- Imagenes -->
             <div class="form-field full">
                 <div class="subTitle">Registro Fotográfico</div>
 
                 <div class="image-upload-box">
 
-                    <input type="file" accept="image/*" multiple hidden #imageInput
-                        (change)="onImagesSelected($event)" />
+                    <input type="file" accept="image/*" multiple hidden #imageInput (change)="onImagesSelected($event)" />
 
-                    <button class="btn-upload" (click)="imageInput.click()">
+                    <button class="btn-upload" (click)="imageInput.click()" [disabled]="isLoadingDetail">
                         <mat-icon>photo_camera</mat-icon>
-                        Agregar imágenes
+                        {{ isEditMode ? 'Agregar más imágenes' : 'Agregar imágenes' }}
                     </button>
+
+                    <div class="images-preview" *ngIf="existingImages.length > 0">
+                        <div class="image-item" *ngFor="let img of existingImages">
+                            <img [src]="apiBaseUrl + img.imageUrl" />
+                        </div>
+                    </div>
 
                     <div class="images-preview" *ngIf="imagePreviews.length > 0">
                         <div class="image-item" *ngFor="let img of imagePreviews; let i = index">
@@ -99,19 +104,48 @@
                 </div>
             </div>
 
-            <div class="canvas-wrapper">
+            <div class="form-field full" *ngIf="isEditMode && (getDiagramUrl(1) || getDiagramUrl(2))">
+                <div class="subTitle">Diagramas de Marcaciones</div>
+
+                <div class="diagram-readonly-grid">
+                    <div class="diagram-container" *ngIf="getDiagramUrl(1)">
+                        <div class="diagram-overlay">
+                            <img class="base" [src]="baseImageUrl" />
+                            <img class="marks" [src]="getDiagramUrl(1)" />
+                        </div>
+                    </div>
+
+                    <div class="diagram-container" *ngIf="getDiagramUrl(2)">
+                        <div class="diagram-overlay">
+                            <img class="base" [src]="baseImageUrl2" />
+                            <img class="marks" [src]="getDiagramUrl(2)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-wrapper" *ngIf="!isEditMode">
                 <img [src]="baseImageUrl" draggable="false">
 
                 <canvas #canvas1 (mousedown)="startDraw($event, 1)" (mousemove)="draw($event, 1)"
                     (mouseup)="stopDraw(1)" (mouseleave)="stopDraw(1)" (touchstart)="startDraw($event, 1)"
                     (touchmove)="draw($event, 1)" (touchend)="stopDraw(1)"></canvas>
+
+                <button type="button" class="btn-clear-canvas" (click)="clearCanvas(1)">
+                    Limpiar
+                </button>
             </div>
-            <div class="canvas-wrapper">
+
+            <div class="canvas-wrapper" *ngIf="!isEditMode">
                 <img [src]="baseImageUrl2" draggable="false">
 
                 <canvas #canvas2 (mousedown)="startDraw($event, 2)" (mousemove)="draw($event, 2)"
                     (mouseup)="stopDraw(2)" (mouseleave)="stopDraw(2)" (touchstart)="startDraw($event, 2)"
                     (touchmove)="draw($event, 2)" (touchend)="stopDraw(2)"></canvas>
+
+                <button type="button" class="btn-clear-canvas" (click)="clearCanvas(2)">
+                    Limpiar
+                </button>
             </div>
 
         </div>
@@ -180,7 +214,7 @@
     <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
 
     <button class="btn-primary" (click)="guardar()"
-        [disabled]="!intake.vehicleId || !intake.clientId || !intake.mode || !intake.mileageKm || (intake.mode === 2 && !intake.pickupAddress)">
-        Guardar Internamiento
+        [disabled]="isLoadingDetail || !intake.vehicleId || !intake.clientId || !intake.mode || !intake.mileageKm || (intake.mode === 2 && !intake.pickupAddress)">
+        {{ isEditMode ? 'Actualizar Internamiento' : 'Guardar Internamiento' }}
     </button>
 </mat-dialog-actions>

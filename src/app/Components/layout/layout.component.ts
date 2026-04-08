@@ -36,6 +36,7 @@ export class LayoutComponent {
           { label: 'Internamiento Vehículos', route: '/facturacion/intake' },
           { label: 'Ordenes de Trabajo', route: '/facturacion/orden-trabajo/intake' },
           { label: 'Facturación', route: '/facturacion/venta' },
+          { label: 'Facturas', route: '/facturacion/Facturas' },
           // { label: 'Caja', route: '/facturacion/caja' }
         ],
       },
@@ -45,6 +46,8 @@ export class LayoutComponent {
         icon: 'settings',
         children: [
           { label: 'Clientes', route: '/configuracion/Clientes' },
+          { label: 'Proveedores', route: '/configuracion/Proveedores' },
+          { label: 'Paquetes', route: '/configuracion/PaqueteServicio' },
           { label: 'Marcas / Modelos', route: '/configuracion/Marcas' },
           { label: 'Vehículos', route: '/configuracion/Vehiculos' },
           { label: 'Servicios', route: '/configuracion/Servicios' },
@@ -57,7 +60,7 @@ export class LayoutComponent {
 
       },
       {
-        label: 'Alamacén',
+        label: 'Almacén',
         name: 'almacen',
         icon: 'house_siding',
         children: [

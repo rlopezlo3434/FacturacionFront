@@ -18,6 +18,9 @@ import { ServiciosComponent } from './Pages/menu/configuracion/servicios/servici
 import { ProductosComponent } from './Pages/menu/configuracion/productos/productos.component';
 import { PresupuestosComponent } from './Pages/menu/facturacion/presupuestos/presupuestos.component';
 import { OrdenesTrabajoComponent } from './Pages/menu/facturacion/ordenes-trabajo/ordenes-trabajo.component';
+import { ProveedoresComponent } from './Pages/menu/configuracion/proveedores/proveedores.component';
+import { ListarFacturacionComponent } from './Pages/menu/facturacion/listar-facturacion/listar-facturacion.component';
+import { PaqueteServicioComponent } from './Pages/menu/configuracion/paquete-servicio/paquete-servicio.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -35,6 +38,7 @@ export const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: 'intake', component: IntakeComponent },
+      { path: 'Facturas', component: ListarFacturacionComponent },
       { path: 'venta', component: FacturacionComponent },
       { path: 'caja', component: CajaComponent },
       { path: 'presupuestos/intake/:intakeId', component: PresupuestosComponent },
@@ -47,8 +51,10 @@ export const routes: Routes = [
     children: [
       { path: 'Items', component: ItemsComponent },
       { path: 'Descuentos', component: PromocionesComponent },
+      { path: 'PaqueteServicio', component: PaqueteServicioComponent},
       { path: 'Empleados', component: EmpleadosComponent },
       { path: 'Clientes', component: ClientesComponent },
+      { path: 'Proveedores', component: ProveedoresComponent },
       { path: 'ManoDeObra', component: ManoDeObraComponent },
       { path: 'Vehiculos', component: VehiculosComponent },
       { path: 'Productos', component: ProductosComponent },

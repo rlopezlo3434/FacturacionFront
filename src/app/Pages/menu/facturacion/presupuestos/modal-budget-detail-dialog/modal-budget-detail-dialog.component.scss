@@ -250,3 +250,30 @@
   color: #2e7d32;
   font-weight: 600;
 }
+
+.package-header-cell {
+  background: #eef4ff;
+  padding: 12px 10px;
+}
+
+.package-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.package-title {
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+.package-sub {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.package-child-cell {
+  padding-left: 32px !important;
+}

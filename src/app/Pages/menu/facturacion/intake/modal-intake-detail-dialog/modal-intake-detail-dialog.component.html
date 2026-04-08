@@ -76,9 +76,14 @@
     </div>
   </div>
 
-  <div class="section" *ngIf="intake?.notes">
+  <div class="section" *ngIf="intake?.services">
+    <div class="subTitle">Servicios</div>
+    <div class="notes-box">{{ intake?.services }}</div>
+  </div>
+
+  <div class="section" *ngIf="intake?.observations">
     <div class="subTitle">Observaciones Generales</div>
-    <div class="notes-box">{{ intake?.notes }}</div>
+    <div class="notes-box">{{ intake?.observations }}</div>
   </div>
 
   <div class="section" *ngIf="intake?.images?.length">

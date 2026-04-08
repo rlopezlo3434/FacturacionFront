@@ -1,240 +1,3 @@
-<!-- <div style="display: flex; align-items: center; justify-content: space-between;">
-    <h2>Facturación</h2>
-    <div><input class="input" type="date" [(ngModel)]="fechaHoy" (change)="loadVentas()"></div>
-</div>
-<div class="container-fac">
-    <div style="flex: 1;">
-        <div class="tipoComprobante">
-           
-            <div class="form-group">
-                <select [(ngModel)]="venta.metodo_pago" name="metodo_pago" class="input">
-                    <option value="" disabled selected>Método de pago</option>
-                    <option value="Efectivo">Efectivo</option>
-                    <option value="Yape">Yape</option>
-                    <option value="Plin">Plin</option>
-                    <option value="Transferencia">Transferencia</option>
-                    <option value="Tarjeta">Tarjeta</option>
-                </select>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-      
-
-                <select [(ngModel)]="venta.serieSeleccionada" class="input">
-                    <option value="" disabled selected>Seleccione una serie</option>
-                    <option *ngFor="let s of series" [ngValue]="s">
-                        {{ s.tipo }} - {{ s.serie }}
-                    </option>
-                </select>
-            </div>
-        </div>
-
-       
-        <div *ngIf="!agregarCliente">
-            <div style="position: relative;">
-                <div class="input-wrapper">
-                    <mat-icon class="input-icon">search</mat-icon>
-                    <input type="text" placeholder="Buscar producto o servicio..." class="input"
-                        [(ngModel)]="itemBuscado" (input)="filtrarItems()" (focus)="mostrarLista = true"
-                        (blur)="ocultarListaConRetardo()" />
-                </div>
-
-                <div *ngIf="mostrarLista && itemsFiltrados.length > 0" class="dropdown-list">
-                    <div *ngFor="let item of itemsFiltrados" class="dropdown-item" (mousedown)="seleccionarItem(item)">
-                        <div [ngStyle]="{
-            'border-left': '3px solid ' + (item.isActive ? '#28a745' : '#ccc'),
-            'padding-left': '0.4rem'
-        }">
-                            <div>
-                                {{ item.description }} -
-                                <span style="font-weight: 500;">{{ item.value | currency:'S/.' }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div *ngIf="searchCliente"
-                style="margin-top: 1rem; display: flex; align-items: center; justify-content: space-between;">
-                <div><strong>Cliente:</strong> {{ venta.cliente?.firstName }} {{ venta.cliente?.lastName }}</div>
-                <mat-icon class="delete" (click)="eliminarCliente()">delete</mat-icon>
-            </div>
-            <div style="margin-top: 0.5rem;">
-                <div *ngFor="let item of itemsSeleccionados" class="dropdown-item">
-                    <div [ngStyle]="{
-                    'border-left': '3px solid ' + (item.isActive ? '#28a745' : '#ccc'),
-                    'padding-left': '0.4rem',
-                    'display': 'flex',
-                    'justify-content': 'space-between',
-                    'align-items': 'center'
-                }">
-                        <div style="flex: 1;">
-                            <div style="display: flex; align-items: center; gap: 1rem;">
-                                <div>
-                                    <div><strong>{{ item.item }}</strong> {{ item.code }}</div>
-                                    <div>
-                                        {{ item.description }} -
-                                        <span style="font-weight: 500;">{{ item.value | currency:'S/.' }}</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <mat-icon (click)="abrirSeleccionEmpleados(item)">person</mat-icon>
-                                </div>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 0.7rem; margin-top: 0.3rem;">
-                                <div class="flexColum">
-                                    <label class="labelCard">Cantidad:</label>
-                                    <input (change)="actualizarTotales(item)" type="number" [(ngModel)]="item.cantidad"
-                                        class="input responsiveInput" min="1" />
-                                </div>
-                                <div class="flexColum">
-                                    <label class="labelCard">Precio:</label>
-                                    <input (change)="actualizarTotales(item)" type="number" [(ngModel)]="item.value"
-                                        class="input responsiveInput" step="0.01" />
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <mat-icon (click)="eliminarItem(item)" class="delete">delete</mat-icon>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div>
-                Descuentos Disponibles:
-                <select class="input" [(ngModel)]="promoTarjeta" (change)="onPromoChange()">
-                    <option [ngValue]="0">% 0</option>
-                    <option *ngFor="let promo of promociones" [ngValue]="promo.descuentoAplicado"> % {{
-                        promo.descuentoAplicado }}</option>
-                </select>
-            </div>
-     
-            <div style="margin-top: 1rem; text-align: right;">
-                <div>Subtotal (sin IGV): <strong>{{ subtotalGeneral | currency:'S/.' }}</strong></div>
-                <div>IGV (18%): <strong>{{ igvGeneral | currency:'S/.' }}</strong></div>
-                <div>Total (con IGV): <strong>{{ totalGeneral | currency:'S/.' }}</strong></div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; margin-top: 1rem;">
-                <label>Observaciones:</label>
-                <textarea style="resize: none;" [(ngModel)]="venta.observaciones" class="input" rows="3"
-                    placeholder="Agregar observaciones..."></textarea>
-            </div>
-            <div *ngIf="venta.metodo_pago == 'Efectivo'"
-                style="display: flex; align-items: center; gap: 1rem; margin-top: 1rem; justify-content: end;">
-
-                <div>Monto recibido</div>
-                <input type="number" [(ngModel)]="montoIngresado" class="input" />
-
-                <div>
-                    <strong>Vuelto: </strong>
-                    {{ (montoIngresado - totalGeneral) | currency:'S/.' }}
-                </div>
-            </div>
-            <div>
-                <button (click)="imprimirVenta()" [disabled]="isLoading" class="btn btn-primary btn-venta">GENERAR
-                    VENTA</button>
-            </div>
-
-        </div>
-        <div *ngIf="agregarCliente">
-           
-            <div *ngIf="!searchCliente" style="position: relative; margin-top: 0.5rem;">
-                <div class="input-wrapper">
-                    <mat-icon class="input-icon">person</mat-icon>
-                    <input type="text" placeholder="Buscar cliente..." class="input" [(ngModel)]="clienteBuscado"
-                        (input)="filtrarClientes()" (focus)="mostrarLista2 = true" (blur)="ocultarListaConRetardo2()" />
-                </div>
-
-                <div *ngIf="mostrarLista2 && clientesFiltrados.length > 0" class="dropdown-list2">
-                    <div *ngFor="let cli of clientesFiltrados" class="dropdown-item2"
-                        (mousedown)="seleccionarCliente(cli)">
-                        <div [ngStyle]="{
-                            'border-left': '3px solid ' + (cli.isActive ? '#28a745' : '#ccc'),
-                            'padding-left': '0.4rem'
-                        }">
-                            <div>{{ cli.firstName }} {{ cli.lastName }}</div>
-                            <div>
-                                <strong>Padre</strong> - <span>{{ cli.client.firstName }} {{ cli.client.lastName
-                                    }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container2">
-        <div class="header-container2">
-            <div class="titleComprobantes">COMPROBANTES EMITIDOS</div>
-            <button class="btn-more-reporte" [matMenuTriggerFor]="menuOpcionesReportes">
-                REPORTES
-                <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menuOpcionesReportes="matMenu">
-
-                <button mat-menu-item (click)="obtenerProductividad()">
-                    <mat-icon>description</mat-icon>
-                    <span>Productividad</span>
-                </button>
-
-                <button mat-menu-item (click)="reporteDiario()">
-                    <mat-icon>description</mat-icon>
-                    <span>Reporte diario</span>
-                </button>
-
-            </mat-menu>
-
-        </div>
-
-        <div *ngIf="ventas?.length === 0" class="text-gray-500 text-center">
-            No hay comprobantes registrados.
-        </div>
-
-        <div class="lista-comprobantes">
-            <div *ngFor="let v of ventas" class="comprobante-card">
-                <div class="comprobante-header">
-                    <div class="tipo">{{ v.tipoComprobante }} {{ v.anulado == false ? '' : '(Anulado)' }}</div>
-                    <div class="fecha">{{ v.fecha }}</div>
-                </div>
-
-                <div class="comprobante-body">
-                    <div class="serie-numero">
-                        {{ v.serie }} - {{ v.numero }}
-                    </div>
-                    <div class="total">S/ {{ v.total | number: '1.2-2' }}</div>
-
-                </div>
-
-                <div class="comprobante-footer">
-                    <button (click)="imprimirPdf(v.linkPdf)" class="btn-pdf">
-                        📄 Imprimir PDF
-                    </button>
-                    <button class="btn-more" [matMenuTriggerFor]="menuOpciones">
-                        <mat-icon>more_vert</mat-icon>
-                    </button>
-    
-                    <mat-menu #menuOpciones="matMenu">
-
-                        <button mat-menu-item (click)="downloadPDF(v.linkPdf)">
-                            <mat-icon>picture_as_pdf</mat-icon>
-                            <span>Descargar PDF</span>
-                        </button>
-
-                        <button *ngIf="v.anulado == false" mat-menu-item (click)="anularComprobante(v)">
-                            <mat-icon>cancel</mat-icon>
-                            <span>Anular comprobante</span>
-                        </button>
-
-                    </mat-menu>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
- -->
-
 <div class="billing-container">
 
     <!-- ================= HEADER ================= -->
@@ -246,6 +9,11 @@
         </div>
 
         <div class="top-actions">
+            <label class="pending-filter">
+                <input type="checkbox" [(ngModel)]="showOnlyPendingInvoices" />
+                Solo pendientes por facturar
+            </label>
+
             <!-- <button class="btn-outline">
                 <mat-icon>filter_list</mat-icon>
                 Filtros
@@ -295,7 +63,7 @@
 
                 <tbody>
 
-                    <tr *ngFor="let it of invoiceItems | invoiceFilter: searchText">
+                    <tr *ngFor="let it of filteredInvoiceItems" [class.row-disabled]="it.invoiced">
 
                         <!-- checkbox -->
                         <td>
@@ -305,12 +73,12 @@
 
                         <!-- código -->
                         <td>
-                            <strong>{{ it.intakeCode  }}</strong>
+                            <strong>{{ it.intakeCode }}</strong>
                         </td>
 
                         <!-- descripción -->
                         <td>
-                            {{ it.description  }}
+                            {{ it.description }}
                         </td>
 
                         <!-- tipo -->
@@ -338,7 +106,7 @@
 
                         <!-- subtotal -->
                         <td class="price">
-                            {{ it.subTotal  | currency:'PEN':'symbol':'1.2-2' }}
+                            {{ it.subTotal | currency:'PEN':'symbol':'1.2-2' }}
                         </td>
 
                     </tr>
@@ -349,7 +117,7 @@
 
             <!-- footer tabla -->
             <div class="table-footer">
-                Mostrando {{ invoiceItems.length }} items encontrados
+                Mostrando {{ filteredInvoiceItems.length }} items encontrados
             </div>
 
         </div>
@@ -375,12 +143,31 @@
                         {{ client?.name }}
                     </div>
 
-                    <div class="label">RUC</div>
-                    <div class="value">
-                        {{ client?.document }}
+                    <div class="label">Documento</div>
+                    <div class="client-search">
+                        <input type="text"
+                            class="client-input"
+                            placeholder="Ingresa DNI o RUC"
+                            [(ngModel)]="clientDocumentInput"
+                            maxlength="11" />
+
+                        <button type="button"
+                            class="client-search-btn"
+                            (click)="buscarClientePorDocumento()"
+                            [disabled]="clientLookupLoading">
+                            <mat-icon>{{ clientLookupLoading ? 'hourglass_top' : 'search' }}</mat-icon>
+                        </button>
                     </div>
 
-                    <a class="change-link">Cambiar</a>
+                    <div class="label">Número de Documento</div>
+                    <div class="value">
+                        {{ client?.document || '-' }}
+                    </div>
+
+                    <div class="label" *ngIf="client?.document?.length === 11">Dirección</div>
+                    <div class="value" *ngIf="client?.document?.length === 11">
+                        {{ client?.address || '-' }}
+                    </div>
                 </div>
 
                 <div class="doc-type">
@@ -442,7 +229,53 @@
 
 
             </div>
+            <div class="card detraccion-card">
 
+                <div class="card-title">
+                    <mat-icon>account_balance</mat-icon>
+                    DETRACCIÓN
+                </div>
+
+                <!-- activar detracción -->
+                <div class="detraccion-toggle">
+                    <mat-checkbox [(ngModel)]="applyDetraccion" (change)="recalculateInvoice()">
+                        Aplicar detracción
+                    </mat-checkbox>
+                </div>
+
+                <!-- porcentaje -->
+                <div class="detraccion-config" *ngIf="applyDetraccion">
+
+                    <div class="percent-input">
+                        <label>% Detracción</label>
+
+                        <input type="number" min="0" max="100" [(ngModel)]="detraccionPercent"
+                            (input)="recalculateInvoice()" />
+                    </div>
+
+                    <div class="detraccion-result">
+
+                        <div>
+                            <span>Monto detracción</span>
+
+                            <strong>
+                                {{ detraccionAmount | currency:'PEN':'symbol':'1.2-2' }}
+                            </strong>
+                        </div>
+
+                        <div class="net">
+                            <span>Total a pagar</span>
+
+                            <strong>
+                                {{ totalPagar | currency:'PEN':'symbol':'1.2-2' }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
         </div>
 
     </div>

@@ -12,7 +12,7 @@ export class ProductosService {
   constructor(private http: HttpClient) {}
 
   getProducts() {
-    return this.http.get(`${environment.apiBase}/Product`, {
+    return this.http.get<any>(`${environment.apiBase}/Product`, {
       headers: { Authorization: `Bearer ${this.token}` }
     });
   }

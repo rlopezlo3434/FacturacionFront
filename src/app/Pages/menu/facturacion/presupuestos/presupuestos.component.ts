@@ -118,29 +118,50 @@ export class PresupuestosComponent {
     });
   }
 
-  generateInvoice() {
-
-  this.facturacionService.generateFromIntake(this.intakeId)
-    .subscribe({
-      next: (resp:any) => {
-
-        this.snackBar.open(
-          resp.message || 'Se crearon items para facturar correctamente.',
-          '',
-          { duration: 3000 }
-        );
-
-        // opcional navegar
-        this.router.navigate(['/facturacion/venta', resp.invoiceId]);
-
+  obtenerPDFpresupuesto(budget: any) {
+    this.budgetService.getBudgetPDF(budget.id).subscribe({
+      next: (pdfData: Blob) => {
+        const url = window.URL.createObjectURL(pdfData);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Presupuesto_${budget.code}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
       },
-      error: err => {
-        this.snackBar.open(
-          err.error?.message || 'No se pudo generar los items para facturar.',
-          '',
-          { duration: 3000 }
-        );
+      error: (err) => {
+        this.snackBar.open(err.error?.message || 'No se pudo descargar el PDF.', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
       }
     });
-}
+  }
+
+  generateInvoice() {
+
+    this.facturacionService.generateFromIntake(this.intakeId)
+      .subscribe({
+        next: (resp: any) => {
+
+          this.snackBar.open(
+            resp.message || 'Se crearon items para facturar correctamente.',
+            '',
+            { duration: 3000 }
+          );
+
+          // opcional navegar
+          this.router.navigate(['/facturacion/venta', resp.invoiceId]);
+
+        },
+        error: err => {
+          this.snackBar.open(
+            err.error?.message || 'No se pudo generar los items para facturar.',
+            '',
+            { duration: 3000 }
+          );
+        }
+      });
+  }
 }

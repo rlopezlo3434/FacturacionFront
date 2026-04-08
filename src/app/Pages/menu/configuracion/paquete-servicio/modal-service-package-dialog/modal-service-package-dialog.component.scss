@@ -1,0 +1,290 @@
+/* CONTENEDOR DEL MODAL */
+.dialog-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.dialog-content {
+  padding-top: 4px;
+  max-height: none;
+}
+
+/* SECCIONES TIPO CARD */
+.section {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+  overflow: visible;
+}
+
+/* TITULOS */
+.subTitle {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  color: #222;
+}
+
+/* GRID */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Campo que ocupa toda una fila */
+.form-field.full {
+  grid-column: 1 / -1;
+}
+
+/* LABEL */
+.label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+/* FORM FIELD */
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.input,
+.select {
+  box-sizing: border-box;
+}
+
+
+/* INPUT / SELECT UNIFICADOS */
+.input,
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  background: white;
+  outline: none;
+  font-size: 0.95rem;
+  transition: 0.2s ease;
+}
+
+.input:focus,
+.select:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+}
+
+/* SELECT CON FLECHITA */
+.select {
+  padding-right: 36px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg fill='black' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")
+    no-repeat right 10px center;
+  background-color: #fff;
+}
+
+/* INPUT + SEARCH */
+.search-field {
+  display: flex;
+  gap: 8px;
+  // align-items: center;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.icon-btn:hover {
+  border-color: #1976d2;
+  transform: translateY(-1px);
+}
+
+.icon-btn mat-icon {
+  font-size: 20px;
+  color: #1976d2;
+}
+
+/* ACCIONES */
+.dialog-actions {
+  padding: 12px 16px;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 10px;
+}
+
+/* BOTONES */
+.btn-cancelar {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  background: white;
+  cursor: pointer;
+}
+
+.btn-primary {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #1976d2;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+.phone-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: visible;
+}
+
+.address-item {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr ;
+  gap: 10px;
+  align-items: center;
+}
+
+.phone-item {
+  display: grid;
+  grid-template-columns: 0.5fr 1.5fr 0.3fr 0.3fr;
+  gap: 10px;
+  align-items: center;
+  overflow: visible;
+}
+
+.item-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.options-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+}
+
+:host ::ng-deep .mat-mdc-dialog-content {
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+:host ::ng-deep .mdc-dialog__content {
+  overflow: visible !important;
+}
+
+:host ::ng-deep .mat-mdc-dialog-surface {
+  overflow: visible !important;
+}
+
+.option-item {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: #fff;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.option-item:hover {
+  background: #f5f9ff;
+}
+
+.option-empty {
+  padding: 10px 12px;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .phone-item {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .phone-item {
+    grid-template-columns: 1fr;
+  }
+}
+
+.primary-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #444;
+  padding: 8px 10px;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  background: white;
+}
+
+.btn-add {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px dashed #1976d2;
+  background: rgba(25, 118, 210, 0.06);
+  cursor: pointer;
+  font-weight: 600;
+  color: #1976d2;
+  transition: 0.2s ease;
+}
+
+.btn-add:hover {
+  background: rgba(25, 118, 210, 0.12);
+  transform: translateY(-1px);
+}
+
+.btn-icon.delete mat-icon {
+  color: #d32f2f;
+}
+
+.btn-icon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

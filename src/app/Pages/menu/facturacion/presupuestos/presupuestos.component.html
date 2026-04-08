@@ -66,6 +66,7 @@
               <th>Código</th>
               <th>Total</th>
               <th>Fecha</th>
+              <th>PDF</th>
               <th>Estado</th>
               <th>Oficial</th>
               <!-- <th>Ord. Trabajo</th> -->
@@ -81,6 +82,10 @@
               <td>{{ b.total | currency:'PEN':'symbol':'1.2-2' }}</td>
 
               <td>{{ b.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+
+              <td>
+                <i class="fa-solid fa-file-pdf" style="cursor: pointer;" (click)="$event.stopPropagation(); obtenerPDFpresupuesto(b)"></i>
+              </td>
 
               <td>
                 <span class="chip activo" *ngIf="b.isApproved">Aprobado</span>

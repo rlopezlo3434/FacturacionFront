@@ -54,13 +54,16 @@
         <table class="custom-table">
           <thead>
             <tr>
+              <th>#</th>
               <th>Vehículo</th>
               <th>Cliente</th>
               <th>Modo</th>
               <th>Dirección</th>
               <th>Kilometraje</th>
               <th>Fecha</th>
+              <th>PDF</th>
               <th>Estado</th>
+              <th>Editar</th>
               <th>Presupuesto</th>
             </tr>
           </thead>
@@ -70,6 +73,7 @@
               *ngFor="let i of internamientos | intakeFilter:filtroTexto | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
               (click)="openDetail(i)">
 
+              <td>N°{{ i.id }}</td>
               <!-- Vehículo -->
               <td>
                 <div class="cliente-info">
@@ -123,12 +127,17 @@
                 </div>
               </td>
 
+              <td>
+                <i class="fa-solid fa-file-pdf" style="cursor: pointer;" (click)="$event.stopPropagation(); obtenerPDFinternamiento(i)"></i>
+              </td>
               <!-- Estado -->
               <td>
                 <span class="chip activo" *ngIf="i.isActive">Activo</span>
                 <span class="chip suspendido" *ngIf="!i.isActive">Finalizado</span>
               </td>
-
+              <td>
+                <button class="btn btn-create" (click)="$event.stopPropagation(); openEditIntakeDialog(i)">Editar</button>
+              </td>
               <!-- Presupuesto -->
               <td>
                 <button class="btn btn-create" (click)="$event.stopPropagation(); goToBudgets(i)">

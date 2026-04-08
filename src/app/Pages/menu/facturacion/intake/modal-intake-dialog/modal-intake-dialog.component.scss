@@ -93,6 +93,22 @@
   box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
 }
 
+.textarea2 {
+  min-height: 40px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  font-size: 0.95rem;
+  outline: none;
+  resize: none;
+  transition: 0.2s ease;
+}
+
+.textarea2:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+}
+
 /* ✅ Inventario */
 .inventory-group {
   margin-top: 14px;
@@ -252,6 +268,11 @@
   cursor: pointer;
 }
 
+.btn-upload:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .btn-upload mat-icon {
   font-size: 20px;
 }
@@ -260,6 +281,26 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.image-box {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  background: white;
+}
+
+.image-box img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
 }
 
 .image-item {
@@ -318,4 +359,48 @@
   z-index: 10;
   cursor: crosshair;
   touch-action: none;
+}
+
+.btn-clear-canvas {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 20;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  background: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.diagram-readonly-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.diagram-container {
+  width: min(100%, 420px);
+}
+
+.diagram-overlay {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e5e5;
+  background: white;
+}
+
+.diagram-overlay img {
+  width: 100%;
+  display: block;
+}
+
+.diagram-overlay .marks {
+  position: absolute;
+  top: 0;
+  left: 0;
 }

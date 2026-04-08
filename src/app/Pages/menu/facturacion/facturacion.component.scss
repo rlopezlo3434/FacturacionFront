@@ -385,6 +385,19 @@
 .top-actions {
     display: flex;
     gap: 10px;
+    align-items: center;
+}
+
+.pending-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #475569;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
 }
 
 .btn-outline {
@@ -556,6 +569,49 @@
     margin-bottom: 6px;
 }
 
+.client-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.client-input {
+    flex: 1;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 10px 12px;
+    outline: none;
+    font-size: 14px;
+}
+
+.client-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.client-search-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.client-search-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.client-search-btn mat-icon {
+    font-size: 20px;
+}
+
 .change-link {
     position: absolute;
     right: 10px;
@@ -688,6 +744,12 @@
     opacity: .9;
 }
 
+.row-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    background-color: #f5f5f5;
+}
+
 /* ================================
    RESPONSIVE
 ================================ */
@@ -701,4 +763,77 @@
         width: 100%;
     }
 
+}
+
+
+
+.detraccion-card{
+    margin-top: 1rem;
+    border-top: 1px solid #eee;
+    padding-top: 0.8rem;
+}
+
+/* activar detracción */
+.detraccion-toggle{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: 0 1rem;
+    margin-bottom: .6rem;
+}
+
+/* configuración */
+.detraccion-config{
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    padding: 1rem;
+}
+
+/* porcentaje */
+.percent-input{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.percent-input label{
+    font-size: .9rem;
+    color: #666;
+}
+
+.percent-input input{
+    width: 70px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    text-align: right;
+    font-weight: 600;
+}
+
+/* resultados */
+.detraccion-result{
+    margin-top: .5rem;
+}
+
+.detraccion-result div{
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+}
+
+.detraccion-result span{
+    color: #666;
+}
+
+.detraccion-result strong{
+    font-weight: 600;
+}
+
+/* total neto */
+.detraccion-result .net{
+    margin-top: .4rem;
+    padding-top: .4rem;
+    border-top: 1px dashed #ddd;
+    font-size: 1.05rem;
 }

@@ -17,7 +17,7 @@ export class ProductosComponent {
 
 
   paginaActual = 1;
-  filasPorPagina = 10;
+  filasPorPagina = 15;
 
   lowStockLimit = 5;
 

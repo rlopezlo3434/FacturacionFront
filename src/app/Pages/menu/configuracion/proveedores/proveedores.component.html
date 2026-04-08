@@ -1,0 +1,208 @@
+<div>
+  <!-- BUSCADOR -->
+  <div class="search-menu">
+    <div class="icon-menu">
+      <mat-icon (click)="openMenu()">menu</mat-icon>
+    </div>
+
+    <div class="input-wrapper">
+      <mat-icon class="input-icon">search</mat-icon>
+      <input
+        [(ngModel)]="filtroTexto"
+        type="text"
+        placeholder="Buscar por Nombre, RUC o Contacto..."
+        class="input"
+      />
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header-secuence">
+    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+      <div class="selected">Gestión de Proveedores</div>
+      <div class="subTitle">Administra tu red de proveedores y aliados comerciales</div>
+    </div>
+
+    <div>
+      <button class="btn btn-create" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        Nuevo Proveedor
+      </button>
+    </div>
+  </div>
+
+  <!-- CARDS -->
+  <div class="container-card">
+
+    <div class="card">
+      <div class="card-title">Total de Proveedores</div>
+      <div class="card-value">{{ proveedores.length }}</div>
+      <div class="footer-card">+5 este mes</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Proveedores Activos</div>
+      <div class="card-value">14</div>
+      <div class="footer-card">82% del total</div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-title">Compras Totales</div>
+      <div class="card-value">S/. 45,820</div>
+      <div class="footer-card">+12% este mes</div>
+    </div>
+
+   
+
+  </div>
+
+  <!-- TABLA -->
+  <div class="table-container">
+
+    <div class="table-actions">
+      <div class="selected">Lista de Proveedores</div>
+    </div>
+
+    <div class="table-scroll">
+      <div class="table-body">
+
+        <table class="custom-table">
+
+          <thead>
+            <tr>
+              <th>Proveedor</th>
+              <th>Contacto</th>
+              <!-- <th>Dirección</th> -->
+              <!-- <th>Rubro</th> -->
+              <!-- <th>Compras</th> -->
+              <th>Estado</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr
+              *ngFor="let prov of proveedores | filtroProveedores: filtroTexto | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
+              (click)="openEditDialog(prov)"
+            >
+
+              <!-- PROVEEDOR -->
+              <td>
+                <div class="cliente-info">
+                  <div class="avatar-circle">
+                    {{ getInitials(prov.razonSocial ) }}
+                  </div>
+
+                  <div class="cliente-details">
+                    <div class="cliente-name">
+                      {{ prov.razonSocial  }}
+                    </div>
+
+                    <div class="cliente-document">
+                      RUC: {{ prov.ruc }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- CONTACTO -->
+              <td>
+                <div class="cliente-contact">
+
+                  <div class="cliente-phone">
+                    <mat-icon>phone</mat-icon>
+                    <div class="phone-main">
+                      {{ prov.numero || 'Sin teléfono' }}
+                    </div>
+                  </div>
+
+                  <!-- <div class="cliente-email">
+                    <mat-icon>email</mat-icon>
+                    <div>
+                      {{ prov.email || 'Sin correo' }}
+                    </div>
+                  </div> -->
+
+                </div>
+              </td>
+
+              <!-- DIRECCIÓN -->
+              <!-- <td>
+                <div class="cliente-address">
+                  <mat-icon>house</mat-icon>
+                  <div class="phone-main">
+                    {{ prov.address || 'Sin dirección' }}
+                  </div>
+                </div>
+              </td> -->
+
+              <!-- RUBRO -->
+              <!-- <td>
+                {{ prov.category }}
+              </td> -->
+
+              <!-- COMPRAS -->
+              <!-- <td>
+                {{ prov.totalPurchases | currency:'PEN':'symbol':'1.2-2' }}
+              </td> -->
+
+              <!-- ESTADO -->
+              <td>
+                <span
+                  *ngIf="prov.activo"
+                  class="chip activo"
+                  style="cursor:pointer"
+                  (click)="$event.stopPropagation()"
+                >
+                  Activo
+                </span>
+
+                <span *ngIf="!prov.activo" class="chip suspendido">
+                  Suspendido
+                </span>
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+    </div>
+
+    <!-- PAGINACIÓN -->
+    <div class="pagination">
+
+      <span>Filas por página:</span>
+
+      <span>
+        {{(paginaActual-1)*filasPorPagina+1}} -
+        {{paginaActual*filasPorPagina > proveedores.length
+          ? proveedores.length
+          : paginaActual*filasPorPagina}}
+        de {{proveedores.length}}
+      </span>
+
+      <button
+        class="paginacion-icon"
+        (click)="paginaAnterior()"
+        [disabled]="paginaActual===1"
+      >
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <button
+        class="paginacion-icon"
+        (click)="paginaSiguiente()"
+        [disabled]="paginaActual*filasPorPagina>=proveedores.length"
+      >
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

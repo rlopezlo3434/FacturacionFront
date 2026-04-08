@@ -1,0 +1,147 @@
+<h2 mat-dialog-title class="dialog-title">
+  {{ data ? 'Editar Paquete de Servicio' : 'Nuevo Paquete de Servicio' }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+  <!-- INFORMACIÓN GENERAL -->
+  <div class="section">
+
+    <div class="subTitle">Información del Paquete</div>
+
+    <div class="form-grid">
+
+      <!-- <div class="form-field">
+        <label class="label">Nombre *</label>
+        <input class="input"
+               placeholder="Ej: Mantenimiento Menor Toyota"
+               [(ngModel)]="paquete.name">
+      </div> -->
+
+      <div class="form-field full">
+        <label class="label">Descripción</label>
+        <input class="input"
+               placeholder="Descripción del paquete"
+               [(ngModel)]="paquete.description">
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ITEMS -->
+  <div class="section">
+
+    <div class="subTitle">Productos / Servicios del Paquete</div>
+
+    <div class="phone-list">
+
+      <div *ngFor="let item of paquete.items; let i = index" class="phone-item">
+
+        <!-- TIPO -->
+        <select class="select"
+                [(ngModel)]="paquete.items[i].itemType"
+                (change)="onChangeItemType(i)">
+
+          <option [ngValue]="1">Producto</option>
+          <option [ngValue]="2">Servicio</option>
+
+        </select>
+
+        <!-- PRODUCTO -->
+        <div *ngIf="item.itemType === 1" class="item-selector">
+          <input class="input"
+                 placeholder="Buscar producto"
+                 [(ngModel)]="paquete.items[i].searchText"
+                 (focus)="showOptions(i)"
+                 (blur)="hideOptions(i)">
+
+          <div class="options-dropdown"
+               *ngIf="item.showOptions">
+            <button type="button"
+                    class="option-item"
+                    *ngFor="let p of getFilteredProductos(i)"
+                    (click)="selectProducto(i, p)">
+              {{ p.name }}
+            </button>
+
+            <div class="option-empty"
+                 *ngIf="getFilteredProductos(i).length === 0">
+              No se encontraron productos
+            </div>
+          </div>
+        </div>
+
+        <!-- SERVICIO -->
+        <div *ngIf="item.itemType === 2" class="item-selector">
+          <input class="input"
+                 placeholder="Buscar servicio"
+                 [(ngModel)]="paquete.items[i].searchText"
+                 (focus)="showOptions(i)"
+                 (blur)="hideOptions(i)">
+
+          <div class="options-dropdown"
+               *ngIf="item.showOptions">
+            <button type="button"
+                    class="option-item"
+                    *ngFor="let s of getFilteredServicios(i)"
+                    (click)="selectServicio(i, s)">
+              {{ s.name }}
+            </button>
+
+            <div class="option-empty"
+                 *ngIf="getFilteredServicios(i).length === 0">
+              No se encontraron servicios
+            </div>
+          </div>
+        </div>
+
+        <!-- CANTIDAD -->
+        <input type="number"
+               class="input"
+               min="1"
+               placeholder="Cantidad"
+               [(ngModel)]="paquete.items[i].quantity">
+
+        <!-- ELIMINAR -->
+        <button class="btn-icon delete"
+                type="button"
+                (click)="removeItem(i)">
+
+          <mat-icon>delete</mat-icon>
+
+        </button>
+
+      </div>
+
+      <!-- AGREGAR -->
+      <button class="btn-add"
+              type="button"
+              (click)="addItem()">
+
+        <mat-icon>add_circle</mat-icon>
+        Agregar item
+
+      </button>
+
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+
+  <button class="btn-cancelar" (click)="cancelar()">
+    Cancelar
+  </button>
+
+  <button class="btn-primary"
+          (click)="guardar()"
+          [disabled]="paquete.items.length === 0">
+
+    {{ data ? 'Actualizar' : 'Crear' }}
+
+  </button>
+
+</mat-dialog-actions>

@@ -12,7 +12,7 @@ export class ServicesServiceService {
   constructor(private http: HttpClient) {}
 
   getServices() {
-    return this.http.get(`${environment.apiBase}/ServicesMaster`, {
+    return this.http.get<any>(`${environment.apiBase}/ServicesMaster`, {
       headers: { Authorization: `Bearer ${this.token}` }
     });
   }

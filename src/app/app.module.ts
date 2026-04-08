@@ -39,6 +39,7 @@ import { FiltroEmpleadoPipe } from './pipes/filtro-empleado.pipe';
 import { FiltroItemPipe } from './pipes/filtro-item.pipe';
 import { FiltroClientePipe } from './pipes/filtro-cliente.pipe';
 import { FiltroPromocioPipe } from './pipes/filtro-promocio.pipe';
+import { FiltroProveedoresPipe } from './pipes/filtro-proveedores.pipe';
 
 import { ModalNumbersDialogComponent } from './Pages/menu/configuracion/clientes/modal-numbers-dialog/modal-numbers-dialog.component';
 import { ModalHijosDialogComponent } from './Pages/menu/configuracion/clientes/modal-hijos-dialog/modal-hijos-dialog.component';
@@ -77,6 +78,12 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ModalIntakeDetailDialogComponent } from './Pages/menu/facturacion/intake/modal-intake-detail-dialog/modal-intake-detail-dialog.component';
 import { UppercaseDirective } from '../shared/uppercase.directive';
 import { InvoiceFilterPipe } from "./pipes/invoice-filter.pipe";
+import { ProveedoresComponent } from './Pages/menu/configuracion/proveedores/proveedores.component';
+import { ModalProveedorDialogComponent } from './Pages/menu/configuracion/proveedores/modal-proveedor-dialog/modal-proveedor-dialog.component';
+import { ListarFacturacionComponent } from './Pages/menu/facturacion/listar-facturacion/listar-facturacion.component';
+import { PaqueteServicioComponent } from './Pages/menu/configuracion/paquete-servicio/paquete-servicio.component';
+import { ModalServicePackageDialogComponent } from './Pages/menu/configuracion/paquete-servicio/modal-service-package-dialog/modal-service-package-dialog.component';
+import { MarcaModeloPipe } from "./pipes/marca-modelo.pipe";
 
 
 registerLocaleData(localeEsPe);
@@ -126,7 +133,12 @@ registerLocaleData(localeEsPe);
     ModalBudgetDetailDialogComponent,
     OrdenesTrabajoComponent,
     ModalWorkOrderDetailDialogComponent,
-    ModalIntakeDetailDialogComponent
+    ModalIntakeDetailDialogComponent,
+    ProveedoresComponent,
+    ModalProveedorDialogComponent,
+    ListarFacturacionComponent,
+    PaqueteServicioComponent,
+    ModalServicePackageDialogComponent
 
   ],
   imports: [
@@ -155,7 +167,9 @@ registerLocaleData(localeEsPe);
     BudgetFilterPipe,
     WorOrderFilerPipe,
     UppercaseDirective,
-    InvoiceFilterPipe
+    InvoiceFilterPipe,
+    FiltroProveedoresPipe,
+    MarcaModeloPipe
 ],
   providers: [provideAnimationsAsync(), { provide: LOCALE_ID, useValue: 'es-PE' }],
   bootstrap: [AppComponent],

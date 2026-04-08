@@ -8,6 +8,7 @@ import { EmpleadosService } from '../../../../services/empleados.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { SeleccionEmpleadosModalComponent } from './seleccion-empleados-modal/seleccion-empleados-modal.component';
+import { SidebarService } from '../../../../services/sidebar.service';
 
 @Component({
   selector: 'app-facturacion',
@@ -59,9 +60,13 @@ export class FacturacionComponent {
   selectedItems = [];
   searchText = '';
   client = {
-    name: 'CONSTRUCTORA DEL NORTE S.A.C.',
-    document: '20456789123'
+    name: '',
+    document: '',
+    address: ''
   };
+  clientDocumentInput = '';
+  clientLookupLoading = false;
+  showOnlyPendingInvoices = false;
 
   documentType = 'FACTURA';
 
@@ -71,13 +76,21 @@ export class FacturacionComponent {
   serie: string = 'F002';
   invoiceItems: any[] = [];
 
+  applyDetraccion = false;
+
+  detraccionPercent = 12;
+
+  detraccionAmount = 0;
+  totalPagar = 0;
   constructor(
     private clienteService: ClienteService,
     private facturacionService: FacturacionService,
     private empleadoService: EmpleadosService,
     private promoService: PromocionesService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private sidebarService: SidebarService
+
   ) {
     this.cli.gender = "";
     this.cli.documentIdentificationType = "";
@@ -107,6 +120,24 @@ export class FacturacionComponent {
       });
   }
 
+  get filteredInvoiceItems(): any[] {
+    let items = this.invoiceItems;
+
+    if (this.showOnlyPendingInvoices) {
+      items = items.filter(item => !item.invoiced);
+    }
+
+    const filtro = this.searchText?.trim().toLowerCase();
+
+    if (!filtro) {
+      return items;
+    }
+
+    return items.filter(item =>
+      `${item?.intakeCode || ''} ${item?.description || ''}`.toLowerCase().includes(filtro)
+    );
+  }
+
   recalculateInvoice() {
 
     this.itemsSeleccionados =
@@ -127,6 +158,22 @@ export class FacturacionComponent {
 
     this.igv = this.subTotal * 0.18;
     this.total = this.subTotal + this.igv;
+
+    if (this.applyDetraccion) {
+
+      this.detraccionAmount =
+        (this.total * this.detraccionPercent) / 100;
+
+    } else {
+
+      this.detraccionAmount = 0;
+
+    }
+
+    // TOTAL A PAGAR
+    this.totalPagar =
+      this.total - this.detraccionAmount;
+
   }
 
   mostrarCliente() {
@@ -168,7 +215,7 @@ export class FacturacionComponent {
       if (tipo === 'persona') {
         this.cli.documentIdentificationType = 'DNI';
       } else if (tipo === 'empresa') {
-        this.cli.documentIdentificationType = 'RUC';
+        this.cli.documentIdentificationType = 'Ruc';
       }
       this.tipoClienteSeleccionado = tipo;
     }
@@ -177,6 +224,88 @@ export class FacturacionComponent {
   consultarDocumento() {
     this.facturacionService.consultarDecolect(this.cli.documentIdentificationNumber, this.tipoClienteSeleccionado ? this.tipoClienteSeleccionado : '').subscribe(res => {
       console.log('Datos del cliente:', res);
+    });
+  }
+
+  buscarClientePorDocumento() {
+    const numeroDocumento = this.clientDocumentInput.trim();
+
+    if (!numeroDocumento) {
+      this.snackBar.open('Ingresa un DNI o RUC para buscar', '', {
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
+    let tipoDocumento = '';
+
+    if (numeroDocumento.length === 8) {
+      tipoDocumento = 'DNI';
+    } else if (numeroDocumento.length === 11) {
+      tipoDocumento = 'Ruc';
+    } else {
+      this.snackBar.open('El documento debe tener 8 dígitos para DNI o 11 para RUC', '', {
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
+    this.clientLookupLoading = true;
+
+    this.clienteService.consultarDocumento(tipoDocumento, numeroDocumento).subscribe({
+      next: (response: any) => {
+        this.clientLookupLoading = false;
+
+        if (response?.message === 'not found') {
+          this.snackBar.open('No se encontraron datos para el documento proporcionado', '', {
+            duration: 3000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar']
+          });
+          return;
+        }
+
+        const fullName = `${response?.first_name ?? ''} ${response?.first_last_name ?? ''}`.trim();
+        const displayName = fullName || response?.razon_social || '';
+        const address = response?.direccion || '';
+
+        this.client = {
+          name: displayName,
+          document: numeroDocumento,
+          address
+        };
+
+        this.venta.cliente = {
+          documentIdentificationNumber: numeroDocumento,
+          firstName: response?.first_name || response?.razon_social || displayName,
+          lastName: response?.first_last_name || '',
+          names: displayName,
+          address
+        };
+
+        this.snackBar.open('Datos del cliente cargados correctamente', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+      },
+      error: () => {
+        this.clientLookupLoading = false;
+        this.snackBar.open('Error al consultar el documento', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
     });
   }
 
@@ -193,7 +322,7 @@ export class FacturacionComponent {
     });
   }
 
- 
+
 
 
   seleccionarEmpleado(empleado: any) {
@@ -260,6 +389,10 @@ export class FacturacionComponent {
     });
   }
 
+  openMenu() {
+    this.sidebarService.toggleSidenav();
+  }
+
   anularComprobante(document: any) {
     console.log(document)
     this.facturacionService.anularComprobante(document.id).subscribe({
@@ -298,7 +431,7 @@ export class FacturacionComponent {
   imprimirVenta() {
     this.isLoading = true;
 
-    const items = 
+    const items =
       this.invoiceItems.filter(x => x.selected)
         .map(x => ({
           ...x,
@@ -310,20 +443,30 @@ export class FacturacionComponent {
         }));
     const numeroDoc = this.venta.cliente?.documentIdentificationNumber || '';
     const tipoDocumento = numeroDoc.length === 8 ? "1" : "6";
+    const nombreCliente = this.venta.cliente?.names
+      || `${this.venta.cliente?.firstName || ''} ${this.venta.cliente?.lastName || ''}`.trim();
     console.log('Número de documento del cliente:', items);
     const resumenVenta = {
       items: items,
       // subtotalGeneral: this.subtotalGeneral.toFixed(2),
       // igvGeneral: this.igvGeneral.toFixed(2),
       // totalGeneral: this.totalGeneral.toFixed(2),
+      direccion: this.venta.cliente?.address || '',
       observaciones: this.venta.observaciones || '',
       tipo_de_comprobante: this.venta.serieSeleccionada.tipoComprobante,
       cliente_numero: this.venta.cliente?.documentIdentificationNumber || '',
-      cliente_nombre: this.venta.cliente?.firstName + ' ' + this.venta.cliente?.lastName,
+      cliente_nombre: nombreCliente,
       serie: this.serie,
       cliente_tipo_documento: tipoDocumento,
       metodo_pago: this.venta.metodo_pago || 'EFECTIVO',
-      fecha_emision: this.fechaBoleteoHoy
+      fecha_emision: this.fechaBoleteoHoy,
+      detraccion: this.applyDetraccion,
+      detraccion_tipo:
+        this.applyDetraccion ? 12 : null,
+      detraccion_porcentaje:
+        this.applyDetraccion ? this.detraccionPercent : null,
+      detraccion_total:
+        this.applyDetraccion ? this.detraccionAmount : null
     };
 
     this.facturacionService.registrarVenta(resumenVenta).subscribe(
@@ -341,6 +484,7 @@ export class FacturacionComponent {
           this.venta.serieSeleccionada = '';
           this.venta.observaciones = '';
           this.fechaBoleteoHoy = new Date().toISOString().substring(0, 10);
+          this.loadVentas();
 
         } else {
           this.snackBar.open(res.message, '', {
@@ -367,7 +511,10 @@ export class FacturacionComponent {
           }
         );
       }
+
+
     );
+    this.loadVentas();
 
   }
 

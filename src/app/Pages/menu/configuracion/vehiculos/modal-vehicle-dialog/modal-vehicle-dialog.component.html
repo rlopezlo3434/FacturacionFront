@@ -34,7 +34,7 @@
 
        <!-- N Serie -->
       <div class="form-field">
-        <label class="label">N° Serie *</label>
+        <label class="label">N° Serie / Vin *</label>
        <input
           type="text"
           class="input"
@@ -47,14 +47,14 @@
 
       <!-- N VIN -->
       <div class="form-field">
-        <label class="label">N° Vin *</label>
+        <label class="label">N° Motor *</label>
         <input
           type="text"
           class="input"
           appUppercase
-          placeholder="Ej: JTJJM7FX9J000000"
-          [(ngModel)]="vehicle.vin"
-          (input)="vehicle.vin = vehicle.vin.toUpperCase()"
+          placeholder="Ej: 1UR0467445"
+          [(ngModel)]="vehicle.motor"
+          (input)="vehicle.motor = vehicle.motor.toUpperCase()"
         />
       </div>
 

@@ -1,0 +1,167 @@
+<div>
+  <div class="search-menu">
+    <div class="icon-menu">
+      <mat-icon (click)="openMenu()">menu</mat-icon>
+    </div>
+
+    <div class="input-wrapper">
+      <mat-icon class="input-icon">search</mat-icon>
+      <input
+        [(ngModel)]="filtroTexto"
+        type="text"
+        placeholder="Buscar por código o nombre del paquete..."
+        class="input"
+      />
+    </div>
+  </div>
+
+  <div class="header-secuence">
+    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+      <div class="selected">Gestión de Paquetes de Servicio</div>
+      <div class="subTitle">
+        Administra paquetes compuestos por productos y servicios
+      </div>
+    </div>
+
+    <div>
+      <button class="btn btn-create" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        Nuevo Paquete
+      </button>
+    </div>
+  </div>
+
+  <div class="container-card">
+    <div class="card">
+      <div class="card-title">Total de Paquetes</div>
+      <div class="card-value">{{ paquetes.length }}</div>
+      <div class="footer-card">Registrados en el sistema</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Paquetes Activos</div>
+      <div class="card-value">{{ totalActivos }}</div>
+      <div class="footer-card">{{ getPorcentajeActivos() }}% del total</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Productos Incluidos</div>
+      <div class="card-value">{{ totalProductos }}</div>
+      <div class="footer-card">Sumados en todos los paquetes</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Servicios Incluidos</div>
+      <div class="card-value">{{ totalServicios }}</div>
+      <div class="footer-card">Sumados en todos los paquetes</div>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <div class="table-actions">
+      <div class="selected">Lista de Paquetes</div>
+    </div>
+
+    <div class="table-scroll">
+      <div class="table-body">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Productos</th>
+              <th>Servicios</th>
+              <th>Total Items</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              *ngFor="let paquete of getPaquetesPaginados()"
+              (click)="openEditDialog(paquete)"
+            >
+              <td>
+                <div class="cliente-contact">
+                  <div class="cliente-phone">
+                    <mat-icon>description</mat-icon>
+                    <div class="phone-main">
+                      {{ paquete.description || 'Sin descripción' }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="cliente-car">
+                  <mat-icon>inventory_2</mat-icon>
+                  <div>{{ getCantidadProductos(paquete.items) }}</div>
+                </div>
+              </td>
+
+              <td>
+                <div class="cliente-car">
+                  <mat-icon>build</mat-icon>
+                  <div>{{ getCantidadServicios(paquete.items) }}</div>
+                </div>
+              </td>
+
+              <td>
+                {{ paquete.items?.length || 0 }}
+              </td>
+
+              <td>
+                <span
+                  style="cursor: pointer;"
+                  (click)="$event.stopPropagation()"
+                  *ngIf="paquete.isActive"
+                  class="chip activo"
+                >
+                  Activo
+                </span>
+
+                <span
+                  *ngIf="!paquete.isActive"
+                  class="chip suspendido"
+                >
+                  Inactivo
+                </span>
+              </td>
+            </tr>
+
+            <tr *ngIf="getPaquetesFiltrados().length === 0">
+              <td colspan="6" class="empty-row">
+                No se encontraron paquetes de servicio.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pagination">
+      <span>Filas por página: </span>
+
+      <span>
+        {{ getDesde() }} -
+        {{ getHasta() }}
+        de {{ getPaquetesFiltrados().length }}
+      </span>
+
+      <button
+        class="paginacion-icon"
+        (click)="paginaAnterior()"
+        [disabled]="paginaActual === 1"
+      >
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <button
+        class="paginacion-icon"
+        (click)="paginaSiguiente()"
+        [disabled]="paginaActual * filasPorPagina >= getPaquetesFiltrados().length"
+      >
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

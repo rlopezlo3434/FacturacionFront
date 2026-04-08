@@ -76,6 +76,89 @@
     </div>
   </div>
 
+  <!-- Participantes -->
+  <div class="section">
+    <div class="subTitle">Participantes de la Orden de Trabajo</div>
+
+    <div class="form-grid">
+
+      <!-- EMPLEADOS -->
+      <div class="form-field">
+
+        <label class="label">Empleados</label>
+
+        <div class="dropdown">
+
+          <button type="button" class="dropdown-btn" (click)="toggleDropdown('empleados')">
+
+            Seleccionar empleados
+          </button>
+
+          <div class="dropdown-content" *ngIf="showEmpleados">
+
+            <label class="dropdown-item" *ngFor="let emp of empleados">
+
+              <input type="checkbox" [checked]="selectedEmpleadoIds.includes(emp.id)"
+                (change)="toggleEmpleado(emp.id)" />
+
+              {{ emp.names }}
+
+            </label>
+
+          </div>
+
+        </div>
+
+        <div class="selected-chips">
+          <span class="chip participante" *ngFor="let emp of getEmpleadosSeleccionados()">
+
+            {{ emp.names }}
+
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- PROVEEDORES -->
+      <div class="form-field">
+
+        <label class="label">Proveedores</label>
+
+        <div class="dropdown">
+
+          <button type="button" class="dropdown-btn" (click)="toggleDropdown('proveedores')">
+
+            Seleccionar proveedores
+          </button>
+
+          <div class="dropdown-content" *ngIf="showProveedores">
+
+            <label class="dropdown-item" *ngFor="let prov of proveedores">
+
+              <input type="checkbox" [checked]="selectedProveedorIds.includes(prov.id)"
+                (change)="toggleProveedor(prov.id)" />
+
+              {{ prov.razonSocial }}
+
+            </label>
+
+          </div>
+
+        </div>
+
+        <div class="selected-chips">
+          <span class="chip participante proveedor" *ngFor="let prov of getProveedoresSeleccionados()">
+
+            {{ prov.razonSocial }}
+
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
   <!-- ✅ Items -->
   <div class="section">
     <div class="subTitle">Checklist de Trabajo</div>
@@ -115,9 +198,7 @@
                 </td>
 
                 <td>
-                  <input class="input-mini"
-                         [(ngModel)]="it.observations"
-                         placeholder="Ej: pendiente por repuesto..." />
+                  <input class="input-mini" [(ngModel)]="it.observations" placeholder="Ej: pendiente por repuesto..." />
                 </td>
 
               </tr>
@@ -141,9 +222,7 @@
 <mat-dialog-actions class="dialog-actions" align="end">
   <button class="btn-cancelar" (click)="cancelar()">Cerrar</button>
 
-  <button class="btn-primary"
-          (click)="guardarAvance()"
-          [disabled]="items.length === 0 || loading">
+  <button class="btn-primary" (click)="guardarAvance()" [disabled]="items.length === 0 || loading">
     {{ loading ? 'Guardando...' : 'Guardar avance' }}
   </button>
 </mat-dialog-actions>

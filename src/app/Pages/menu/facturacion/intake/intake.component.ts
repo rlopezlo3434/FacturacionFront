@@ -5,6 +5,7 @@ import { VehicleIntakeService } from '../../../../../services/vehicle-intake.ser
 import { SidebarService } from '../../../../../services/sidebar.service';
 import { Router } from '@angular/router';
 import { ModalIntakeDetailDialogComponent } from './modal-intake-detail-dialog/modal-intake-detail-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-intake',
@@ -29,9 +30,9 @@ export class IntakeComponent implements OnInit {
   paginaActual = 1;
   filasPorPagina = 10;
 
-  
 
-  constructor(private intakeService: VehicleIntakeService, private dialog: MatDialog, private sidebarService: SidebarService,
+
+  constructor(private intakeService: VehicleIntakeService, private dialog: MatDialog, private sidebarService: SidebarService, private snackBar: MatSnackBar,
     private router: Router
   ) { }
 
@@ -49,7 +50,24 @@ export class IntakeComponent implements OnInit {
   }
 
   openViewIntakeDialog(intake: any) { }
-  openEditIntakeDialog(intake: any) { }
+
+  openEditIntakeDialog(intake: any) {
+    const dialogRef = this.dialog.open(ModalIntakeDialogComponent, {
+      width: '1500px',
+      maxWidth: '80vw',
+      disableClose: true,
+      data: {
+        id: intake.id
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(ok => {
+      if (ok) {
+        this.loadIntakes();
+      }
+    });
+  }
+
   confirmDeleteIntake(intake: any) { }
 
 
@@ -79,6 +97,28 @@ export class IntakeComponent implements OnInit {
     });
   }
 
+
+  obtenerPDFinternamiento(intake: any) {
+    this.intakeService.getIntakePDF(intake.id).subscribe({
+      next: (pdfData: Blob) => {
+        const url = window.URL.createObjectURL(pdfData);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Internamiento_${intake.id}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.snackBar.open(err.error?.message || 'No se pudo descargar el PDF.', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
   paginaAnterior() {
     if (this.paginaActual > 1) this.paginaActual--;
   }
@@ -101,4 +141,8 @@ export class IntakeComponent implements OnInit {
     this.router.navigate(['facturacion/presupuestos/intake', intake.id]);
   }
 
+
+  generarInternamiento() {
+    console.log('Generar PDF del internamiento');
+  }
 }

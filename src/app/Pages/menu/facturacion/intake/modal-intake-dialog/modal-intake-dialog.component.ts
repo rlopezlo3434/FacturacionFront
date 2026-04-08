@@ -1,19 +1,25 @@
-import { AfterViewInit, Component, ElementRef, Inject, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  Inject,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { VehiculoService } from '../../../../../../services/vehiculo.service';
+import { environment } from '../../../../../../environments/environment';
 import { ClienteService } from '../../../../../../services/cliente.service';
 import { VehicleIntakeService } from '../../../../../../services/vehicle-intake.service';
-import { HostListener } from '@angular/core';
-import { environment } from '../../../../../../environments/environment';
+import { VehiculoService } from '../../../../../../services/vehiculo.service';
+
 @Component({
   selector: 'app-modal-intake-dialog',
   templateUrl: './modal-intake-dialog.component.html',
   styleUrl: './modal-intake-dialog.component.scss'
 })
-
-
-export class ModalIntakeDialogComponent implements AfterViewInit {
+export class ModalIntakeDialogComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas1') canvas1!: ElementRef<HTMLCanvasElement>;
   @ViewChild('canvas2') canvas2!: ElementRef<HTMLCanvasElement>;
 
@@ -22,15 +28,16 @@ export class ModalIntakeDialogComponent implements AfterViewInit {
   lastPos: Record<number, { x: number; y: number }> = {};
 
   intake: any = {
+    id: null,
     vehicleId: null,
     clientId: null,
     mode: 1,
     pickupAddress: '',
     mileageKm: null,
+    services: '',
     observations: '',
     inventoryItems: []
   };
-
 
   vehicles: any[] = [];
   clients: any[] = [];
@@ -41,15 +48,25 @@ export class ModalIntakeDialogComponent implements AfterViewInit {
 
   vehicleSearch = '';
   showVehicleDropdown = false;
-
   filteredVehicles: any[] = [];
 
   selectedImages: File[] = [];
   imagePreviews: string[] = [];
+  existingImages: any[] = [];
 
-  baseImageUrl = 'http://161.132.56.183:8023/Intakes/base/AUTO1.png';
-  baseImageUrl2 = 'http://161.132.56.183:8023/Intakes/base/AUTO2.png';
+  apiBaseUrl = 'http://161.132.56.183:8023';
+  readonly assetBaseUrl = this.apiBaseUrl;
+  baseImageUrl = `${this.apiBaseUrl}/Intakes/base/AUTO1.png`;
+  baseImageUrl2 = `${this.apiBaseUrl}/Intakes/base/AUTO2.png`;
 
+  isLoadingDetail = false;
+  private viewInitialized = false;
+  private pendingInventoryItems: any[] = [];
+  private pendingDiagramUrls: Partial<Record<number, string>> = {};
+
+  get isEditMode(): boolean {
+    return !!this.data?.id;
+  }
 
   constructor(
     public dialogRef: MatDialogRef<ModalIntakeDialogComponent>,
@@ -65,6 +82,11 @@ export class ModalIntakeDialogComponent implements AfterViewInit {
     this.loadClients();
     this.loadInventoryMaster();
 
+    if (this.isEditMode) {
+      this.loadIntakeDetailForEdit(this.data.id);
+      return;
+    }
+
     if (this.data?.vehicleId) {
       this.intake.vehicleId = this.data.vehicleId;
     }
@@ -74,11 +96,15 @@ export class ModalIntakeDialogComponent implements AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
+    this.viewInitialized = true;
 
+    if (!this.isEditMode && this.canvas1 && this.canvas2) {
+      this.initCanvas(this.canvas1.nativeElement, 1);
+      this.initCanvas(this.canvas2.nativeElement, 2);
+    }
 
-    this.initCanvas(this.canvas1.nativeElement, 1);
-    this.initCanvas(this.canvas2.nativeElement, 2);
+    this.tryApplyPendingDiagrams();
   }
 
   initCanvas(canvas: HTMLCanvasElement, key: number) {
@@ -120,7 +146,9 @@ export class ModalIntakeDialogComponent implements AfterViewInit {
   }
 
   draw(event: any, key: number) {
-    if (!this.drawing[key]) return;
+    if (!this.drawing[key]) {
+      return;
+    }
 
     const canvas = this.getCanvas(key);
     const pos = this.getPos(event, canvas);
@@ -138,10 +166,16 @@ export class ModalIntakeDialogComponent implements AfterViewInit {
     this.drawing[key] = false;
   }
 
+  clearCanvas(key: number) {
+    const canvas = this.getCanvas(key);
+    const ctx = this.contexts[key];
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    delete this.pendingDiagramUrls[key];
+  }
+
   getCanvas(key: number): HTMLCanvasElement {
-    return key === 1
-      ? this.canvas1.nativeElement
-      : this.canvas2.nativeElement;
+    return key === 1 ? this.canvas1.nativeElement : this.canvas2.nativeElement;
   }
 
   @HostListener('document:click', ['$event'])
@@ -155,11 +189,14 @@ export class ModalIntakeDialogComponent implements AfterViewInit {
 
   onImagesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (!input.files) return;
+    if (!input.files) {
+      return;
+    }
 
     Array.from(input.files).forEach(file => {
-
-      if (!file.type.startsWith('image/')) return;
+      if (!file.type.startsWith('image/')) {
+        return;
+      }
 
       this.selectedImages.push(file);
 
@@ -198,8 +235,7 @@ export class ModalIntakeDialogComponent implements AfterViewInit {
 
   selectVehicle(v: any) {
     this.intake.vehicleId = v.id;
-
-    this.vehicleSearch = `${v.plate} - ${v.model?.name} (${v.brand?.name})`;
+    this.vehicleSearch = this.formatVehicleLabel(v);
 
     if (v.owner?.id) {
       this.intake.clientId = v.owner.id;
@@ -211,6 +247,8 @@ export class ModalIntakeDialogComponent implements AfterViewInit {
   loadVehicles() {
     this.vehiculoService.getVehicles().subscribe((res: any) => {
       this.vehicles = res?.data || [];
+      this.syncVehicleSearch();
+      this.filterVehiclesNative();
     });
   }
 
@@ -222,120 +260,34 @@ export class ModalIntakeDialogComponent implements AfterViewInit {
 
   loadInventoryMaster() {
     this.intakeService.getInventoryMaster().subscribe((res: any) => {
-      this.inventoryMaster = res?.data || [];
-
-      this.inventoryMaster.forEach(x => x.isPresent = false);
+      this.inventoryMaster = (res?.data || []).map((item: any) => ({
+        ...item,
+        isPresent: false
+      }));
 
       this.inventoryVehiculo = this.inventoryMaster.filter(x => x.group === 1);
       this.inventoryAccesorios = this.inventoryMaster.filter(x => x.group === 2);
+
+      if (this.pendingInventoryItems.length > 0) {
+        this.applyInventorySelection(this.pendingInventoryItems);
+        this.pendingInventoryItems = [];
+      }
     });
   }
 
-  setInventory(masterId: number, value: boolean) {
-    const item = this.inventoryMaster.find(x => x.id === masterId);
-    if (item) item.isPresent = value;
-  }
+  loadIntakeDetailForEdit(id: number) {
+    this.isLoadingDetail = true;
 
-  // guardar() {
-  //   const payload = {
-  //     vehicleId: this.intake.vehicleId,
-  //     clientId: this.intake.clientId,
-  //     mode: this.intake.mode,
-  //     pickupAddress: this.intake.mode === 2 ? this.intake.pickupAddress : null,
-  //     mileageKm: Number(this.intake.mileageKm),
-  //     observations: this.intake.observations,
-  //     inventoryItems: this.inventoryMaster.map(x => ({
-  //       inventoryMasterItemId: x.id,
-  //       isPresent: x.isPresent
-  //     }))
-  //   };
-
-  //   this.intakeService.createIntake(payload).subscribe({
-  //     next: (resp: any) => {
-  //       const success = resp?.success;
-  //       const message = resp?.message || 'Internamiento registrado correctamente';
-
-  //       this.snackBar.open(message, '', {
-  //         duration: 3000,
-  //         horizontalPosition: 'right',
-  //         verticalPosition: 'top',
-  //         panelClass: [success ? 'success-snackbar' : 'error-snackbar']
-  //       });
-
-  //       if (success) this.dialogRef.close(true);
-  //     },
-  //     error: (err) => {
-  //       this.snackBar.open(err.error?.message || 'Error al registrar internamiento', '', {
-  //         duration: 3000,
-  //         horizontalPosition: 'right',
-  //         verticalPosition: 'top',
-  //         panelClass: ['error-snackbar']
-  //       });
-  //     }
-  //   });
-  // }
-
-  async guardar() {
-
-    const diagram1 = await this.canvasToFile(
-      this.getCanvas(1),
-      'diagram-1.png'
-    );
-
-    const diagram2 = await this.canvasToFile(
-      this.getCanvas(2),
-      'diagram-2.png'
-    );
-
-    const formData = new FormData();
-
-    // 🔹 Datos principales
-    formData.append('vehicleId', String(this.intake.vehicleId));
-    formData.append('clientId', String(this.intake.clientId));
-    formData.append('mode', String(this.intake.mode));
-    formData.append('mileageKm', String(Number(this.intake.mileageKm)));
-    formData.append('diagrams', diagram1);
-    formData.append('diagrams', diagram2);
-
-    if (this.intake.mode === 2) {
-      formData.append('pickupAddress', this.intake.pickupAddress);
-    }
-
-    if (this.intake.observations) {
-      formData.append('observations', this.intake.observations);
-    }
-
-    // 🔹 Inventario (convertido a JSON string)
-    const inventoryItems = this.inventoryMaster.map(x => ({
-      inventoryMasterItemId: x.id,
-      isPresent: x.isPresent
-    }));
-
-    formData.append('inventoryItems', JSON.stringify(inventoryItems));
-
-    // 🔹 Imágenes
-    this.selectedImages.forEach((file) => {
-      formData.append('images', file);
-    });
-
-    // 🔹 Envío
-    this.intakeService.createIntake(formData).subscribe({
-      next: (resp: any) => {
-        const success = resp?.success;
-        const message = resp?.message || 'Internamiento registrado correctamente';
-
-        this.snackBar.open(message, '', {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-          panelClass: [success ? 'success-snackbar' : 'error-snackbar']
-        });
-
-        if (success) this.dialogRef.close(true);
+    this.intakeService.getIntakeDetail(id).subscribe({
+      next: (res: any) => {
+        const detail = res?.data || res;
+        this.populateForm(detail);
+        this.isLoadingDetail = false;
       },
       error: (err) => {
+        this.isLoadingDetail = false;
         this.snackBar.open(
-          err.error?.message || 'Error al registrar internamiento',
+          err?.error?.message || 'No se pudo cargar el internamiento para editar',
           '',
           {
             duration: 3000,
@@ -344,8 +296,225 @@ export class ModalIntakeDialogComponent implements AfterViewInit {
             panelClass: ['error-snackbar']
           }
         );
+        this.dialogRef.close(false);
       }
     });
+  }
+
+  populateForm(detail: any) {
+    this.intake = {
+      id: detail?.id ?? this.data?.id ?? null,
+      vehicleId: detail?.vehicle?.id ?? detail?.vehicleId ?? null,
+      clientId: detail?.client?.id ?? detail?.clientId ?? null,
+      mode: detail?.mode ?? 1,
+      pickupAddress: detail?.pickupAddress || '',
+      mileageKm: detail?.mileageKm ?? null,
+      services: detail?.services || '',
+      observations: detail?.observations || '',
+      inventoryItems: detail?.inventoryItems || []
+    };
+
+    this.pendingInventoryItems = detail?.inventoryItems || [];
+    if (this.inventoryMaster.length > 0) {
+      this.applyInventorySelection(this.pendingInventoryItems);
+      this.pendingInventoryItems = [];
+    }
+
+    this.existingImages = detail?.images || [];
+
+    this.prepareExistingDiagrams(detail?.imagesDiagram || []);
+    this.syncVehicleSearch();
+  }
+
+  prepareExistingDiagrams(diagrams: any[]) {
+    this.pendingDiagramUrls = {};
+
+    diagrams.forEach((diagram: any) => {
+      const url = this.normalizeAssetUrl(diagram?.markedImageUrl);
+
+      if (diagram?.markedImageUrl?.includes('diagram-1.png')) {
+        this.pendingDiagramUrls[1] = url;
+      }
+
+      if (diagram?.markedImageUrl?.includes('diagram-2.png')) {
+        this.pendingDiagramUrls[2] = url;
+      }
+    });
+
+    this.tryApplyPendingDiagrams();
+  }
+
+  tryApplyPendingDiagrams() {
+    if (!this.viewInitialized || this.isEditMode) {
+      return;
+    }
+
+    [1, 2].forEach(key => {
+      const url = this.pendingDiagramUrls[key];
+      if (url) {
+        this.loadDiagramIntoCanvas(key, url);
+      }
+    });
+  }
+
+  loadDiagramIntoCanvas(key: number, url: string) {
+    const canvas = this.getCanvas(key);
+    const ctx = this.contexts[key];
+    const image = new Image();
+
+    image.crossOrigin = 'anonymous';
+    image.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    };
+    image.src = url;
+  }
+
+  getDiagramUrl(key: number): string | null {
+    return this.pendingDiagramUrls[key] || null;
+  }
+
+  applyInventorySelection(items: any[]) {
+    if (!items?.length) {
+      return;
+    }
+
+    this.inventoryMaster.forEach(masterItem => {
+      const selected = items.find((item: any) =>
+        item.inventoryMasterItemId === masterItem.id ||
+        item.id === masterItem.id
+      );
+
+      masterItem.isPresent = selected?.isPresent ?? false;
+    });
+  }
+
+  syncVehicleSearch() {
+    if (!this.intake.vehicleId || this.vehicles.length === 0) {
+      return;
+    }
+
+    const selectedVehicle = this.vehicles.find(v => v.id === this.intake.vehicleId);
+    if (selectedVehicle) {
+      this.vehicleSearch = this.formatVehicleLabel(selectedVehicle);
+    }
+  }
+
+  formatVehicleLabel(vehicle: any): string {
+    const plate = vehicle?.plate || '';
+    const model = vehicle?.model?.name || '';
+    const brand = vehicle?.brand?.name || '';
+
+    if (!model && !brand) {
+      return plate;
+    }
+
+    return `${plate} - ${model} (${brand})`;
+  }
+
+  normalizeAssetUrl(path: string): string {
+    if (!path) {
+      return '';
+    }
+
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+
+    return `${this.assetBaseUrl}${path.startsWith('/') ? path : `/${path}`}`;
+  }
+
+  setInventory(masterId: number, value: boolean) {
+    const item = this.inventoryMaster.find(x => x.id === masterId);
+    if (item) {
+      item.isPresent = value;
+    }
+  }
+
+  async guardar() {
+    const diagram1 = !this.isEditMode && this.canvas1
+      ? await this.canvasToFile(this.getCanvas(1), 'diagram-1.png')
+      : null;
+    const diagram2 = !this.isEditMode && this.canvas2
+      ? await this.canvasToFile(this.getCanvas(2), 'diagram-2.png')
+      : null;
+
+    const formData = this.buildFormData(diagram1, diagram2);
+    const accion = this.isEditMode
+      ? this.intakeService.updateIntake(this.intake.id || this.data.id, formData)
+      : this.intakeService.createIntake(formData);
+
+    const mensajeExito = this.isEditMode
+      ? 'Internamiento actualizado correctamente'
+      : 'Internamiento registrado correctamente';
+
+    const mensajeError = this.isEditMode
+      ? 'Error al actualizar internamiento'
+      : 'Error al registrar internamiento';
+
+    accion.subscribe({
+      next: (resp: any) => {
+        const success = resp?.success;
+        const message = resp?.message || mensajeExito;
+
+        this.snackBar.open(message, '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: [success ? 'success-snackbar' : 'error-snackbar']
+        });
+
+        if (success) {
+          this.dialogRef.close(true);
+        }
+      },
+      error: (err) => {
+        this.snackBar.open(err?.error?.message || mensajeError, '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  buildFormData(diagram1: File | null, diagram2: File | null): FormData {
+    const formData = new FormData();
+
+    formData.append('vehicleId', String(this.intake.vehicleId));
+    formData.append('clientId', String(this.intake.clientId));
+    formData.append('mode', String(this.intake.mode));
+    formData.append('mileageKm', String(Number(this.intake.mileageKm)));
+    if (diagram1) {
+      formData.append('diagrams', diagram1);
+    }
+
+    if (diagram2) {
+      formData.append('diagrams', diagram2);
+    }
+    formData.append('services', (this.intake.services || '').toUpperCase());
+
+    if (this.intake.mode === 2) {
+      formData.append('pickupAddress', this.intake.pickupAddress || '');
+    }
+
+    if (this.intake.observations) {
+      formData.append('observations', this.intake.observations.toUpperCase());
+    }
+
+    const inventoryItems = this.inventoryMaster.map(x => ({
+      inventoryMasterItemId: x.id,
+      isPresent: x.isPresent
+    }));
+
+    formData.append('inventoryItems', JSON.stringify(inventoryItems));
+
+    this.selectedImages.forEach(file => {
+      formData.append('images', file);
+    });
+
+    return formData;
   }
 
   canvasToFile(canvas: HTMLCanvasElement, name: string): Promise<File> {

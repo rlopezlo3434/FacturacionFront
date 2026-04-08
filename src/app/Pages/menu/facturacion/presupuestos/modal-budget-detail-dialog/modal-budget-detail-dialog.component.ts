@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BudgetService } from '../../../../../../services/budget.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { PaqueteServicioService } from '../../../../../../services/paquete-servicio.service';
 
 @Component({
   selector: 'app-modal-budget-detail-dialog',
@@ -11,16 +12,36 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class ModalBudgetDetailDialogComponent {
   budget: any = null;
   loading = false;
-
+  paquetesServicio: any[] = [];
+  groupedBudgetItems: any[] = [];
   constructor(
     public dialogRef: MatDialogRef<ModalBudgetDetailDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private budgetService: BudgetService,
+    private paqueteService: PaqueteServicioService,
     private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
     this.loadDetail();
+    this.loadPaqueteService();
+  }
+
+  loadPaqueteService(){
+    this.paqueteService.getAll().subscribe({
+      next: (res: any) => {
+        this.paquetesServicio = res || [];
+        this.buildGroupedBudgetItems();
+      },
+      error: () => {
+        this.snackBar.open('No se pudo cargar los paquetes de servicio', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
   }
 
   recalcItem(it: any) {
@@ -60,6 +81,7 @@ export class ModalBudgetDetailDialogComponent {
     this.budgetService.getBudgetDetail(this.data.budgetId).subscribe({
       next: (res: any) => {
         this.budget = res?.data;
+        this.buildGroupedBudgetItems();
         this.loading = false;
       },
       error: () => {
@@ -73,31 +95,6 @@ export class ModalBudgetDetailDialogComponent {
       }
     });
   }
-
-  // aprobar() {
-  //   if (!this.budget?.id) return;
-
-  //   this.budgetService.approveBudget(this.budget.id).subscribe({
-  //     next: (res: any) => {
-  //       this.snackBar.open(res?.message || 'Presupuesto aprobado', '', {
-  //         duration: 3000,
-  //         horizontalPosition: 'right',
-  //         verticalPosition: 'top',
-  //         panelClass: ['success-snackbar']
-  //       });
-
-  //       this.dialogRef.close(true); // ✅ refresca la pantalla de presupuestos
-  //     },
-  //     error: (err) => {
-  //       this.snackBar.open(err.error?.message || 'Error al aprobar presupuesto', '', {
-  //         duration: 3000,
-  //         horizontalPosition: 'right',
-  //         verticalPosition: 'top',
-  //         panelClass: ['error-snackbar']
-  //       });
-  //     }
-  //   });
-  // }
 
   aprobar() {
     const payload = {
@@ -135,5 +132,54 @@ export class ModalBudgetDetailDialogComponent {
 
   cancelar() {
     this.dialogRef.close(false);
+  }
+
+  buildGroupedBudgetItems() {
+    if (!this.budget?.items?.length) {
+      this.groupedBudgetItems = [];
+      return;
+    }
+
+    const grouped: any[] = [];
+    const packageMap = new Map<number, any[]>();
+    const standaloneItems: any[] = [];
+
+    for (const item of this.budget.items) {
+      item.isPackageChild = false;
+
+      if (item.servicePackageId) {
+        if (!packageMap.has(item.servicePackageId)) {
+          packageMap.set(item.servicePackageId, []);
+        }
+        item.isPackageChild = true;
+        packageMap.get(item.servicePackageId)?.push(item);
+      } else {
+        standaloneItems.push(item);
+      }
+    }
+
+    for (const [servicePackageId, items] of packageMap.entries()) {
+      const paquete = this.paquetesServicio.find((x: any) => x.id === servicePackageId);
+
+      grouped.push({
+        isPackageHeader: true,
+        servicePackageId,
+        packageDescription: paquete?.description || `Paquete #${servicePackageId}`,
+        packageItemsCount: items.length
+      });
+
+      grouped.push(...items);
+    }
+
+    grouped.push(...standaloneItems);
+    this.groupedBudgetItems = grouped;
+  }
+
+  trackByGroupedItem(index: number, item: any) {
+    if (item.isPackageHeader) {
+      return `header-${item.servicePackageId}`;
+    }
+
+    return item.id ?? `item-${index}`;
   }
 }

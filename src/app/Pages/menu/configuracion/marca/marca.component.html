@@ -8,6 +8,7 @@
     <div class="input-wrapper">
       <mat-icon class="input-icon">search</mat-icon>
       <input [(ngModel)]="filtroTexto" type="text"
+        (ngModelChange)="paginaActualMarcas = 1"
         placeholder="Buscar por Marca o Modelo..."
         appUppercase
         class="input" />
@@ -68,7 +69,7 @@
           <span>Marcas</span>
         </div>
 
-        <div class="table-scroll">
+        <div class="table-scroll brand-table-scroll">
           <table class="custom-table">
             <thead>
               <tr>
@@ -78,7 +79,7 @@
             </thead>
 
             <tbody>
-              <tr *ngFor="let brand of brands"
+              <tr *ngFor="let brand of marcasPaginadas | marcaModelo:filtroTexto"
                 [class.selected-row]="selectedBrand?.id === brand.id"
                 (click)="selectBrand(brand)">
 
@@ -96,13 +97,27 @@
                 </td>
 
                 <td>
-                  <span class="chip activo" *ngIf="brand.isActive">Activo</span>
-                  <span class="chip suspendido" *ngIf="!brand.isActive">Inactivo</span>
+                  <span style="cursor: pointer;" class="chip activo" *ngIf="brand.isActive" (click)="updateBrandState(brand, false); $event.stopPropagation()">Activo</span>
+                  <span style="cursor: pointer;" class="chip suspendido" *ngIf="!brand.isActive" (click)="updateBrandState(brand, true); $event.stopPropagation()">Inactivo</span>
                 </td>
 
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <div class="pagination">
+          <span>Página {{ paginaActualMarcas }} de {{ totalPaginasMarcas }}</span>
+          <button class="paginacion-icon"
+            (click)="paginaAnteriorMarcas()"
+            [disabled]="paginaActualMarcas === 1">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <button class="paginacion-icon"
+            (click)="paginaSiguienteMarcas()"
+            [disabled]="paginaActualMarcas === totalPaginasMarcas">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
         </div>
       </div>
 
@@ -120,7 +135,7 @@
           <p>Selecciona una marca para ver sus modelos</p>
         </div>
 
-        <div class="table-scroll" *ngIf="selectedBrand">
+        <div class="table-scroll brand-table-scroll" *ngIf="selectedBrand">
           <table class="custom-table">
             <thead>
               <tr>
@@ -147,8 +162,10 @@
                 </td>
 
                 <td>
-                  <span class="chip activo" *ngIf="model.isActive">Activo</span>
-                  <span class="chip suspendido" *ngIf="!model.isActive">Inactivo</span>
+                  <span style="cursor: pointer;" class="chip activo" *ngIf="model.isActive"
+                    (click)="updateModelState(model, false); $event.stopPropagation()">Activo</span>
+                  <span style="cursor: pointer;" class="chip suspendido" *ngIf="!model.isActive"
+                    (click)="updateModelState(model, true); $event.stopPropagation()">Inactivo</span>
                 </td>
 
               </tr>

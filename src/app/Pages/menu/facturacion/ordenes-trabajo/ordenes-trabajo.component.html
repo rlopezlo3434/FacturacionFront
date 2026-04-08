@@ -66,6 +66,7 @@
               <th>Cliente</th>
               <th>Internamiento</th>
               <th>Modo</th>
+              <th>PDF</th>
               <th>Estado</th>
               <th>Fecha</th>
             </tr>
@@ -110,6 +111,10 @@
                 <span class="chip suspendido" *ngIf="ot.mode === 2">Recojo</span>
               </td>
 
+              <td>
+                <i class="fa-solid fa-file-pdf" style="cursor: pointer;" (click)="$event.stopPropagation(); obtenerPDFordenTrabajo(ot)"></i>
+              </td>
+            
               <td>
                 <span class="chip activo" *ngIf="ot.isCompleted">Completado</span>
                 <span class="chip suspendido" *ngIf="!ot.isCompleted">Pendiente</span>

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { WorkOrderService } from '../../../../../services/work-order.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalWorkOrderDetailDialogComponent } from './modal-work-order-detail-dialog/modal-work-order-detail-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-ordenes-trabajo',
@@ -17,7 +18,8 @@ export class OrdenesTrabajoComponent {
 
   constructor(
     private workOrderService: WorkOrderService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -46,6 +48,27 @@ export class OrdenesTrabajoComponent {
 
     dialogRef.afterClosed().subscribe(ok => {
       if (ok) this.loadWorkOrders();
+    });
+  }
+
+  obtenerPDFordenTrabajo(i: any){
+    this.workOrderService.getWorkOrderPDF(i.id).subscribe({
+      next: (pdfData: Blob) => {
+        const url = window.URL.createObjectURL(pdfData);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `OrdenTrabajo_${i.code}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.snackBar.open(err.error?.message || 'No se pudo descargar el PDF.', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
     });
   }
 

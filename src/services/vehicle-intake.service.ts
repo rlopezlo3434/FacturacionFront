@@ -11,6 +11,12 @@ export class VehicleIntakeService {
 
   constructor(private http: HttpClient) { }
 
+  private getHeaders() {
+    return {
+      Authorization: `Bearer ${this.token}`
+    };
+  }
+
   getInventoryMaster() {
     return this.http.get(`${environment.apiBase}/VehicleIntakes/inventory-master`, {
       headers: { Authorization: `Bearer ${this.token}` }
@@ -28,6 +34,20 @@ export class VehicleIntakeService {
       headers: { Authorization: `Bearer ${this.token}` }
     });
   }
+
+  updateIntake(id: number, formData: FormData) {
+    return this.http.put(`${environment.apiBase}/VehicleIntakes/${id}`, formData, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    });
+  }
+
+  getIntakePDF(intakeId: number) {
+    return this.http.get(`${environment.apiBase}/Pdf/${intakeId}/internamiento`, {
+      headers: this.getHeaders(),
+      responseType: 'blob'
+    });
+  }
+
 
   getIntakes() {
     return this.http.get(`${environment.apiBase}/VehicleIntakes`, {
