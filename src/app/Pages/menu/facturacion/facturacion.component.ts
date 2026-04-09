@@ -361,7 +361,8 @@ export class FacturacionComponent {
       cliente_tipo_documento: tipoDocumento,
       metodo_pago: this.venta.metodo_pago || '',
       fecha_emision: this.fechaBoleteoHoy,
-      codigoPromocional: this.codigoPromocional || ''
+      codigoPromocional: this.codigoPromocional || '',
+      porcentajePromo: this.promoTarjeta
     };
 
     this.facturacionService.registrarVenta(resumenVenta).subscribe(
