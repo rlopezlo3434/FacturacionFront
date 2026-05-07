@@ -19,7 +19,10 @@
       <div class="subTitle">Inventario de vehículos premium</div>
     </div>
 
-    <div>
+    <div style="display: flex; gap: 1rem;">
+      <button class="btn btn-create" (click)="descargarReporte()">
+        <mat-icon>description</mat-icon> Reporte
+      </button>
       <button class="btn btn-create" (click)="openCreateDialog()">
         <mat-icon>add</mat-icon> Nuevo Vehículo
       </button>

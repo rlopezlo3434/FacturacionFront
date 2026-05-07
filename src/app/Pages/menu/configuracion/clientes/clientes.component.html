@@ -14,7 +14,10 @@
             <div class="selected">Gestión de Clientes</div>
             <div class="subTitle">Administra tu cartera de clientes premium</div>
         </div>
-        <div>
+        <div style="display: flex; gap: 1rem;">
+            <button class="btn btn-create" (click)="descargarReporte()">
+                <mat-icon>description</mat-icon> Reporte
+            </button>
             <button class="btn btn-create" (click)="openCreateDialog()">
                 <mat-icon>add</mat-icon> Nuevo
                 Cliente</button>
@@ -62,8 +65,8 @@
                             <th>Contacto</th>
                             <th>Ultimo Servicio</th>
                             <!-- <th>Próxima Cita</th> -->
-                            <th>Servicios</th>
-                            <th>Gasto Total</th>
+                            <!-- <th>Servicios</th>
+                            <th>Gasto Total</th> -->
                             <th>Estado</th>
                         </tr>
                     </thead>
@@ -76,7 +79,7 @@
                                         {{ getInitials(cli.names) }}
                                     </div>
                                     <div class="cliente-details">
-                                        <div class="cliente-name">
+                                        <div class="cliente-name" [title]="cli.names">
                                             {{ cli.names }}
                                         </div>
                                         <div class="cliente-document">
@@ -154,12 +157,12 @@
 
                                 </div>
                             </td> -->
-                            <td>
+                            <!-- <td>
                                 12
                             </td>
                             <td>
                                 {{ 2500 | currency:'PEN':'symbol':'1.2-2' }}
-                            </td>
+                            </td> -->
                             <td>
                                 <span style="cursor: pointer;" (click)="$event.stopPropagation()" *ngIf="cli.isActive"
                                     class="chip activo">Activo</span>

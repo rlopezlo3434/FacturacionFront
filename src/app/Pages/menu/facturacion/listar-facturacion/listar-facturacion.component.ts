@@ -54,7 +54,7 @@ export class ListarFacturacionComponent {
 
   }
 
-  generarFactura(inv: any){
+  generarFactura(inv: any) {
     this.facturaService.getFacturaPDF(inv.id).subscribe({
       next: (pdfData: Blob) => {
         const url = window.URL.createObjectURL(pdfData);
@@ -73,6 +73,29 @@ export class ListarFacturacionComponent {
         });
       }
     });
+  }
+
+  descargarReporte() {
+    this.facturaService.obtenerProductividad2(this.fecha).subscribe(blob => {
+      const objectUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = 'Reporte_Ventas.xlsx';
+      a.click();
+
+      URL.revokeObjectURL(objectUrl);
+    });
+  }
+
+  descargarXML(url: string) {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'comprobante.xml'; // nombre del archivo
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   calcularKpis() {

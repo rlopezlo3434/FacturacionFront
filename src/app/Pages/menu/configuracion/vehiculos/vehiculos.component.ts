@@ -77,6 +77,19 @@ export class VehiculosComponent {
     });
   }
 
+  descargarReporte() {
+    this.vehiculoService.obtenerProductividad().subscribe(blob => {
+      const objectUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = 'Reporte_Vehiculos.xlsx';
+      a.click();
+
+      URL.revokeObjectURL(objectUrl);
+    });
+  }
+
   loadVehicles() {
     this.vehiculoService.getVehicles().subscribe((res: any) => {
       this.vehiculos = res?.data || [];

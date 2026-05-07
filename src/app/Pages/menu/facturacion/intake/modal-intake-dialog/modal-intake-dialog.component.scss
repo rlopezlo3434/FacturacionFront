@@ -382,7 +382,8 @@
 }
 
 .diagram-container {
-  width: min(100%, 420px);
+    margin-bottom: 2rem;
+
 }
 
 .diagram-overlay {
@@ -403,4 +404,5 @@
   position: absolute;
   top: 0;
   left: 0;
+  pointer-events: none;
 }

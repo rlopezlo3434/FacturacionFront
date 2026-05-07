@@ -24,6 +24,11 @@ export class FacturacionComponent {
     total: 0,
     metodo_pago: ''
   };
+
+  paymentCondition: string = 'CONTADO';
+  cuotas: number = 1;
+  cuotasDetalle: any[] = [];
+  diasCredito: number = 1;
   itemBuscado = '';
   isLoading = false;
   mostrarLista = false;
@@ -46,6 +51,7 @@ export class FacturacionComponent {
   itemsSeleccionados: any[] = [];
   series: any[] = [];
   montoIngresado: number = 0;
+  clienteInfoItem: { nombre: string; numero: string } | null = null;
   empleadoBuscado: string = '';
   empleados: any[] = [];
   empleadosFiltrados: any[] = [];
@@ -82,6 +88,53 @@ export class FacturacionComponent {
 
   detraccionAmount = 0;
   totalPagar = 0;
+
+  detraccionTipo: number | null = null;
+  detraccionSearch = '';
+
+  detracciones = [
+    { codigo: 1, descripcion: '001 Azúcar y melaza de caña' },
+    { codigo: 2, descripcion: '002 Arroz' },
+    { codigo: 3, descripcion: '003 Alcohol etílico' },
+    { codigo: 4, descripcion: '004 Recursos Hidrobiológicos' },
+    { codigo: 5, descripcion: '005 Maíz amarillo duro' },
+    { codigo: 7, descripcion: '007 Caña de azúcar' },
+    { codigo: 8, descripcion: '008 Madera' },
+    { codigo: 9, descripcion: '009 Arena y piedra' },
+    { codigo: 10, descripcion: '010 Residuos, subproductos, desechos, recortes y desperdicios' },
+    { codigo: 11, descripcion: '011 Bienes gravados con el IGV, o renuncia a la exoneración' },
+    { codigo: 12, descripcion: '012 Intermediación laboral y tercerización' },
+    { codigo: 13, descripcion: '014 Carnes y despojos comestibles' },
+    { codigo: 14, descripcion: '016 Aceite de pescado' },
+    { codigo: 15, descripcion: '017 Harina, polvo y pellets de pescado, crustáceos, moluscos y demás invertebrados acuáticos' },
+    { codigo: 17, descripcion: '019 Arrendamiento de bienes muebles' },
+    { codigo: 18, descripcion: '020 Mantenimiento y reparación de bienes muebles' },
+    { codigo: 19, descripcion: '021 Movimiento de carga' },
+    { codigo: 20, descripcion: '022 Otros servicios empresariales' },
+    { codigo: 21, descripcion: '023 Leche' },
+    { codigo: 22, descripcion: '024 Comisión mercantil' },
+    { codigo: 23, descripcion: '025 Fabricación de bienes por encargo' },
+    { codigo: 24, descripcion: '026 Servicio de transporte de personas' },
+    { codigo: 25, descripcion: '027 Servicio de transporte de carga' },
+    { codigo: 26, descripcion: '028 Transporte de pasajeros' },
+    { codigo: 28, descripcion: '030 Contratos de construcción' },
+    { codigo: 29, descripcion: '031 Oro gravado con el IGV' },
+    { codigo: 30, descripcion: '032 Paprika y otros frutos de los generos capsicum o pimienta' },
+    { codigo: 32, descripcion: '034 Minerales metálicos no auríferos' },
+    { codigo: 33, descripcion: '035 Bienes exonerados del IGV' },
+    { codigo: 34, descripcion: '036 Oro y demás minerales metálicos exonerados del IGV' },
+    { codigo: 35, descripcion: '037 Demás servicios gravados con el IGV' },
+    { codigo: 37, descripcion: '039 Minerales no metálicos' },
+    { codigo: 38, descripcion: '040 Bien inmueble gravado con IGV' },
+    { codigo: 39, descripcion: '041 Plomo' },
+    { codigo: 40, descripcion: '013 Animales vivos' },
+    { codigo: 41, descripcion: '015 Abonos, cueros y pieles de origen animal' },
+    { codigo: 42, descripcion: '099 Ley 30737' },
+    { codigo: 43, descripcion: '044 Servicio de beneficio de minerales metálicos gravado con el IGV' },
+    { codigo: 44, descripcion: '045 Minerales de oro y sus concentrados gravados con el IGV' }
+  ];
+  showDetraccionDropdown = false;
+  filteredDetracciones = [...this.detracciones];
   constructor(
     private clienteService: ClienteService,
     private facturacionService: FacturacionService,
@@ -107,8 +160,76 @@ export class FacturacionComponent {
     this.loadVentas();
     this.seriesComprobantes();
     this.loadApprovedItems();
+    this.venta.tipoComprobante = '1';
   }
 
+
+  onPaymentConditionChange() {
+    this.cuotasDetalle = [];
+    this.cuotas = 1;
+
+    if (this.paymentCondition === 'CONTADO') {
+      return;
+    }
+
+    if (this.paymentCondition === 'CREDITO_DIAS') {
+      this.diasCredito = 1;
+      this.generarUnaCuota(this.diasCredito);
+      return;
+    }
+
+    if (this.paymentCondition === 'CREDITO_CUOTAS') {
+      this.cuotas = 1;
+      this.generarCuotas();
+    }
+  }
+
+  onDiasCreditoChange() {
+    const dias = Math.min(30, Math.max(1, this.diasCredito || 1));
+    this.diasCredito = dias;
+    this.generarUnaCuota(dias);
+  }
+
+  generarUnaCuota(dias: number) {
+    const fecha = new Date();
+    fecha.setDate(fecha.getDate() + dias);
+    console.log("entre")
+    this.cuotasDetalle = [
+      {
+        cuota: 1,
+        fecha: this.formatDate(fecha),
+        importe: this.total
+      }
+    ];
+  }
+
+  generarCuotas() {
+    if (!this.cuotas || this.cuotas <= 0) return;
+
+    this.cuotasDetalle = [];
+
+    const montoPorCuota = this.total / this.cuotas;
+    const fechaBase = new Date();
+
+    for (let i = 1; i <= this.cuotas; i++) {
+      const fecha = new Date(fechaBase);
+      fecha.setMonth(fecha.getMonth() + i);
+
+      this.cuotasDetalle.push({
+        cuota: i,
+        fecha: this.formatDate(fecha),
+        importe: parseFloat(montoPorCuota.toFixed(2))
+      });
+    }
+  }
+
+  formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  }
 
   loadApprovedItems() {
     this.facturacionService
@@ -119,7 +240,13 @@ export class FacturacionComponent {
 
       });
   }
+  selectDetraccion(d: any) {
+    this.detraccionTipo = d.codigo;
+    this.detraccionSearch = `${d.codigo} - ${d.descripcion}`;
+    this.showDetraccionDropdown = false;
 
+    this.recalculateInvoice();
+  }
   get filteredInvoiceItems(): any[] {
     let items = this.invoiceItems;
 
@@ -138,6 +265,21 @@ export class FacturacionComponent {
     );
   }
 
+
+  filterDetracciones() {
+    const t = this.detraccionSearch.toLowerCase().trim();
+
+    if (!t) {
+      this.filteredDetracciones = this.detracciones;
+      return;
+    }
+
+    this.filteredDetracciones = this.detracciones.filter(d =>
+      d.descripcion.toLowerCase().includes(t) ||
+      d.codigo.toString().includes(t)
+    );
+  }
+
   recalculateInvoice() {
 
     this.itemsSeleccionados =
@@ -149,6 +291,13 @@ export class FacturacionComponent {
           value: x.subTotal,
           cantidad: x.quantity,
         }));
+
+    const primero = this.invoiceItems.find(x => x.selected);
+    console.log(primero)
+    this.clienteInfoItem = primero
+      ? { nombre: primero.clienteNombre, numero: primero.clienteNumero }
+      : null;
+
     console.log('Items seleccionados:', this.itemsSeleccionados);
     const selected =
       this.invoiceItems.filter((x: any) => x.selected);
@@ -165,7 +314,9 @@ export class FacturacionComponent {
         (this.total * this.detraccionPercent) / 100;
 
     } else {
-
+      this.detraccionTipo = null;
+      this.detraccionSearch = '';
+      this.filteredDetracciones = [...this.detracciones];
       this.detraccionAmount = 0;
 
     }
@@ -422,8 +573,10 @@ export class FacturacionComponent {
     this.documentType = type;
 
     if (type === 'FACTURA') {
+      this.venta.tipoComprobante = '1';
       this.serie = 'F002';
     } else {
+      this.venta.tipoComprobante = '2'
       this.serie = 'B002';
     }
   }
@@ -448,31 +601,42 @@ export class FacturacionComponent {
     console.log('Número de documento del cliente:', items);
     const resumenVenta = {
       items: items,
-      // subtotalGeneral: this.subtotalGeneral.toFixed(2),
-      // igvGeneral: this.igvGeneral.toFixed(2),
-      // totalGeneral: this.totalGeneral.toFixed(2),
       direccion: this.venta.cliente?.address || '',
       observaciones: this.venta.observaciones || '',
-      tipo_de_comprobante: this.venta.serieSeleccionada.tipoComprobante,
+      tipo_de_comprobante: this.venta.tipoComprobante,
       cliente_numero: this.venta.cliente?.documentIdentificationNumber || '',
       cliente_nombre: nombreCliente,
       serie: this.serie,
       cliente_tipo_documento: tipoDocumento,
-      metodo_pago: this.venta.metodo_pago || 'EFECTIVO',
+      metodo_pago: 1,
+      cond_venta: this.paymentCondition === 'CONTADO' ? 'CONTADO' : 'CREDITO',
+      // 👇 NUEVO
+      tipo_condicion_pago: this.paymentCondition === 'CREDITO_DIAS'
+        ? `CREDITO_DIAS_${this.diasCredito}`
+        : this.paymentCondition,
+
+      cuotas: this.paymentCondition !== 'CONTADO'
+        ? this.cuotasDetalle.map(c => ({
+          cuota: c.cuota,
+          fecha_pago: c.fecha,
+          importe: c.importe
+        }))
+        : [],
       fecha_emision: this.fechaBoleteoHoy,
       detraccion: this.applyDetraccion,
       detraccion_tipo:
-        this.applyDetraccion ? 12 : null,
+        this.applyDetraccion ? this.detraccionTipo : null,
       detraccion_porcentaje:
         this.applyDetraccion ? this.detraccionPercent : null,
       detraccion_total:
         this.applyDetraccion ? this.detraccionAmount : null
     };
-
+    console.log(resumenVenta)
     this.facturacionService.registrarVenta(resumenVenta).subscribe(
       (res: any) => {
         this.isLoading = false;
         if (res.success) {
+          this.resetFormVenta();
           this.snackBar.open(res.message, '', {
             duration: 3000,
             horizontalPosition: 'right',
@@ -494,6 +658,7 @@ export class FacturacionComponent {
             panelClass: ['error-snackbar']
           });
         }
+        this.loadApprovedItems();
 
         this.loadVentas();
       },
@@ -514,7 +679,44 @@ export class FacturacionComponent {
 
 
     );
-    this.loadVentas();
+
+  }
+
+  onToggleDetraccion() {
+    if (this.applyDetraccion) {
+      // 🔥 buscar la detracción con código 020
+      const detraccion020 = this.detracciones.find((d: any) => d.codigo === 18);
+      console.log("entre")
+      if (detraccion020) {
+        this.selectDetraccion(detraccion020);
+      }
+    } else {
+      this.detraccionSearch = '';
+    }
+
+    this.recalculateInvoice();
+  }
+
+  resetFormVenta() {
+    this.itemsSeleccionados = [];
+
+    this.invoiceItems.forEach(x => x.selected = false);
+
+    this.venta = {
+      ...this.venta,
+    };
+
+    this.serie = '';
+    this.fechaBoleteoHoy = new Date().toISOString().substring(0, 10);
+
+    // 🔥 DETRACCIÓN
+    this.applyDetraccion = false;
+    this.detraccionTipo = null;
+    this.detraccionPercent = 0;
+    this.detraccionAmount = 0;
+    this.detraccionSearch = '';
+    this.filteredDetracciones = [...this.detracciones];
+    this.showDetraccionDropdown = false;
 
   }
 

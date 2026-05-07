@@ -42,7 +42,7 @@
             </div>
 
             <!-- Género -->
-            <div class="form-field">
+            <!-- <div class="form-field">
                 <label class="label">Género *</label>
                 <select class="select" [(ngModel)]="selectedGenderId">
                     <option [ngValue]="null" disabled>Seleccionar</option>
@@ -51,7 +51,7 @@
                         {{ item.name }}
                     </option>
                 </select>
-            </div>
+            </div> -->
 
             <!-- Correo -->
             <div class="form-field full">
@@ -152,7 +152,7 @@
     <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
 
     <button class="btn-primary" (click)="guardar()"
-        [disabled]="!cli.names || !selectedDocumentTypeId || !cli.documentIdentificationNumber || !selectedGenderId">
+        [disabled]="!cli.names || !selectedDocumentTypeId || !cli.documentIdentificationNumber">
         {{ data ? 'Actualizar' : 'Crear' }}
     </button>
 </mat-dialog-actions>

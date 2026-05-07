@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +46,7 @@ export class VehiculoService {
   }
 
   updateModel(modelId: number, payload: any) {
-    return this.http.put(`${environment.apiBase}/Catalogo/models/${modelId}`, payload, {
+    return this.http.post(`${environment.apiBase}/Catalogo/models/${modelId}`, payload, {
       headers: { Authorization: `Bearer ${this.token}` }
     });
   }
@@ -68,5 +69,14 @@ export class VehiculoService {
     });
   }
 
+  obtenerProductividad(): Observable<Blob> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
+    return this.http.get(`${environment.apiBase}/Vehicle/reporte-vehiculos`, {
+      headers,
+      responseType: 'blob'
+    });
+  }
 
 }

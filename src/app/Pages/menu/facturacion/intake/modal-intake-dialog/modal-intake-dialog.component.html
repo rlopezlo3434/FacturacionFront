@@ -64,8 +64,8 @@
             <div class="form-field full">
                 <label class="label">Servicios (separar con coma)</label>
                 <textarea class="textarea2" appUppercase
-                    placeholder="Ej: Mantenimiento menor Toyota, lavado de camioneta..."
-                    [(ngModel)]="intake.services" [disabled]="isLoadingDetail"></textarea>
+                    placeholder="Ej: Mantenimiento menor Toyota, lavado de camioneta..." [(ngModel)]="intake.services"
+                    [disabled]="isLoadingDetail"></textarea>
             </div>
 
             <div class="form-field full">
@@ -79,7 +79,8 @@
 
                 <div class="image-upload-box">
 
-                    <input type="file" accept="image/*" multiple hidden #imageInput (change)="onImagesSelected($event)" />
+                    <input type="file" accept="image/*" multiple hidden #imageInput
+                        (change)="onImagesSelected($event)" />
 
                     <button class="btn-upload" (click)="imageInput.click()" [disabled]="isLoadingDetail">
                         <mat-icon>photo_camera</mat-icon>
@@ -104,10 +105,12 @@
                 </div>
             </div>
 
-            <div class="form-field full" *ngIf="isEditMode && (getDiagramUrl(1) || getDiagramUrl(2))">
+            <div class="form-field full"
+                *ngIf="isEditMode && (getDiagramUrl(1) || getDiagramUrl(2))">
+
                 <div class="subTitle">Diagramas de Marcaciones</div>
 
-                <div class="diagram-readonly-grid">
+                <div style="display: flex; gap:0.5rem; align-items: center; ">
                     <div class="diagram-container" *ngIf="getDiagramUrl(1)">
                         <div class="diagram-overlay">
                             <img class="base" [src]="baseImageUrl" />
@@ -129,7 +132,8 @@
 
                 <canvas #canvas1 (mousedown)="startDraw($event, 1)" (mousemove)="draw($event, 1)"
                     (mouseup)="stopDraw(1)" (mouseleave)="stopDraw(1)" (touchstart)="startDraw($event, 1)"
-                    (touchmove)="draw($event, 1)" (touchend)="stopDraw(1)"></canvas>
+                    (touchmove)="draw($event, 1)" (touchend)="stopDraw(1)">
+                </canvas>
 
                 <button type="button" class="btn-clear-canvas" (click)="clearCanvas(1)">
                     Limpiar
@@ -141,7 +145,8 @@
 
                 <canvas #canvas2 (mousedown)="startDraw($event, 2)" (mousemove)="draw($event, 2)"
                     (mouseup)="stopDraw(2)" (mouseleave)="stopDraw(2)" (touchstart)="startDraw($event, 2)"
-                    (touchmove)="draw($event, 2)" (touchend)="stopDraw(2)"></canvas>
+                    (touchmove)="draw($event, 2)" (touchend)="stopDraw(2)">
+                </canvas>
 
                 <button type="button" class="btn-clear-canvas" (click)="clearCanvas(2)">
                     Limpiar

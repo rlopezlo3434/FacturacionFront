@@ -1,33 +1,33 @@
 /* chips modos */
 .modo-taller {
-  background: #e3f2fd;
-  color: #1976d2;
-  border: 1px solid #bbdefb;
+    background: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #bbdefb;
 }
 
 .modo-domicilio {
-  background: #fff3e0;
-  color: #ef6c00;
-  border: 1px solid #ffe0b2;
+    background: #fff3e0;
+    color: #ef6c00;
+    border: 1px solid #ffe0b2;
 }
 
 .chip {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .activo {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #c8e6c9;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
 }
 
 .suspendido {
-  background: #ffebee;
-  color: #c62828;
-  border: 1px solid #ffcdd2;
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
 }
 
 
@@ -46,13 +46,13 @@
     font-weight: 600;
 }
 
-.container-card{
+.container-card {
     display: flex;
     gap: 1rem;
     margin: 1rem 0;
 }
 
-.card{
+.card {
     flex: 1;
     background: var(--color-bg);
     border: 1px solid #ddd;
@@ -62,27 +62,29 @@
     color: var(--color-text);
     text-align: start;
 
-    .card-title{
+    .card-title {
         font-size: 1rem;
         margin-bottom: 0.5rem;
         font-weight: 500;
     }
-    .card-value{
+
+    .card-value {
         font-size: 1.5rem;
         font-weight: bold;
     }
-    .footer-card{
+
+    .footer-card {
         margin-top: 0.5rem;
         font-size: 0.9rem;
         color: gray;
     }
 }
 
-.cliente-info{
+.cliente-info {
     display: flex;
     align-items: center;
 
-    .avatar-circle{
+    .avatar-circle {
         width: 40px;
         height: 40px;
         border-radius: 50%;
@@ -95,58 +97,66 @@
         margin-right: 8px;
     }
 
-    .cliente-details{
+    .cliente-details {
         display: flex;
         flex-direction: column;
 
-        .cliente-name{
+        .cliente-name {
             font-weight: 500;
         }
 
-        .cliente-document{
+        .cliente-document {
             font-size: 0.9rem;
             color: gray;
         }
     }
 }
 
-.cliente-contact{
+.cliente-contact {
     align-items: center;
     gap: 0.8rem;
 
-    .cliente-phone{
+    .cliente-phone {
         display: flex;
         align-items: center;
         gap: 0.3rem;
         font-weight: 500;
         margin-bottom: 0.3rem;
     }
-    .cliente-email{
+
+    .cliente-email {
         display: flex;
         align-items: center;
         gap: 0.3rem;
         font-weight: 500;
     }
 
+    .cliente-email div {
+        max-width: 12vw;
+        /* ajusta según tu diseño */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 
 .phone-more-btn {
-  min-width: auto !important;
-  padding: 0 8px !important;
-  line-height: 26px;
-  height: 26px;
-  font-size: 12px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
+    min-width: auto !important;
+    padding: 0 8px !important;
+    line-height: 26px;
+    height: 26px;
+    font-size: 12px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
 }
 
 
 .phone-main {
-  font-weight: 500;
+    font-weight: 500;
 }
 
-.cliente-car{
+.cliente-car {
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -179,7 +189,12 @@
     overflow-x: auto;
 }
 
-.drawer{
+.btn-danger {
+    background-color: #e53935;
+    color: white;
+}
+
+.drawer {
     height: 100%;
 }
 
@@ -193,7 +208,7 @@
 
 }
 
-.search-menu{
+.search-menu {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -324,6 +339,7 @@
     min-width: 50vw;
     width: 20vw;
     margin-bottom: 0.7rem;
+
     input {
         width: 100%;
 

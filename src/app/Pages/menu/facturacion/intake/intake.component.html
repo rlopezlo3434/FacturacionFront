@@ -65,6 +65,7 @@
               <th>Estado</th>
               <th>Editar</th>
               <th>Presupuesto</th>
+              <th>Eliminar</th>
             </tr>
           </thead>
 
@@ -95,7 +96,7 @@
               <!-- Cliente -->
               <td>
                 <div class="cliente-contact">
-                  <div class="cliente-email">
+                  <div class="cliente-email" [title]="i.client?.names">
                     <mat-icon>person</mat-icon>
                     <div>{{ i.client?.names }}</div>
                   </div>
@@ -128,7 +129,8 @@
               </td>
 
               <td>
-                <i class="fa-solid fa-file-pdf" style="cursor: pointer;" (click)="$event.stopPropagation(); obtenerPDFinternamiento(i)"></i>
+                <i class="fa-solid fa-file-pdf" style="cursor: pointer;"
+                  (click)="$event.stopPropagation(); obtenerPDFinternamiento(i)"></i>
               </td>
               <!-- Estado -->
               <td>
@@ -136,12 +138,18 @@
                 <span class="chip suspendido" *ngIf="!i.isActive">Finalizado</span>
               </td>
               <td>
-                <button class="btn btn-create" (click)="$event.stopPropagation(); openEditIntakeDialog(i)">Editar</button>
+                <button class="btn btn-create"
+                  (click)="$event.stopPropagation(); openEditIntakeDialog(i)">Editar</button>
               </td>
               <!-- Presupuesto -->
               <td>
                 <button class="btn btn-create" (click)="$event.stopPropagation(); goToBudgets(i)">
                   Presupuesto
+                </button>
+              </td>
+              <td>
+                <button class="btn btn-danger" (click)="$event.stopPropagation(); deleteIntake(i)">
+                  Eliminar
                 </button>
               </td>
             </tr>

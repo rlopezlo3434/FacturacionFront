@@ -12,7 +12,8 @@ export class ModalServiceMasterDialogComponent {
 service: any = {
     name: '',
     price: null,
-    isActive: true
+    isActive: true,
+    isThird: false
   };
 
   constructor(
@@ -26,7 +27,8 @@ service: any = {
       this.service = {
         name: data.name,
         price: data.price,
-        isActive: data.isActive
+        isActive: data.isActive,
+        isThird: data.isThird
       };
     }
   }
@@ -36,7 +38,8 @@ service: any = {
     const payload = {
       name: this.service.name,
       price: Number(this.service.price),
-      isActive: this.service.isActive
+      isActive: this.service.isActive,
+      isThird: this.service.isThird
     };
 
     const accion = this.data

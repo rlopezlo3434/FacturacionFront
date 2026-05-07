@@ -149,7 +149,6 @@ export class ModalClientesDialogComponent {
       names: this.cli.names,
       documentIdentificationNumber: this.cli.documentIdentificationNumber,
       documentIdentificationType: documentTypeSelected.id,
-      gender: genderSelected.id,
       email: this.cli.email,
       acceptsMarketing: this.cli.acceptsMarketing || false,
       numbers: this.cli.numbers,

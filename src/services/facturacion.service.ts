@@ -76,6 +76,18 @@ export class FacturacionService {
     });
   }
 
+  obtenerProductividad2(fecha: string): Observable<Blob> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
+    return this.http.get(`${environment.apiBase}/facturacion/reporte-ventas-resumen`, {
+      headers,
+      responseType: 'blob',
+      params: {
+        fechaInicio: fecha
+      }
+    });
+  }
   descargarPDF(url: string): Observable<Blob> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.token}`
@@ -97,7 +109,7 @@ export class FacturacionService {
     });
   }
 
-  getFacturaPDF(id:number) {
+  getFacturaPDF(id: number) {
     return this.http.get(`${environment.apiBase}/Pdf/${id}/factura`, {
       headers: this.getHeaders(),
       responseType: 'blob'

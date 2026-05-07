@@ -24,10 +24,9 @@
       <div class="subTitle">Gestión y control de facturas emitidas</div>
     </div>
 
-    <button class="btn btn-create" (click)="openCreateInvoice()">
-      <mat-icon>add</mat-icon>
-      Nueva Factura
-    </button>
+    <button class="btn btn-create" (click)="descargarReporte()">
+        <mat-icon>description</mat-icon> Reporte
+      </button>
 
   </div>
 
@@ -78,7 +77,7 @@
               <th>Fecha</th>
               <th>Total</th>
               <th>PDF</th>
-              <th>CDR</th>
+              <!-- <th>CDR</th> -->
               <th>XML</th>
               <th></th>
             </tr>
@@ -108,12 +107,12 @@
                 <i class="fa-solid fa-file-pdf" style="color: rgb(230, 144, 144); cursor: pointer;" (click)="$event.stopPropagation(); generarFactura(inv) "></i>
               </td>
 
-              <td>
+              <!-- <td>
                 <i class="fa-solid fa-file-circle-check" style="color: rgb(100, 180, 100)"></i>
-              </td>
+              </td> -->
 
               <td>
-                <i class="fa-solid fa-file-code" style="color: rgb(100, 121, 180)"></i>
+                <i class="fa-solid fa-file-code" style="color: rgb(100, 121, 180); cursor: pointer;" (click)="$event.stopPropagation(); descargarXML(inv.linkXml) "></i>
               </td>
 
             </tr>

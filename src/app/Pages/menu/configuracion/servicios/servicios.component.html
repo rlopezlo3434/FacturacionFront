@@ -8,8 +8,7 @@
 
     <div class="input-wrapper">
       <mat-icon class="input-icon">search</mat-icon>
-      <input [(ngModel)]="filtroTexto" type="text"
-        placeholder="Buscar por Código o Nombre..." class="input" />
+      <input [(ngModel)]="filtroTexto" type="text" placeholder="Buscar por Código o Nombre..." class="input" />
     </div>
   </div>
 
@@ -20,7 +19,8 @@
       <div class="subTitle">Administra tu catálogo de servicios y precios</div>
     </div>
 
-    <div>
+    <div style="display: flex; gap: 1rem;">
+      
       <button class="btn btn-create" (click)="openCreateDialog()">
         <mat-icon>add</mat-icon> Nuevo Servicio
       </button>
@@ -63,15 +63,14 @@
               <th>Servicio</th>
               <th>Precio</th>
               <th>Estado</th>
+              <th>Tercero</th>
             </tr>
           </thead>
 
           <tbody>
             <tr
               *ngFor="let s of services | serviceFilter:filtroTexto | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
-              (click)="openEditDialog(s)"
-              style="cursor: pointer;"
-            >
+              (click)="openEditDialog(s)" style="cursor: pointer;">
               <td>
                 <strong>{{ s.code }}</strong>
               </td>
@@ -87,6 +86,10 @@
               <td>
                 <span class="chip activo" *ngIf="s.isActive">Activo</span>
                 <span class="chip suspendido" *ngIf="!s.isActive">Inactivo</span>
+              </td>
+              <td>
+                <span class="chip activo" *ngIf="s.isThird">Si</span>
+                <span class="chip suspendido" *ngIf="!s.isThird">No</span>
               </td>
             </tr>
           </tbody>

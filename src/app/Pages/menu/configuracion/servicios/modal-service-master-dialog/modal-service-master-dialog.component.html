@@ -40,6 +40,14 @@
         <input class="input" type="text" [value]="data.code" disabled />
       </div>
 
+      <div class="form-field full">
+        <label class="label">Servicio de tercero</label>
+        <select class="select" [(ngModel)]="service.isThird">
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">Inactivo</option>
+        </select>
+      </div>
+
     </div>
   </div>
 

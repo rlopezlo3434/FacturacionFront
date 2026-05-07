@@ -14,15 +14,6 @@
                 Solo pendientes por facturar
             </label>
 
-            <!-- <button class="btn-outline">
-                <mat-icon>filter_list</mat-icon>
-                Filtros
-            </button> -->
-
-            <button class="btn-outline">
-                <mat-icon>refresh</mat-icon>
-                Actualizar
-            </button>
         </div>
 
     </div>
@@ -35,6 +26,14 @@
         <!-- ===================================================== -->
         <div class="items-section">
 
+            <!-- INFO CLIENTE DEL ITEM SELECCIONADO -->
+            <div class="cliente-info-banner" *ngIf="clienteInfoItem">
+                <mat-icon>person_pin</mat-icon>
+                <span><strong>{{ clienteInfoItem.nombre }}</strong></span>
+                <span class="separator">|</span>
+                <span>{{ clienteInfoItem.numero }}</span>
+            </div>
+
             <div class="section-header">
                 <div class="title">
                     <mat-icon>inventory_2</mat-icon>
@@ -45,76 +44,76 @@
                     {{ itemsSeleccionados.length }} items seleccionables
                 </div>
             </div>
+            <div class="table-container">
+                <table class="custom-table">
 
-            <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>CÓDIGO / PRESUP.</th>
+                            <th>DESCRIPCIÓN</th>
+                            <th>TIPO</th>
+                            <th>CANT.</th>
+                            <th>PRECIO UNIT.</th>
+                            <th>DESCUENTO</th>
+                            <th>SUBTOTAL</th>
+                        </tr>
+                    </thead>
 
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>CÓDIGO / PRESUP.</th>
-                        <th>DESCRIPCIÓN</th>
-                        <th>TIPO</th>
-                        <th>CANT.</th>
-                        <th>PRECIO UNIT.</th>
-                        <th>DESCUENTO</th>
-                        <th>SUBTOTAL</th>
-                    </tr>
-                </thead>
+                    <tbody>
 
-                <tbody>
+                        <tr *ngFor="let it of filteredInvoiceItems" [class.row-disabled]="it.invoiced">
 
-                    <tr *ngFor="let it of filteredInvoiceItems" [class.row-disabled]="it.invoiced">
+                            <!-- checkbox -->
+                            <td>
+                                <mat-checkbox [(ngModel)]="it.selected" (change)="recalculateInvoice()">
+                                </mat-checkbox>
+                            </td>
 
-                        <!-- checkbox -->
-                        <td>
-                            <mat-checkbox [(ngModel)]="it.selected" (change)="recalculateInvoice()">
-                            </mat-checkbox>
-                        </td>
+                            <!-- código -->
+                            <td>
+                                <strong>{{ it.intakeCode }}</strong>
+                            </td>
 
-                        <!-- código -->
-                        <td>
-                            <strong>{{ it.intakeCode }}</strong>
-                        </td>
+                            <!-- descripción -->
+                            <td>
+                                {{ it.description }}
+                            </td>
 
-                        <!-- descripción -->
-                        <td>
-                            {{ it.description }}
-                        </td>
+                            <!-- tipo -->
+                            <td>
+                                <span class="chip product" *ngIf="it.itemType === 1">
+                                    PRODUCTO
+                                </span>
 
-                        <!-- tipo -->
-                        <td>
-                            <span class="chip product" *ngIf="it.itemType === 1">
-                                PRODUCTO
-                            </span>
+                                <span class="chip service" *ngIf="it.itemType === 2">
+                                    SERVICIO
+                                </span>
+                            </td>
 
-                            <span class="chip service" *ngIf="it.itemType === 2">
-                                SERVICIO
-                            </span>
-                        </td>
+                            <!-- cantidad -->
+                            <td>{{ it.quantity }}</td>
 
-                        <!-- cantidad -->
-                        <td>{{ it.quantity }}</td>
+                            <!-- precio -->
+                            <td>
+                                {{ it.unitPrice | currency:'PEN':'symbol':'1.2-2' }}
+                            </td>
 
-                        <!-- precio -->
-                        <td>
-                            {{ it.unitPrice | currency:'PEN':'symbol':'1.2-2' }}
-                        </td>
+                            <td>
+                                {{ it.discount | currency:'PEN':'symbol':'1.2-2' }}
+                            </td>
 
-                        <td>
-                            {{ it.discount | currency:'PEN':'symbol':'1.2-2' }}
-                        </td>
+                            <!-- subtotal -->
+                            <td class="price">
+                                {{ it.subTotal | currency:'PEN':'symbol':'1.2-2' }}
+                            </td>
 
-                        <!-- subtotal -->
-                        <td class="price">
-                            {{ it.subTotal | currency:'PEN':'symbol':'1.2-2' }}
-                        </td>
+                        </tr>
 
-                    </tr>
+                    </tbody>
 
-                </tbody>
-
-            </table>
-
+                </table>
+            </div>
             <!-- footer tabla -->
             <div class="table-footer">
                 Mostrando {{ filteredInvoiceItems.length }} items encontrados
@@ -145,15 +144,10 @@
 
                     <div class="label">Documento</div>
                     <div class="client-search">
-                        <input type="text"
-                            class="client-input"
-                            placeholder="Ingresa DNI o RUC"
-                            [(ngModel)]="clientDocumentInput"
-                            maxlength="11" />
+                        <input type="text" class="client-input" placeholder="Ingresa DNI o RUC"
+                            [(ngModel)]="clientDocumentInput" maxlength="11" />
 
-                        <button type="button"
-                            class="client-search-btn"
-                            (click)="buscarClientePorDocumento()"
+                        <button type="button" class="client-search-btn" (click)="buscarClientePorDocumento()"
                             [disabled]="clientLookupLoading">
                             <mat-icon>{{ clientLookupLoading ? 'hourglass_top' : 'search' }}</mat-icon>
                         </button>
@@ -229,6 +223,48 @@
 
 
             </div>
+            <div class="card payment-card">
+
+                <div class="card-title">
+                    <mat-icon>payments</mat-icon>
+                    CONDICIÓN DE PAGO
+                </div>
+
+                <!-- SELECT -->
+                <div class="form-field full">
+                    <label>Tipo de pago</label>
+
+                    <select [(ngModel)]="paymentCondition" (change)="onPaymentConditionChange()">
+                        <option value="CONTADO">Contado</option>
+                        <option value="CREDITO_DIAS">Crédito por días</option>
+                        <option value="CREDITO_CUOTAS">Crédito en cuotas</option>
+                    </select>
+                </div>
+
+                <!-- DÍAS DE CRÉDITO DINÁMICO -->
+                <div *ngIf="paymentCondition === 'CREDITO_DIAS'" class="form-field full">
+                    <label>Días de crédito (1 - 30)</label>
+                    <input type="number" min="1" max="30" [(ngModel)]="diasCredito" (input)="onDiasCreditoChange()" />
+                </div>
+
+                <!-- CUOTAS SOLO SI ES CRÉDITO EN CUOTAS -->
+                <div *ngIf="paymentCondition === 'CREDITO_CUOTAS'" class="form-field full">
+                    <label>Cantidad de cuotas</label>
+                    <input type="number" min="1" [(ngModel)]="cuotas" (input)="generarCuotas()" />
+                </div>
+
+                <!-- PREVIEW DE CUOTAS -->
+                <div *ngIf="cuotasDetalle.length > 0" class="cuotas-preview">
+
+                    <div *ngFor="let c of cuotasDetalle">
+                        <span>Cuota {{ c.cuota }}</span>
+                        <span>{{ c.fecha }}</span>
+                        <strong>{{ c.importe | currency:'PEN' }}</strong>
+                    </div>
+
+                </div>
+
+            </div>
             <div class="card detraccion-card">
 
                 <div class="card-title">
@@ -238,13 +274,44 @@
 
                 <!-- activar detracción -->
                 <div class="detraccion-toggle">
-                    <mat-checkbox [(ngModel)]="applyDetraccion" (change)="recalculateInvoice()">
+                    <mat-checkbox [(ngModel)]="applyDetraccion" (change)="onToggleDetraccion()">
                         Aplicar detracción
                     </mat-checkbox>
                 </div>
 
                 <!-- porcentaje -->
                 <div class="detraccion-config" *ngIf="applyDetraccion">
+
+                    <div class="form-field full">
+                        <label>Buscar detracción</label>
+
+                        <div class="combo-box">
+                            <input type="text" class="input" placeholder="Buscar por código o descripción..."
+                                [(ngModel)]="detraccionSearch" (focus)="showDetraccionDropdown = true"
+                                (input)="filterDetracciones()" />
+
+                            <!-- 🔽 DROPDOWN BONITO -->
+                            <div class="dropdown-list" *ngIf="showDetraccionDropdown">
+
+                                <div class="dropdown-item" *ngFor="let d of filteredDetracciones"
+                                    (click)="selectDetraccion(d)">
+
+                                    <div class="item-code">
+                                        {{ d.codigo }}
+                                    </div>
+
+                                    <div class="item-desc">
+                                        {{ d.descripcion }}
+                                    </div>
+                                </div>
+
+                                <div class="dropdown-empty" *ngIf="filteredDetracciones.length === 0">
+                                    No se encontraron resultados
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                     <div class="percent-input">
                         <label>% Detracción</label>

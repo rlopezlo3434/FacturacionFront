@@ -1,3 +1,26 @@
+.cliente-info-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #e8f4fd;
+    border-left: 4px solid #1976d2;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    font-size: 0.88rem;
+    color: #1565c0;
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+
+    .separator {
+        opacity: 0.4;
+    }
+}
+
 // .input-wrapper {
 //     position: relative;
 //     display: flex;
@@ -482,6 +505,15 @@
     font-size: 14px;
 }
 
+.custom-table thead th {
+  position: sticky;
+  top: 0;
+  background: #fff; /* 🔥 importante para que no sea transparente */
+  z-index: 2;
+  border-bottom: 1px solid #ddd;
+}
+
+
 .custom-table tbody tr:hover {
     background: #fafafa;
 }
@@ -727,6 +759,11 @@
     gap: 6px;
 }
 
+.table-container {
+  max-height: 75vh; /* 🔥 ajusta a tu gusto */
+  overflow-y: auto;
+}
+
 .btn-primary:hover {
     background: #f3f4f6;
 }
@@ -768,9 +805,8 @@
 
 
 .detraccion-card{
-    margin-top: 1rem;
     border-top: 1px solid #eee;
-    padding-top: 0.8rem;
+    padding-top: 0.2rem;
 }
 
 /* activar detracción */
@@ -836,4 +872,179 @@
     padding-top: .4rem;
     border-top: 1px dashed #ddd;
     font-size: 1.05rem;
+}
+
+
+
+
+.combo-box {
+  position: relative;
+  width: 100%;
+}
+
+/* 🔽 dropdown */
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+
+  background: #fff;
+  border-radius: 10px;
+  margin-top: 5px;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border: 1px solid #e5e7eb;
+
+  z-index: 9999;
+}
+
+/* 🧾 item */
+.dropdown-item {
+    gap: 1rem;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  transition: all 0.2s ease;
+}
+
+/* hover bonito */
+.dropdown-item:hover {
+  background: #f3f4f6;
+}
+
+/* código */
+.item-code {
+  font-weight: bold;
+  font-size: 13px;
+  color: #374151;
+}
+
+/* descripción */
+.item-desc {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* vacío */
+.dropdown-empty {
+  padding: 12px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* ========================= */
+/* PREVIEW CUOTAS */
+/* ========================= */
+.cuotas-preview {
+    margin-top: 12px;
+    border: 1px dashed #e5e7eb;
+    border-radius: 10px;
+    padding: 10px;
+    background: #fafafa;
+}
+
+/* item cuota */
+.cuotas-preview > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    padding: 6px 4px;
+    border-bottom: 1px solid #eee;
+}
+
+.cuotas-preview > div:last-child {
+    border-bottom: none;
+}
+
+/* textos */
+.cuotas-preview span {
+    color: #6b7280;
+}
+
+.cuotas-preview strong {
+    color: #111827;
+    font-weight: 600;
+}
+
+/* ========================= */
+/* EFECTOS HOVER */
+/* ========================= */
+.cuotas-preview > div:hover {
+    background: #f1f5f9;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+@media (max-width: 768px) {
+    .cuotas-preview > div {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}
+
+/* ========================= */
+/* FORM FIELD */
+/* ========================= */
+.form-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.form-field.full {
+}
+
+.form-field label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+/* ========================= */
+/* SELECT */
+/* ========================= */
+.form-field select {
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 0 10px;
+    font-size: 13px;
+    background: #fff;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-field select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* ========================= */
+/* INPUT NUMBER */
+/* ========================= */
+.form-field input[type="number"] {
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 0 10px;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-field input[type="number"]:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
 }

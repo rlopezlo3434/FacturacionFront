@@ -42,36 +42,48 @@
     }
 }
 
-.cliente-info{
+.cliente-info {
+  display: flex;
+  align-items: center;
+
+  .avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    color: white;
     display: flex;
     align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 8px;
+    flex-shrink: 0; /* 🔥 importante */
+  }
 
-    .avatar-circle{
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: var(--color-primary);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        margin-right: 8px;
+  .cliente-details {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: 230px;
+
+    .cliente-name {
+      font-weight: 500;
+
+      /* 🔥 AQUÍ ESTÁ LA CLAVE */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .cliente-details{
-        display: flex;
-        flex-direction: column;
+    .cliente-document {
+      font-size: 0.9rem;
+      color: gray;
 
-        .cliente-name{
-            font-weight: 500;
-        }
-
-        .cliente-document{
-            font-size: 0.9rem;
-            color: gray;
-        }
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+  }
 }
 
 .cliente-contact{

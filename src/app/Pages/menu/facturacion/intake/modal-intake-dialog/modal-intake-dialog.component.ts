@@ -99,12 +99,14 @@ export class ModalIntakeDialogComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.viewInitialized = true;
 
-    if (!this.isEditMode && this.canvas1 && this.canvas2) {
-      this.initCanvas(this.canvas1.nativeElement, 1);
-      this.initCanvas(this.canvas2.nativeElement, 2);
-    }
+    setTimeout(() => {
+      if (!this.isEditMode && this.canvas1 && this.canvas2) {
+        this.initCanvas(this.canvas1.nativeElement, 1);
+        this.initCanvas(this.canvas2.nativeElement, 2);
+      }
 
-    this.tryApplyPendingDiagrams();
+      this.tryApplyPendingDiagrams();
+    }, 100); // puedes ajustar a 200 si aún falla
   }
 
   initCanvas(canvas: HTMLCanvasElement, key: number) {

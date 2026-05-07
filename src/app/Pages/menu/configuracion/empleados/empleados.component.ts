@@ -17,7 +17,7 @@ export class EmpleadosComponent {
   filtroEstado: string = '';
 
   paginaActual = 1;
-  filasPorPagina = 5;
+  filasPorPagina = 8;
 
   roleCode: string | null = null;
 

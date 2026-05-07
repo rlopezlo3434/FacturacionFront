@@ -127,6 +127,19 @@ export class ClientesComponent {
     });
   }
 
+  descargarReporte() {
+    this.clienteService.obtenerProductividad().subscribe(blob => {
+      const objectUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = 'Reporte_Clientes.xlsx';
+      a.click();
+
+      URL.revokeObjectURL(objectUrl);
+    });
+  }
+
   openNumbersDialog(cliente: any) {
     const dialogRef = this.dialog.open(ModalNumbersDialogComponent, {
       width: '400px',
@@ -140,7 +153,7 @@ export class ClientesComponent {
       }
     });
   }
-  
+
   updateMarketing(cliente: any) {
     console.log(cliente)
     this.clienteService.updateMarketing(cliente.id, cliente.acceptsMarketing).subscribe({

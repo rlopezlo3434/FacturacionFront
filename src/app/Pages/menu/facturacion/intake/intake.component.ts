@@ -145,4 +145,26 @@ export class IntakeComponent implements OnInit {
   generarInternamiento() {
     console.log('Generar PDF del internamiento');
   }
+
+  deleteIntake(i: any) {
+    const confirmacion = confirm(`¿Eliminar internamiento N°${i.id}?`);
+    if (!confirmacion) return;
+
+    this.intakeService.deleteIntake(i.id).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          alert(res.message);
+
+          // 🔥 actualizar lista sin recargar
+          this.internamientos = this.internamientos.filter(x => x.id !== i.id);
+        } else {
+          alert(res.message);
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        alert("Error al eliminar");
+      }
+    });
+  }
 }

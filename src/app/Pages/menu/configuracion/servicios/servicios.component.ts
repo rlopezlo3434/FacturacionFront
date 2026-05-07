@@ -44,6 +44,8 @@ filtroTexto = '';
     });
   }
 
+ 
+
   openEditDialog(service: any) {
     const dialogRef = this.dialog.open(ModalServiceMasterDialogComponent, {
       width: '600px',
