@@ -519,20 +519,15 @@ export class FacturacionComponent {
     const descuento = Number(this.promoTarjeta) || 0;
 
     this.itemsSeleccionados.forEach(item => {
-      const precioConIgv = item.value;
+      if (!item.originalValue) item.originalValue = item.value;
+      const precioConIgv = item.originalValue;
       const cantidad = item.cantidad;
 
-      // total sin descuento
-      const totalOriginal = precioConIgv * cantidad;
-
-      // aplicar descuento
-      const totalConDescuento = +(totalOriginal * (1 - descuento / 100)).toFixed(2);
-
-      // recalcular valores sin IGV
+      const totalConDescuento = +(precioConIgv * cantidad * (1 - descuento / 100)).toFixed(2);
       const subtotal = +(totalConDescuento / 1.18).toFixed(2);
       const igv = +(subtotal * 0.18).toFixed(2);
 
-      // asignar nuevos valores al item
+      item.value = +(precioConIgv * (1 - descuento / 100)).toFixed(2);
       item.total = totalConDescuento;
       item.subtotal = subtotal;
       item.igv = igv;
@@ -551,6 +546,7 @@ export class FacturacionComponent {
 
   quitarDescuento() {
     this.itemsSeleccionados.forEach(item => {
+      if (item.originalValue) item.value = item.originalValue;
       const precioConIgv = item.value;
       const cantidad = item.cantidad;
 
