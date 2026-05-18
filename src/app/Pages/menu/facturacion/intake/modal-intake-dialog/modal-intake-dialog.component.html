@@ -55,6 +55,22 @@
                     [disabled]="isLoadingDetail" />
             </div>
 
+            <div class="form-field">
+                <label class="label">Nivel de Gasolina</label>
+                <div class="fuel-selector">
+                    <span class="fuel-label">E</span>
+                    <div class="fuel-bars">
+                        <div *ngFor="let bar of [1,2,3,4]"
+                            class="fuel-bar"
+                            [class.active]="intake.fuelLevel >= bar"
+                            [class.disabled]="isLoadingDetail"
+                            (click)="!isLoadingDetail && (intake.fuelLevel = intake.fuelLevel === bar && bar !== 0 ? bar - 1 : bar)">
+                        </div>
+                    </div>
+                    <span class="fuel-label">F</span>
+                </div>
+            </div>
+
             <div class="form-field full" *ngIf="intake.mode === 2">
                 <label class="label">Dirección de Recojo *</label>
                 <input type="text" class="input" placeholder="Ej: Av. Los Olivos 123 - SJL"

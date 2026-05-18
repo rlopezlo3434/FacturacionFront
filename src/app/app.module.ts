@@ -84,6 +84,9 @@ import { ListarFacturacionComponent } from './Pages/menu/facturacion/listar-fact
 import { PaqueteServicioComponent } from './Pages/menu/configuracion/paquete-servicio/paquete-servicio.component';
 import { ModalServicePackageDialogComponent } from './Pages/menu/configuracion/paquete-servicio/modal-service-package-dialog/modal-service-package-dialog.component';
 import { MarcaModeloPipe } from "./pipes/marca-modelo.pipe";
+import { ComprasComponent } from './Pages/menu/compras/compras.component';
+import { ModalCompraDialogComponent } from './Pages/menu/compras/modal-compra-dialog/modal-compra-dialog.component';
+import { ModalDetalleCompraDialogComponent } from './Pages/menu/compras/modal-detalle-compra-dialog/modal-detalle-compra-dialog.component';
 
 
 registerLocaleData(localeEsPe);
@@ -138,7 +141,10 @@ registerLocaleData(localeEsPe);
     ModalProveedorDialogComponent,
     ListarFacturacionComponent,
     PaqueteServicioComponent,
-    ModalServicePackageDialogComponent
+    ModalServicePackageDialogComponent,
+    ComprasComponent,
+    ModalCompraDialogComponent,
+    ModalDetalleCompraDialogComponent
 
   ],
   imports: [

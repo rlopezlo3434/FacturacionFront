@@ -62,6 +62,11 @@ export class FacturacionComponent {
   tipoClienteSeleccionado: string | null = null;
   cli: any = {};
 
+  vehiculos: any[] = [];
+  vehiculoSearch = '';
+  vehiculoSeleccionado: any = null;
+  showVehiculoDropdown = false;
+
 
   selectedItems = [];
   searchText = '';
@@ -160,34 +165,44 @@ export class FacturacionComponent {
     this.loadVentas();
     this.seriesComprobantes();
     this.loadApprovedItems();
+    this.loadVehiculos();
     this.venta.tipoComprobante = '1';
+  }
+
+  loadVehiculos() {
+    this.facturacionService.getVehiculos().subscribe({
+      next: (res: any) => { this.vehiculos = res.data || []; },
+      error: () => {}
+    });
+  }
+
+  get vehiculosFiltrados() {
+    const q = this.vehiculoSearch.toLowerCase();
+    return this.vehiculos.filter(v => v.plate.toLowerCase().includes(q));
+  }
+
+  selectVehiculo(v: any) {
+    this.vehiculoSeleccionado = v;
+    this.vehiculoSearch = v.plate;
+    this.showVehiculoDropdown = false;
+  }
+
+  limpiarVehiculo() {
+    this.vehiculoSeleccionado = null;
+    this.vehiculoSearch = '';
   }
 
 
   onPaymentConditionChange() {
     this.cuotasDetalle = [];
     this.cuotas = 1;
-
-    if (this.paymentCondition === 'CONTADO') {
-      return;
-    }
-
-    if (this.paymentCondition === 'CREDITO_DIAS') {
-      this.diasCredito = 1;
-      this.generarUnaCuota(this.diasCredito);
-      return;
-    }
-
-    if (this.paymentCondition === 'CREDITO_CUOTAS') {
-      this.cuotas = 1;
-      this.generarCuotas();
-    }
+    if (this.paymentCondition === 'CREDITO_DIAS') this.diasCredito = 1;
+    this.recalculateInvoice();
   }
 
   onDiasCreditoChange() {
-    const dias = Math.min(30, Math.max(1, this.diasCredito || 1));
-    this.diasCredito = dias;
-    this.generarUnaCuota(dias);
+    this.diasCredito = Math.min(30, Math.max(1, this.diasCredito || 1));
+    this.generarUnaCuota(this.diasCredito);
   }
 
   generarUnaCuota(dias: number) {
@@ -281,50 +296,54 @@ export class FacturacionComponent {
   }
 
   recalculateInvoice() {
-
-    this.itemsSeleccionados =
-      this.invoiceItems.filter(x => x.selected)
-        .map(x => ({
-          ...x,
-          codigo: x.intakeCode,
-          description: x.description,
-          value: x.subTotal,
-          cantidad: x.quantity,
-        }));
+    // Reconstruir items seleccionados con precios originales
+    this.itemsSeleccionados = this.invoiceItems.filter(x => x.selected)
+      .map(x => ({
+        ...x,
+        codigo: x.intakeCode,
+        description: x.description,
+        value: x.unitPriceWithIgv ?? (x.subTotal / (x.quantity || 1)),
+        originalValue: x.unitPriceWithIgv ?? (x.subTotal / (x.quantity || 1)),
+        cantidad: x.quantity,
+        subtotal: x.subTotal,
+        igv: +(x.subTotal * 0.18).toFixed(2),
+        total: +(x.subTotal * 1.18).toFixed(2),
+      }));
 
     const primero = this.invoiceItems.find(x => x.selected);
-    console.log(primero)
     this.clienteInfoItem = primero
       ? { nombre: primero.clienteNombre, numero: primero.clienteNumero }
       : null;
 
-    console.log('Items seleccionados:', this.itemsSeleccionados);
-    const selected =
-      this.invoiceItems.filter((x: any) => x.selected);
+    // Aplicar descuento activo si hay uno
+    if (this.promoTarjeta > 0) {
+      this.aplicarDescuento();
+    }
 
-    this.subTotal =
-      selected.reduce((a: any, b: any) => a + b.subTotal, 0);
+    // Calcular totales desde los items (ya con descuento si aplica)
+    this.subTotal = +this.itemsSeleccionados
+      .reduce((a, b) => a + (b.subtotal || 0), 0).toFixed(2);
 
-    this.igv = this.subTotal * 0.18;
-    this.total = this.subTotal + this.igv;
+    this.igv = +(this.subTotal * 0.18).toFixed(2);
+    this.total = +(this.subTotal + this.igv).toFixed(2);
 
     if (this.applyDetraccion) {
-
-      this.detraccionAmount =
-        (this.total * this.detraccionPercent) / 100;
-
+      this.detraccionAmount = +((this.total * this.detraccionPercent) / 100).toFixed(2);
     } else {
       this.detraccionTipo = null;
       this.detraccionSearch = '';
       this.filteredDetracciones = [...this.detracciones];
       this.detraccionAmount = 0;
-
     }
 
-    // TOTAL A PAGAR
-    this.totalPagar =
-      this.total - this.detraccionAmount;
+    this.totalPagar = +(this.total - this.detraccionAmount).toFixed(2);
 
+    // Refrescar cuotas automáticamente
+    if (this.paymentCondition === 'CREDITO_DIAS') {
+      this.generarUnaCuota(this.diasCredito);
+    } else if (this.paymentCondition === 'CREDITO_CUOTAS') {
+      this.generarCuotas();
+    }
   }
 
   mostrarCliente() {
@@ -629,7 +648,8 @@ export class FacturacionComponent {
       detraccion_porcentaje:
         this.applyDetraccion ? this.detraccionPercent : null,
       detraccion_total:
-        this.applyDetraccion ? this.detraccionAmount : null
+        this.applyDetraccion ? this.detraccionAmount : null,
+      vehiculo_placa: this.vehiculoSeleccionado?.plate ?? null
     };
     console.log(resumenVenta)
     this.facturacionService.registrarVenta(resumenVenta).subscribe(
@@ -825,12 +845,7 @@ export class FacturacionComponent {
 
 
   onPromoChange() {
-    console.log('Promoción seleccionada:', this.promoTarjeta);
-    if (!this.promoTarjeta || this.promoTarjeta == 0) {
-      this.quitarDescuento();
-    } else {
-      this.aplicarDescuento();
-    }
+    this.recalculateInvoice();
   }
 
   quitarDescuento() {

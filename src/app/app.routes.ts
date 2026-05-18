@@ -21,6 +21,7 @@ import { OrdenesTrabajoComponent } from './Pages/menu/facturacion/ordenes-trabaj
 import { ProveedoresComponent } from './Pages/menu/configuracion/proveedores/proveedores.component';
 import { ListarFacturacionComponent } from './Pages/menu/facturacion/listar-facturacion/listar-facturacion.component';
 import { PaqueteServicioComponent } from './Pages/menu/configuracion/paquete-servicio/paquete-servicio.component';
+import { ComprasComponent } from './Pages/menu/compras/compras.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -43,6 +44,13 @@ export const routes: Routes = [
       { path: 'caja', component: CajaComponent },
       { path: 'presupuestos/intake/:intakeId', component: PresupuestosComponent },
       { path: 'orden-trabajo/intake', component: OrdenesTrabajoComponent }
+    ]
+  },
+  {
+    path: 'compras',
+    component: LayoutComponent,
+    children: [
+      { path: 'listado', component: ComprasComponent }
     ]
   },
   {

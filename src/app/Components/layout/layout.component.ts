@@ -60,6 +60,14 @@ export class LayoutComponent {
 
       },
       {
+        label: 'Compras',
+        name: 'compras',
+        icon: 'shopping_cart',
+        children: [
+          { label: 'Listado de Compras', route: '/compras/listado' }
+        ],
+      },
+      {
         label: 'Almacén',
         name: 'almacen',
         icon: 'house_siding',

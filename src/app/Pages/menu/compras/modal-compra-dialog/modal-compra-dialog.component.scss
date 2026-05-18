@@ -1,0 +1,132 @@
+.dialog-title { font-weight: 600; font-size: 1.25rem; }
+
+.dialog-content { padding-top: 4px; }
+
+.section {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.subTitle { font-weight: 600; font-size: 1rem; margin-bottom: 12px; color: #222; }
+
+.form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+
+.form-field { display: flex; flex-direction: column; gap: 4px; }
+.form-field.full { grid-column: 1 / -1; }
+
+.combo-box { position: relative; width: 100%; }
+.combo-input-row { display: flex; gap: 6px; align-items: center; }
+
+.btn-clear {
+  background: none; border: 1px solid #dcdcdc; border-radius: 8px;
+  cursor: pointer; padding: 6px; display: flex; align-items: center;
+  mat-icon { font-size: 18px; color: #666; }
+}
+.label { font-size: 0.85rem; font-weight: 500; color: #444; }
+
+.input, .select {
+  width: 100%; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid #dcdcdc; background: white; outline: none;
+  font-size: 0.95rem; box-sizing: border-box;
+  &:focus { border-color: #1976d2; box-shadow: 0 0 0 3px rgba(25,118,210,0.15); }
+}
+
+.select {
+  padding-right: 36px; appearance: none; -webkit-appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg fill='black' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>") no-repeat right 10px center;
+  background-color: #fff;
+}
+
+.input-sm { padding: 10px 8px; }
+
+/* DETALLE */
+.detalle-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+
+.detalle-item {
+  display: grid;
+  grid-template-columns: 1fr 90px 110px 110px 36px;
+  gap: 8px;
+  align-items: center;
+}
+
+.item-selector { position: relative; }
+
+.options-dropdown {
+  position: fixed;
+  max-height: 200px; overflow-y: auto;
+  background: #fff; border: 1px solid #dcdcdc;
+  border-radius: 10px; box-shadow: 0 10px 22px rgba(0,0,0,0.15); z-index: 9999;
+}
+
+.option-item {
+  width: 100%; text-align: left; border: none; background: #fff;
+  padding: 9px 12px; cursor: pointer; font-size: 0.9rem; display: flex; gap: 8px;
+  &:hover { background: #f5f9ff; }
+}
+
+.opt-code { color: #888; font-size: 0.8rem; }
+
+.option-empty { padding: 10px 12px; color: #64748b; font-size: 0.9rem; }
+
+.fila-total { font-weight: 600; font-size: 0.9rem; color: #1976d2; white-space: nowrap; }
+
+.btn-icon-del {
+  background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  mat-icon { color: #d32f2f; font-size: 20px; }
+  &:disabled mat-icon { color: #ccc; }
+}
+
+.btn-add {
+  display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+  border-radius: 10px; border: 1px dashed #1976d2;
+  background: rgba(25,118,210,0.06); cursor: pointer;
+  font-weight: 600; color: #1976d2; font-size: 0.9rem;
+  &:hover { background: rgba(25,118,210,0.12); }
+}
+
+/* TOTALES */
+.totales-box {
+  border: 1px solid #eee; border-radius: 10px;
+  padding: 12px 16px; background: #fafafa;
+}
+
+.totales-row {
+  display: flex; justify-content: space-between;
+  padding: 4px 0; font-size: 0.95rem; color: #444;
+  &.total { border-top: 1px solid #ddd; margin-top: 6px; padding-top: 10px; font-size: 1.05rem; color: #111; }
+}
+
+/* ACTIONS */
+.dialog-actions { padding: 12px 16px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+
+.btn-cancelar {
+  padding: 10px 14px; border-radius: 10px;
+  border: 1px solid #dcdcdc; background: white; cursor: pointer;
+}
+
+.btn-primary {
+  padding: 10px 16px; border-radius: 10px; border: none;
+  background: #1976d2; color: white; cursor: pointer; font-weight: 600;
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+:host ::ng-deep .mat-mdc-dialog-content {
+  max-height: 65vh !important;
+  overflow-y: auto !important;
+}
+
+.options-dropdown {
+  position: fixed !important;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.15);
+  z-index: 9999;
+  min-width: 200px;
+}

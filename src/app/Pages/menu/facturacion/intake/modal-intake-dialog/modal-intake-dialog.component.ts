@@ -34,6 +34,7 @@ export class ModalIntakeDialogComponent implements OnInit, AfterViewInit {
     mode: 1,
     pickupAddress: '',
     mileageKm: null,
+    fuelLevel: 0,
     services: '',
     observations: '',
     inventoryItems: []
@@ -313,7 +314,8 @@ export class ModalIntakeDialogComponent implements OnInit, AfterViewInit {
       mileageKm: detail?.mileageKm ?? null,
       services: detail?.services || '',
       observations: detail?.observations || '',
-      inventoryItems: detail?.inventoryItems || []
+      inventoryItems: detail?.inventoryItems || [],
+      fuelLevel: detail?.fuelLevel ?? 0
     };
 
     this.pendingInventoryItems = detail?.inventoryItems || [];
@@ -488,6 +490,7 @@ export class ModalIntakeDialogComponent implements OnInit, AfterViewInit {
     formData.append('clientId', String(this.intake.clientId));
     formData.append('mode', String(this.intake.mode));
     formData.append('mileageKm', String(Number(this.intake.mileageKm)));
+    formData.append('fuelLevel', String(this.intake.fuelLevel ?? 0));
     if (diagram1) {
       formData.append('diagrams', diagram1);
     }

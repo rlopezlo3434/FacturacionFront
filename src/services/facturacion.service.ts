@@ -168,4 +168,10 @@ export class FacturacionService {
     );
   }
 
+  getVehiculos() {
+    return this.http.get<any>(`${environment.apiBase}/Vehicle`, {
+      headers: this.getHeaders()
+    });
+  }
+
 }

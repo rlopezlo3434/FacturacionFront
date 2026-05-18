@@ -1,0 +1,140 @@
+<h2 mat-dialog-title class="dialog-title">Nueva Compra</h2>
+
+<mat-dialog-content class="dialog-content">
+
+  <!-- INFO GENERAL -->
+  <div class="section">
+    <div class="subTitle">Información General</div>
+    <div class="form-grid">
+
+      <!-- PROVEEDOR BUSCADOR -->
+      <div class="form-field full">
+        <label class="label">Proveedor *</label>
+        <div class="combo-box">
+          <div class="combo-input-row">
+            <input class="input" placeholder="Buscar por razón social o RUC..."
+              [(ngModel)]="proveedorSearch"
+              (focus)="showProveedorOptions($event)"
+              (input)="showProveedorDropdown = true" />
+            <button *ngIf="proveedorSeleccionado" type="button" class="btn-clear"
+              (click)="limpiarProveedor()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <div class="options-dropdown" [ngStyle]="proveedorDropdownStyle"
+            *ngIf="showProveedorDropdown && proveedoresFiltrados.length > 0">
+            <button type="button" class="option-item"
+              *ngFor="let p of proveedoresFiltrados"
+              (mousedown)="selectProveedor(p)">
+              <span class="opt-code">{{ p.ruc }}</span> {{ p.razonSocial }}
+            </button>
+          </div>
+          <div class="options-dropdown" [ngStyle]="proveedorDropdownStyle"
+            *ngIf="showProveedorDropdown && proveedorSearch.length > 0 && proveedoresFiltrados.length === 0">
+            <div class="option-empty">No se encontraron proveedores</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="label">Fecha Documento *</label>
+        <input class="input" type="date" [(ngModel)]="compra.fechaDocumento" />
+      </div>
+
+      <div class="form-field">
+        <label class="label">Moneda</label>
+        <select class="select" [(ngModel)]="compra.moneda">
+          <option value="SOLES">Soles (PEN)</option>
+          <option value="DOLARES">Dólares (USD)</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label class="label">Serie</label>
+        <input class="input" placeholder="Ej: F001" [(ngModel)]="compra.serie" maxlength="20" />
+      </div>
+
+      <div class="form-field">
+        <label class="label">Correlativo</label>
+        <input class="input" placeholder="Ej: 00001" [(ngModel)]="compra.correlativo" maxlength="20" />
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DETALLE DE PRODUCTOS -->
+  <div class="section">
+    <div class="subTitle">Productos</div>
+
+    <div class="detalle-list">
+      <div *ngFor="let d of compra.detalles; let i = index" class="detalle-item">
+
+        <!-- BUSCADOR PRODUCTO -->
+        <div class="item-selector">
+          <input class="input" placeholder="Buscar producto..."
+            [(ngModel)]="compra.detalles[i].searchText"
+            (focus)="showOptions(i, $event)"
+            (blur)="hideOptions(i)" />
+          <div class="options-dropdown" [ngStyle]="d.dropdownStyle" *ngIf="d.showOptions">
+            <button type="button" class="option-item"
+              *ngFor="let p of getFilteredProductos(i)"
+              (click)="selectProducto(i, p)">
+              <span class="opt-code">{{ p.code }}</span> {{ p.name }}
+            </button>
+            <div class="option-empty" *ngIf="getFilteredProductos(i).length === 0">
+              No se encontraron productos
+            </div>
+          </div>
+        </div>
+
+        <!-- CANTIDAD -->
+        <input type="number" class="input input-sm" min="1" placeholder="Cant."
+          [(ngModel)]="compra.detalles[i].cantidad" />
+
+        <!-- PRECIO COMPRA -->
+        <input type="number" class="input input-sm" min="0" step="0.01" placeholder="Precio"
+          [(ngModel)]="compra.detalles[i].precioCompra" />
+
+        <!-- SUBTOTAL FILA -->
+        <div class="fila-total">
+          {{ (d.cantidad * d.precioCompra) | currency:currencyCode:'symbol':'1.2-2' }}
+        </div>
+
+        <!-- ELIMINAR -->
+        <button class="btn-icon-del" type="button" (click)="removeDetalle(i)" [disabled]="compra.detalles.length === 1">
+          <mat-icon>delete</mat-icon>
+        </button>
+
+      </div>
+    </div>
+
+    <button class="btn-add" type="button" (click)="addDetalle()">
+      <mat-icon>add_circle</mat-icon>
+      Agregar producto
+    </button>
+  </div>
+
+  <!-- TOTALES -->
+  <div class="totales-box">
+    <div class="totales-row">
+      <span>Subtotal</span>
+      <span>{{ subtotal | currency:currencyCode:'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="totales-row">
+      <span>IGV (18%)</span>
+      <span>{{ igv | currency:currencyCode:'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="totales-row total">
+      <span>Total</span>
+      <strong>{{ total | currency:currencyCode:'symbol':'1.2-2' }}</strong>
+    </div>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+  <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+  <button class="btn-primary" (click)="guardar()" [disabled]="isSaving">
+    {{ isSaving ? 'Guardando...' : 'Registrar Compra' }}
+  </button>
+</mat-dialog-actions>

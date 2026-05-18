@@ -882,6 +882,12 @@
   width: 100%;
 }
 
+.combo-input-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
 /* 🔽 dropdown */
 .dropdown-list {
   position: absolute;

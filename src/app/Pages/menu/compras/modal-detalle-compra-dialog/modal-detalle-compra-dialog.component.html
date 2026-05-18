@@ -1,0 +1,107 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon>receipt_long</mat-icon>
+  Detalle de Compra
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+  <!-- LOADING -->
+  <div *ngIf="isLoading" class="loading-box">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="!isLoading && compra">
+
+    <!-- INFO GENERAL -->
+    <div class="section">
+      <div class="subTitle">Información General</div>
+      <div class="info-grid">
+
+        <div class="info-item">
+          <div class="info-label">Proveedor</div>
+          <div class="info-value bold">{{ compra.proveedorRazonSocial }}</div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">RUC</div>
+          <div class="info-value">{{ compra.proveedorRuc }}</div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">Fecha Documento</div>
+          <div class="info-value">{{ compra.fechaDocumento | date:'dd/MM/yyyy' }}</div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">Fecha Registro</div>
+          <div class="info-value">{{ compra.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">Moneda</div>
+          <div class="info-value"><span class="chip moneda">{{ compra.moneda }}</span></div>
+        </div>
+
+        <div class="info-item" *ngIf="compra.serie">
+          <div class="info-label">Serie</div>
+          <div class="info-value">{{ compra.serie }}</div>
+        </div>
+
+        <div class="info-item" *ngIf="compra.correlativo">
+          <div class="info-label">Correlativo</div>
+          <div class="info-value">{{ compra.correlativo }}</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DETALLE PRODUCTOS -->
+    <div class="section">
+      <div class="subTitle">Productos</div>
+      <div class="table-scroll">
+        <table class="detalle-table">
+          <thead>
+            <tr>
+              <th>CÓDIGO</th>
+              <th>PRODUCTO</th>
+              <th>CANT.</th>
+              <th>PRECIO C/IGV</th>
+              <th>TOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of compra.detalles">
+              <td><span class="code-chip">{{ d.productCodigo }}</span></td>
+              <td>{{ d.productNombre }}</td>
+              <td>{{ d.cantidad }}</td>
+              <td>{{ d.precioCompra | currency:currencyCode:'symbol':'1.2-2' }}</td>
+              <td><strong>{{ (d.cantidad * d.precioCompra) | currency:currencyCode:'symbol':'1.2-2' }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TOTALES -->
+    <div class="totales-box">
+      <div class="totales-row">
+        <span>Subtotal (sin IGV)</span>
+        <span>{{ compra.subtotal | currency:currencyCode:'symbol':'1.2-2' }}</span>
+      </div>
+      <div class="totales-row">
+        <span>IGV (18%)</span>
+        <span>{{ compra.igv | currency:currencyCode:'symbol':'1.2-2' }}</span>
+      </div>
+      <div class="totales-row total">
+        <span>Total</span>
+        <strong>{{ compra.total | currency:currencyCode:'symbol':'1.2-2' }}</strong>
+      </div>
+    </div>
+
+  </ng-container>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button class="btn-cancelar" (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>

@@ -138,11 +138,10 @@
 
                 <div class="client-box">
                     <div class="label">Nombre / Razón Social</div>
-                    <div class="value">
-                        {{ client?.name }}
-                    </div>
+                    <input type="text" class="client-input" style="margin-bottom: 0.7rem;"  placeholder="Nombre o razón social"
+                        [(ngModel)]="client.name" />
 
-                    <div class="label">Documento</div>
+                    <div class="label">Buscar por DNI / RUC</div>
                     <div class="client-search">
                         <input type="text" class="client-input" placeholder="Ingresa DNI o RUC"
                             [(ngModel)]="clientDocumentInput" maxlength="11" />
@@ -153,15 +152,9 @@
                         </button>
                     </div>
 
-                    <div class="label">Número de Documento</div>
-                    <div class="value">
-                        {{ client?.document || '-' }}
-                    </div>
-
-                    <div class="label" *ngIf="client?.document?.length === 11">Dirección</div>
-                    <div class="value" *ngIf="client?.document?.length === 11">
-                        {{ client?.address || '-' }}
-                    </div>
+                    <div class="label">Dirección</div>
+                    <input type="text" class="client-input" placeholder="Dirección"
+                        [(ngModel)]="client.address" />
                 </div>
 
                 <div class="doc-type">
@@ -174,6 +167,44 @@
                     </button>
                 </div>
 
+            </div>
+
+            <!-- PLACA -->
+            <div class="card">
+                <div class="card-title">
+                    <mat-icon>directions_car</mat-icon>
+                    <div>VEHÍCULO (OPCIONAL)</div>
+                </div>
+
+                <div class="combo-box">
+                    <div class="combo-input-row">
+                        <input type="text" class="client-input" placeholder="Buscar por placa..."
+                            [(ngModel)]="vehiculoSearch"
+                            (focus)="showVehiculoDropdown = true"
+                            (input)="showVehiculoDropdown = true" />
+                        <button *ngIf="vehiculoSeleccionado" type="button" class="client-search-btn"
+                            (click)="limpiarVehiculo()">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+
+                    <div class="dropdown-list" *ngIf="showVehiculoDropdown && vehiculosFiltrados.length > 0">
+                        <div class="dropdown-item" *ngFor="let v of vehiculosFiltrados"
+                            (mousedown)="selectVehiculo(v)">
+                            <div class="item-code">{{ v.plate }}</div>
+                            <div class="item-desc">{{ v.brand?.name }} {{ v.model?.name }} · {{ v.owner?.name }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="vehiculoSeleccionado" class="client-box" style="margin-top: 8px;">
+                    <div class="label">Placa</div>
+                    <div class="value">{{ vehiculoSeleccionado.plate }}</div>
+                    <div class="label">Marca / Modelo</div>
+                    <div class="value">{{ vehiculoSeleccionado.brand?.name }} {{ vehiculoSeleccionado.model?.name }}</div>
+                    <div class="label">Propietario</div>
+                    <div class="value">{{ vehiculoSeleccionado.owner?.name }}</div>
+                </div>
             </div>
 
             <!-- TOTAL -->

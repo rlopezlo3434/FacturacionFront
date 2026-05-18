@@ -1,0 +1,117 @@
+<div>
+
+  <!-- BUSCADOR -->
+  <div class="search-menu">
+    <div class="icon-menu">
+      <mat-icon (click)="openMenu()">menu</mat-icon>
+    </div>
+    <div class="input-wrapper">
+      <mat-icon class="input-icon">search</mat-icon>
+      <input [(ngModel)]="filtroTexto" type="text"
+        placeholder="Buscar por proveedor o RUC..." class="input" />
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header-secuence">
+    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+      <div class="selected">Gestión de Compras</div>
+      <div class="subTitle">Registro de compras a proveedores</div>
+    </div>
+    <button class="btn btn-create" (click)="openCreateDialog()">
+      <mat-icon>add</mat-icon>
+      Nueva Compra
+    </button>
+  </div>
+
+  <!-- CARDS RESUMEN -->
+  <div class="container-card">
+    <div class="card">
+      <div class="card-title">Total de Compras</div>
+      <div class="card-value">{{ compras.length }}</div>
+      <div class="footer-card">registros</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Monto Total</div>
+      <div class="card-value">{{ totalGeneral | currency:'PEN':'symbol':'1.2-2' }}</div>
+      <div class="footer-card">acumulado</div>
+    </div>
+  </div>
+
+  <!-- TABLA -->
+  <div class="table-container">
+    <div class="table-actions">
+      <div class="selected">Lista de Compras</div>
+    </div>
+    <div class="table-scroll">
+      <div class="table-body">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>PROVEEDOR</th>
+              <th>RUC</th>
+              <th>FECHA DOC.</th>
+              <th>MONEDA</th>
+              <th>SUBTOTAL</th>
+              <th>IGV</th>
+              <th>TOTAL</th>
+              <th>PRODUCTOS</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of comprasFiltradas | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)">
+              <td>
+                <div class="proveedor-info">
+                  <div class="avatar-circle">{{ getInitials(c.proveedorRazonSocial) }}</div>
+                  <div>{{ c.proveedorRazonSocial }}</div>
+                </div>
+              </td>
+              <td>{{ c.proveedorRuc }}</td>
+              <td>{{ c.fechaDocumento | date:'dd/MM/yyyy' }}</td>
+              <td><span class="chip moneda">{{ c.moneda }}</span></td>
+              <td>{{ c.subtotal | currency:'PEN':'symbol':'1.2-2' }}</td>
+              <td>{{ c.igv | currency:'PEN':'symbol':'1.2-2' }}</td>
+              <td><strong>{{ c.total | currency:'PEN':'symbol':'1.2-2' }}</strong></td>
+              <td>
+                <span class="chip items">{{ c.detalles?.length || 0 }} items</span>
+              </td>
+              <td>
+                <div style="display:flex; gap:4px;">
+                  <button class="btn-icon-view" type="button" (click)="verDetalle(c.id)">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  <button class="btn-icon-del" type="button" (click)="eliminar(c.id)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="comprasFiltradas.length === 0">
+              <td colspan="9" style="text-align:center; padding: 2rem; color: gray;">
+                No hay compras registradas
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PAGINACIÓN -->
+    <div class="pagination">
+      <span>
+        {{ (paginaActual-1)*filasPorPagina+1 }} -
+        {{ paginaActual*filasPorPagina > comprasFiltradas.length ? comprasFiltradas.length : paginaActual*filasPorPagina }}
+        de {{ comprasFiltradas.length }}
+      </span>
+      <button class="paginacion-icon" (click)="paginaAnterior()" [disabled]="paginaActual===1">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <button class="paginacion-icon" (click)="paginaSiguiente()"
+        [disabled]="paginaActual*filasPorPagina>=comprasFiltradas.length">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+
+</div>
