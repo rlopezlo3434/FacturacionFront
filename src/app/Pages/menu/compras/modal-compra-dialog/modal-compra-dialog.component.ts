@@ -19,7 +19,7 @@ export class ModalCompraDialogComponent implements OnInit {
     moneda: 'SOLES',
     serie: '',
     correlativo: '',
-    detalles: [] as { productId: number | null; cantidad: number; precioCompra: number; searchText: string; showOptions: boolean; dropdownStyle: any }[]
+    detalles: [] as { productId: number | null; cantidad: number; precioCompra: number; costo: number; searchText: string; showOptions: boolean; dropdownStyle: any; productoData: any }[]
   };
 
   proveedorSearch = '';
@@ -44,7 +44,7 @@ export class ModalCompraDialogComponent implements OnInit {
   }
 
   addDetalle() {
-    this.compra.detalles.push({ productId: null, cantidad: 1, precioCompra: 0, searchText: '', showOptions: false, dropdownStyle: {} });
+    this.compra.detalles.push({ productId: null, cantidad: 1, precioCompra: 0, costo: 0, searchText: '', showOptions: false, dropdownStyle: {}, productoData: null });
   }
 
   removeDetalle(i: number) {
@@ -57,9 +57,23 @@ export class ModalCompraDialogComponent implements OnInit {
   }
 
   selectProducto(i: number, p: any) {
+    const esDolar = this.compra.moneda === 'DOLARES';
     this.compra.detalles[i].productId = p.id;
+    this.compra.detalles[i].productoData = p;
     this.compra.detalles[i].searchText = `${p.code ? p.code + ' - ' : ''}${p.name}`;
+    this.compra.detalles[i].precioCompra = esDolar ? (p.priceDolar ?? p.price ?? 0) : (p.price ?? 0);
+    this.compra.detalles[i].costo = esDolar ? (p.costDolar ?? p.cost ?? 0) : (p.cost ?? 0);
     this.compra.detalles[i].showOptions = false;
+  }
+
+  onMonedaChange() {
+    const esDolar = this.compra.moneda === 'DOLARES';
+    this.compra.detalles.forEach(d => {
+      if (!d.productoData) return;
+      const p = d.productoData;
+      d.precioCompra = esDolar ? (p.priceDolar ?? p.price ?? 0) : (p.price ?? 0);
+      d.costo = esDolar ? (p.costDolar ?? p.cost ?? 0) : (p.cost ?? 0);
+    });
   }
 
   showOptions(i: number, event: FocusEvent) {
@@ -106,7 +120,7 @@ export class ModalCompraDialogComponent implements OnInit {
   get currencyCode() { return this.compra.moneda === 'DOLARES' ? 'USD' : 'PEN'; }
 
   get total() {
-    return +this.compra.detalles.reduce((a, d) => a + d.cantidad * d.precioCompra, 0).toFixed(2);
+    return +this.compra.detalles.reduce((a, d) => a + d.cantidad * d.costo, 0).toFixed(2);
   }
   get subtotal() { return +(this.total / 1.18).toFixed(2); }
   get igv() { return +(this.total - this.subtotal).toFixed(2); }
@@ -131,7 +145,7 @@ export class ModalCompraDialogComponent implements OnInit {
       detalles: detallesValidos.map(d => ({
         productId: d.productId,
         cantidad: d.cantidad,
-        precioCompra: d.precioCompra
+        precioCompra: d.costo
       }))
     };
 

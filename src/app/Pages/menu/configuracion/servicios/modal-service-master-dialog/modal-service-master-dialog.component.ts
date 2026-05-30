@@ -13,7 +13,8 @@ service: any = {
     name: '',
     price: null,
     isActive: true,
-    isThird: false
+    isThird: false,
+    isDiscount: false
   };
 
   constructor(
@@ -28,7 +29,8 @@ service: any = {
         name: data.name,
         price: data.price,
         isActive: data.isActive,
-        isThird: data.isThird
+        isThird: data.isThird,
+        isDiscount: data.isDiscount ?? false
       };
     }
   }
@@ -39,7 +41,8 @@ service: any = {
       name: this.service.name,
       price: Number(this.service.price),
       isActive: this.service.isActive,
-      isThird: this.service.isThird
+      isThird: this.service.isThird,
+      isDiscount: this.service.isDiscount
     };
 
     const accion = this.data

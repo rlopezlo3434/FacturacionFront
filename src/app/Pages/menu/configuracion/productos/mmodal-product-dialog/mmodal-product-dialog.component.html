@@ -35,15 +35,25 @@
 
       <!-- Costo -->
       <div class="form-field">
-        <label class="label">Costo *</label>
+        <label class="label">Costo S/ *</label>
         <input class="input" type="number" placeholder="Ej: 15" [(ngModel)]="product.cost" />
       </div>
 
-      
+      <!-- Precio Dolar -->
+      <div class="form-field">
+        <label class="label">Precio Venta $ <span class="optional">opcional</span></label>
+        <input class="input" type="number" placeholder="Ej: 4.50" [(ngModel)]="product.priceDolar" min="0" step="0.01" />
+      </div>
+
+      <!-- Costo Dolar -->
+      <div class="form-field">
+        <label class="label">Costo $ <span class="optional">opcional</span></label>
+        <input class="input" type="number" placeholder="Ej: 3.00" [(ngModel)]="product.costDolar" min="0" step="0.01" />
+      </div>
 
       <!-- UnidadMedida -->
       <div class="form-field">
-        <label class="label">Unidad Medida</label>
+        <label class="label">Unidad Medida *</label>
         <select class="select" [(ngModel)]="product.unitMeasureId">
           <option [ngValue]="null" disabled>Seleccionar</option>
           <option *ngFor="let um of unitMeasures" [ngValue]="um.id">

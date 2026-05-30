@@ -1,5 +1,13 @@
 <h2 mat-dialog-title class="dialog-title">
     Nuevo Presupuesto
+    <div class="moneda-toggle">
+        <button type="button" class="moneda-btn" [class.active]="moneda === 'PEN'" (click)="moneda = 'PEN'; onMonedaChange()">
+            S/ Soles
+        </button>
+        <button type="button" class="moneda-btn" [class.active]="moneda === 'USD'" (click)="moneda = 'USD'; onMonedaChange()">
+            $ Dólares
+        </button>
+    </div>
 </h2>
 
 <mat-dialog-content class="dialog-content">
@@ -18,7 +26,7 @@
                     <div class="dropdown-item" *ngFor="let p of filteredProducts" (click)="addProduct(p)">
                         <div class="drop-title">{{ p.code }} - {{ p.name }}</div>
                         <div class="drop-sub">
-                            Stock: {{ p.quantity }} • Precio: {{ p.price | currency:'PEN':'symbol':'1.2-2' }}
+                            Stock: {{ p.quantity }} • Precio: {{ (esDolar ? (p.priceDolar ?? p.price) : p.price) | currency:moneda:'symbol':'1.2-2' }}
                         </div>
                     </div>
                 </div>
@@ -33,7 +41,7 @@
                     <div class="dropdown-item" *ngFor="let s of filteredServices" (click)="addService(s)">
                         <div class="drop-title">{{ s.code }} - {{ s.name }}</div>
                         <div class="drop-sub">
-                            Precio base: {{ s.price | currency:'PEN':'symbol':'1.2-2' }}
+                            Precio base: {{ (esDolar ? (s.priceDolar ?? s.price) : s.price) | currency:moneda:'symbol':'1.2-2' }}
                         </div>
                     </div>
                 </div>
@@ -117,7 +125,8 @@
                                 <ng-container *ngIf="!it.isPackageHeader">
                                     <td [class.package-child-cell]="it.isPackageChild">
                                         <span class="chip type-product" *ngIf="it.itemType === 1">Producto</span>
-                                        <span class="chip type-service" *ngIf="it.itemType === 2">Servicio</span>
+                                        <span class="chip type-service" *ngIf="it.itemType === 2 && !it.isDiscount">Servicio</span>
+                                        <span class="chip type-discount" *ngIf="it.isDiscount">Descuento</span>
                                     </td>
 
                                     <td>
@@ -133,18 +142,24 @@
                                     </td>
 
                                     <td>
-                                        <input class="input-mini" type="number" min="0" [(ngModel)]="it.unitPrice"
+                                        <input *ngIf="!it.isDiscount" class="input-mini" type="number" min="0" [(ngModel)]="it.unitPrice"
                                             (ngModelChange)="calcTotals()" />
+                                        <span *ngIf="it.isDiscount" class="discount-amount">
+                                            {{ it.unitPrice | currency:'PEN':'symbol':'1.2-2' }}
+                                        </span>
                                     </td>
                                     <td>
-                                        <input class="input-mini" type="number" min="0" [(ngModel)]="it.discount"
+                                        <input *ngIf="!it.isDiscount" class="input-mini" type="number" min="0" [(ngModel)]="it.discount"
                                             (ngModelChange)="calcTotals()" placeholder="0.00" />
-                                        <div *ngIf="it.discount > 0" class="discount-label">
+                                        <span *ngIf="it.isDiscount">—</span>
+                                        <div *ngIf="!it.isDiscount && it.discount > 0" class="discount-label">
                                             Descuento aplicado
                                         </div>
                                     </td>
                                     <td>
-                                        <strong>{{ it.totalPrice | currency:'PEN':'symbol':'1.2-2' }}</strong>
+                                        <strong [class.total-negative]="it.totalPrice < 0">
+                                            {{ it.totalPrice | currency:moneda:'symbol':'1.2-2' }}
+                                        </strong>
                                     </td>
                                     <td>
                                         <button class="btn-remove-mini" type="button" (click)="removeItem(i)">
@@ -167,7 +182,7 @@
 
         <div class="total-box">
             <div class="total-label">TOTAL</div>
-            <div class="total-value">{{ total | currency:'PEN':'symbol':'1.2-2' }}</div>
+            <div class="total-value">{{ total | currency:moneda:'symbol':'1.2-2' }}</div>
         </div>
     </div>
 

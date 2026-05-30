@@ -47,23 +47,26 @@ export class ModalBudgetDetailDialogComponent {
   recalcItem(it: any) {
     const qty = Number(it.quantity || 0);
     const price = Number(it.unitPrice || 0);
-    const discount = Number(it.discount || 0);
 
-    const gross = qty * price;
-
-    if (discount > gross) {
-      it.discount = gross;
+    if (it.service?.isDiscount || price < 0) {
+      it.totalPrice = qty * -Math.abs(price);
+      it.unitPrice = -Math.abs(price);
+    } else {
+      const discount = Number(it.discount || 0);
+      const gross = qty * price;
+      if (discount > gross) { it.discount = gross; }
+      it.totalPrice = gross - it.discount;
     }
-
-    it.totalPrice = gross - it.discount;
 
     this.recalcTotal();
   }
 
   recalcTotal() {
-    this.budget.total = this.budget.items
-      .filter((i: any) => i.isApproved)
-      .reduce(((sum: any, i: any) => sum + i.totalPrice), 0);
+    this.budget.total = this.budget.items.reduce((sum: any, i: any) => {
+      const isDiscount = i.service?.isDiscount || i.unitPrice < 0;
+      const value = isDiscount ? -Math.abs(i.totalPrice) : i.totalPrice;
+      return sum + value;
+    }, 0);
   }
 
   toggleApprove(it: any) {
@@ -81,7 +84,15 @@ export class ModalBudgetDetailDialogComponent {
     this.budgetService.getBudgetDetail(this.data.budgetId).subscribe({
       next: (res: any) => {
         this.budget = res?.data;
+        // El API devuelve totalPrice positivo para descuentos — normalizar a negativo
+        (this.budget?.items || []).forEach((it: any) => {
+          if (it.service?.isDiscount || it.unitPrice < 0) {
+            it.totalPrice = -Math.abs(Number(it.totalPrice));
+            it.unitPrice = -Math.abs(Number(it.unitPrice));
+          }
+        });
         this.buildGroupedBudgetItems();
+        this.recalcTotal();
         this.loading = false;
       },
       error: () => {

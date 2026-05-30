@@ -65,8 +65,10 @@
               <th>Producto</th>
               <th>Cantidad</th>
               <th>Und. Medida</th>
-              <th>Precio Costo</th>
-              <th>Precio Venta</th>
+              <th>Costo S/</th>
+              <th>Precio S/</th>
+              <th>Costo $</th>
+              <th>Precio $</th>
               <th>Código Serie</th>
               <th>Marca</th>
               <th>Multi Marca</th>
@@ -94,8 +96,9 @@
 
               <td>{{ p.unitMeasure?.name || '—' }}</td>
               <td>{{ p.cost | currency:'PEN':'symbol':'1.2-2' }}</td>
-              <td>{{ p.price | currency:'PEN':'symbol':'1.2-2' }}
-
+              <td>{{ p.price | currency:'PEN':'symbol':'1.2-2' }}</td>
+              <td>{{ p.costDolar != null ? (p.costDolar | currency:'$':'symbol':'1.2-2') : '—' }}</td>
+              <td>{{ p.priceDolar != null ? (p.priceDolar | currency:'$':'symbol':'1.2-2') : '—' }}</td>
 
               <td>{{ p.serialCode || '—' }}</td>
 

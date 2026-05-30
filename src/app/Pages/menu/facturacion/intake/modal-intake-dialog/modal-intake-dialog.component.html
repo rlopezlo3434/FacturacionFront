@@ -58,16 +58,21 @@
             <div class="form-field">
                 <label class="label">Nivel de Gasolina</label>
                 <div class="fuel-selector">
-                    <span class="fuel-label">E</span>
                     <div class="fuel-bars">
-                        <div *ngFor="let bar of [1,2,3,4]"
+                        <div *ngFor="let bar of [1,2,3,4,5,6,7,8]"
                             class="fuel-bar"
                             [class.active]="intake.fuelLevel >= bar"
                             [class.disabled]="isLoadingDetail"
-                            (click)="!isLoadingDetail && (intake.fuelLevel = intake.fuelLevel === bar && bar !== 0 ? bar - 1 : bar)">
+                            (click)="!isLoadingDetail && (intake.fuelLevel = intake.fuelLevel === bar ? bar - 1 : bar)">
                         </div>
                     </div>
-                    <span class="fuel-label">F</span>
+                    <div class="fuel-ticks">
+                        <span>E</span>
+                        <span>1/4</span>
+                        <span>1/2</span>
+                        <span>3/4</span>
+                        <span>F</span>
+                    </div>
                 </div>
             </div>
 
@@ -75,6 +80,12 @@
                 <label class="label">Dirección de Recojo *</label>
                 <input type="text" class="input" placeholder="Ej: Av. Los Olivos 123 - SJL"
                     [(ngModel)]="intake.pickupAddress" [disabled]="isLoadingDetail" />
+            </div>
+
+            <div class="form-field full">
+                <label class="label">Nombre Encargado de Recojo</label>
+                <input type="text" class="input" placeholder="Ej: Juan Pérez"
+                    [(ngModel)]="intake.nombreEncargadoRecojo" [disabled]="isLoadingDetail" />
             </div>
 
             <div class="form-field full">
@@ -143,27 +154,27 @@
                 </div>
             </div>
 
-            <div class="canvas-wrapper" *ngIf="!isEditMode">
-                <img [src]="baseImageUrl" draggable="false">
-
-                <canvas #canvas1 (mousedown)="startDraw($event, 1)" (mousemove)="draw($event, 1)"
-                    (mouseup)="stopDraw(1)" (mouseleave)="stopDraw(1)" (touchstart)="startDraw($event, 1)"
-                    (touchmove)="draw($event, 1)" (touchend)="stopDraw(1)">
-                </canvas>
-
+            <div class="canvas-block" *ngIf="!isEditMode">
+                <div class="canvas-wrapper">
+                    <img [src]="baseImageUrl" draggable="false">
+                    <canvas #canvas1 (mousedown)="startDraw($event, 1)" (mousemove)="draw($event, 1)"
+                        (mouseup)="stopDraw(1)" (mouseleave)="stopDraw(1)" (touchstart)="startDraw($event, 1)"
+                        (touchmove)="draw($event, 1)" (touchend)="stopDraw(1)">
+                    </canvas>
+                </div>
                 <button type="button" class="btn-clear-canvas" (click)="clearCanvas(1)">
                     Limpiar
                 </button>
             </div>
 
-            <div class="canvas-wrapper" *ngIf="!isEditMode">
-                <img [src]="baseImageUrl2" draggable="false">
-
-                <canvas #canvas2 (mousedown)="startDraw($event, 2)" (mousemove)="draw($event, 2)"
-                    (mouseup)="stopDraw(2)" (mouseleave)="stopDraw(2)" (touchstart)="startDraw($event, 2)"
-                    (touchmove)="draw($event, 2)" (touchend)="stopDraw(2)">
-                </canvas>
-
+            <div class="canvas-block" *ngIf="!isEditMode">
+                <div class="canvas-wrapper">
+                    <img [src]="baseImageUrl2" draggable="false">
+                    <canvas #canvas2 (mousedown)="startDraw($event, 2)" (mousemove)="draw($event, 2)"
+                        (mouseup)="stopDraw(2)" (mouseleave)="stopDraw(2)" (touchstart)="startDraw($event, 2)"
+                        (touchmove)="draw($event, 2)" (touchend)="stopDraw(2)">
+                    </canvas>
+                </div>
                 <button type="button" class="btn-clear-canvas" (click)="clearCanvas(2)">
                     Limpiar
                 </button>

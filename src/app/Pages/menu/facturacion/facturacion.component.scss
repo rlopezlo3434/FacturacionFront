@@ -549,6 +549,15 @@
     color: #16a34a;
 }
 
+.chip-usd {
+    background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;
+    padding: 2px 7px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-left: 6px;
+}
+.chip-pen {
+    background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;
+    padding: 2px 7px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-left: 6px;
+}
+
 /* ================================
    PANEL DERECHO
 ================================ */
@@ -730,6 +739,95 @@
     color: #8793A5;
 }
 
+.no-sunat-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0 4px;
+    cursor: pointer;
+    user-select: none;
+
+    span {
+        font-size: 0.85rem;
+        color: #555;
+        font-weight: 500;
+    }
+}
+
+.toggle-track {
+    width: 40px;
+    height: 22px;
+    border-radius: 999px;
+    background: #ccc;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+
+    &.on {
+        background: #e65100;
+    }
+}
+
+.toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: white;
+    transition: left 0.2s;
+
+    .toggle-track.on & {
+        left: 21px;
+    }
+}
+
+.metodo-pago-interno {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 4px 0 8px;
+}
+
+.metodo-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.metodo-btns {
+    display: flex;
+    gap: 6px;
+}
+
+.metodo-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 7px 4px;
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    background: white;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #555;
+    transition: 0.15s;
+
+    mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+    &:hover { border-color: #e65100; color: #e65100; }
+
+    &.active {
+        background: #e65100;
+        border-color: #e65100;
+        color: white;
+    }
+}
+
 .totals-detail div {
     display: flex;
     justify-content: space-between;
@@ -785,6 +883,34 @@
     opacity: 0.5;
     pointer-events: none;
     background-color: #f5f5f5;
+}
+
+.budget-group-header td {
+    background: #eef4ff;
+    padding: 6px 10px;
+    border-bottom: 1px solid #c7d9f8;
+}
+
+.budget-group-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon { font-size: 18px; color: #1976d2; }
+    strong { color: #1565c0; font-size: 0.9rem; }
+}
+
+.btn-select-all-code {
+    margin-left: auto;
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1px solid #1976d2;
+    background: white;
+    color: #1976d2;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    &:hover { background: #1976d2; color: white; }
 }
 
 /* ================================

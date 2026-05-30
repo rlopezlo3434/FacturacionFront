@@ -64,6 +64,7 @@
               <th>Precio</th>
               <th>Estado</th>
               <th>Tercero</th>
+              <th>Descuento</th>
             </tr>
           </thead>
 
@@ -88,8 +89,12 @@
                 <span class="chip suspendido" *ngIf="!s.isActive">Inactivo</span>
               </td>
               <td>
-                <span class="chip activo" *ngIf="s.isThird">Si</span>
+                <span class="chip activo" *ngIf="s.isThird">Sí</span>
                 <span class="chip suspendido" *ngIf="!s.isThird">No</span>
+              </td>
+              <td>
+                <span class="chip activo" *ngIf="s.isDiscount">Sí</span>
+                <span class="chip suspendido" *ngIf="!s.isDiscount">No</span>
               </td>
             </tr>
           </tbody>

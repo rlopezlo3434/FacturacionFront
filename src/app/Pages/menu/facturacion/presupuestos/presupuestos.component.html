@@ -65,10 +65,12 @@
             <tr>
               <th>Código</th>
               <th>Total</th>
+              <th>Moneda</th>
               <th>Fecha</th>
               <th>PDF</th>
               <th>Estado</th>
               <th>Oficial</th>
+              <th></th>
               <!-- <th>Ord. Trabajo</th> -->
             </tr>
           </thead>
@@ -79,7 +81,12 @@
               (click)="openBudgetDetail(b)" style="cursor:pointer;">
               <td><strong>{{ b.code }}</strong></td>
 
-              <td>{{ b.total | currency:'PEN':'symbol':'1.2-2' }}</td>
+              <td>{{ b.total | currency:(b.moneda || 'PEN'):'symbol':'1.2-2' }}</td>
+
+              <td>
+                <span class="chip chip-usd" *ngIf="b.moneda === 'USD'">USD $</span>
+                <span class="chip chip-pen" *ngIf="!b.moneda || b.moneda === 'PEN'">PEN S/</span>
+              </td>
 
               <td>{{ b.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
 
@@ -95,6 +102,11 @@
               <td>
                 <span class="chip multi" *ngIf="b.isOfficial">OFICIAL</span>
                 <span *ngIf="!b.isOfficial" style="color:gray;">Histórico</span>
+              </td>
+              <td>
+                <button class="btn-edit-row" (click)="$event.stopPropagation(); openEditBudgetModal(b)" title="Editar presupuesto">
+                  <mat-icon>edit</mat-icon>
+                </button>
               </td>
               <!-- <td>
                 <button class="btn btn-create" (click)="$event.stopPropagation(); generateWorkOrder()" [disabled]="!hasOfficialApprovedBudget()">

@@ -172,7 +172,13 @@
                 <th>Tipo</th>
                 <th>Descripción</th>
                 <th style="width:120px;">Cant.</th>
-                <th style="width:120px;">Completado</th>
+                <th style="width:120px;">
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    Completado
+                    <mat-checkbox [checked]="allCompleted" [indeterminate]="someCompleted && !allCompleted"
+                      (change)="toggleAllCompleted($event.checked)" title="Marcar/desmarcar todos"></mat-checkbox>
+                  </div>
+                </th>
                 <th>Observación</th>
               </tr>
             </thead>

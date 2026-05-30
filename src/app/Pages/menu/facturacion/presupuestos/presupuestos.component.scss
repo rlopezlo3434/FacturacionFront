@@ -338,6 +338,9 @@
   font-weight: 600;
 }
 
+.chip-usd { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+.chip-pen { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+
 .activo {
   background: #e8f5e9;
   color: #2e7d32;
@@ -355,3 +358,4 @@
   color: #1976d2;
   border: 1px solid #bbdefb;
 }
+.btn-edit-row { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; mat-icon { color: #1976d2; font-size: 20px; } &:hover mat-icon { color: #1565c0; } }

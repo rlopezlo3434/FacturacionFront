@@ -15,6 +15,8 @@ export class MmodalProductDialogComponent {
     quantity: 0,
     price: 0,
     cost: 0,
+    priceDolar: null,
+    costDolar: null,
     serialCode: '',
     brandId: null,
     isMultiBrand: false,
@@ -42,11 +44,12 @@ export class MmodalProductDialogComponent {
         quantity: this.data.quantity,
         price: this.data.price,
         cost: this.data.cost,
+        priceDolar: this.data.priceDolar ?? null,
+        costDolar: this.data.costDolar ?? null,
         serialCode: this.data.serialCode,
         isMultiBrand: this.data.isMultiBrand,
         brandId: this.data.brand?.id ?? null,
         unitMeasureId: this.data.unitMeasure?.id ?? null,
-
       };
     }
   }
@@ -76,6 +79,16 @@ export class MmodalProductDialogComponent {
 
   guardar() {
 
+    if (!this.product.unitMeasureId) {
+      this.snackBar.open('La Unidad de Medida es obligatoria', '', {
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
     this.product.name = this.product.name?.toUpperCase();
 
     const payload = {
@@ -84,6 +97,8 @@ export class MmodalProductDialogComponent {
       cost: Number(this.product.cost),
       unitMeasureId: this.product.unitMeasureId ? this.product.unitMeasureId : null,
       price: Number(this.product.price),
+      priceDolar: this.product.priceDolar !== null && this.product.priceDolar !== '' ? Number(this.product.priceDolar) : null,
+      costDolar: this.product.costDolar !== null && this.product.costDolar !== '' ? Number(this.product.costDolar) : null,
       serialCode: this.product.serialCode || null,
       isMultiBrand: this.product.isMultiBrand,
       brandId: this.product.isMultiBrand ? null : this.product.brandId

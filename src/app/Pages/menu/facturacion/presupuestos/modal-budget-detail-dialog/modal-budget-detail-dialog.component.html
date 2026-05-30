@@ -33,6 +33,14 @@
             </div>
 
             <div class="info-card">
+                <div class="info-label">Moneda</div>
+                <div class="info-value">
+                    <span class="chip chip-usd" *ngIf="budget?.moneda === 'USD'">USD $</span>
+                    <span class="chip chip-pen" *ngIf="!budget?.moneda || budget?.moneda === 'PEN'">PEN S/</span>
+                </div>
+            </div>
+
+            <div class="info-card">
                 <div class="info-label">Fecha</div>
                 <div class="info-value">{{ budget?.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
             </div>
@@ -86,11 +94,12 @@
                                 <ng-container *ngIf="!it.isPackageHeader">
                                 <td [class.package-child-cell]="it.isPackageChild">
                                     <span class="chip type-product" *ngIf="it.itemType === 1">Producto</span>
-                                    <span class="chip type-service" *ngIf="it.itemType === 2">Servicio</span>
+                                    <span class="chip type-service" *ngIf="it.itemType === 2 && !it.service?.isDiscount">Servicio</span>
+                                    <span class="chip type-discount" *ngIf="it.service?.isDiscount">Descuento</span>
                                 </td>
 
-                                <td >
-                                    <div class="item-title">
+                                <td>
+                                    <div class="item-title truncate" [title]="it.product?.name || it.service?.name">
                                         {{ it.product?.name || it.service?.name }}
                                     </div>
                                 </td>
@@ -101,17 +110,18 @@
                                 <td><input class="input-mini" type="number" min="0" [disabled]="it.isApproved"
                                         [(ngModel)]="it.unitPrice" (ngModelChange)="recalcItem(it)" /></td>
 
-                                <!-- ✅ DESCUENTO -->
                                 <td>
-                                    <input class="input-mini" type="number" min="0" [disabled]="it.isApproved"
+                                    <input *ngIf="!it.service?.isDiscount" class="input-mini" type="number" min="0"
+                                        [disabled]="it.isApproved"
                                         [(ngModel)]="it.discount" (ngModelChange)="recalcItem(it)" />
+                                    <span *ngIf="it.service?.isDiscount">—</span>
                                 </td>
 
-                                <!-- ✅ TOTAL -->
                                 <td>
-                                    <strong>{{ it.totalPrice | currency:'PEN':'symbol':'1.2-2' }}</strong>
-
-                                    <div *ngIf="it.discount > 0" class="discount-label">
+                                    <strong [class.total-negative]="it.totalPrice < 0">
+                                        {{ it.totalPrice | currency:(budget?.moneda || 'PEN'):'symbol':'1.2-2' }}
+                                    </strong>
+                                    <div *ngIf="!it.service?.isDiscount && it.discount > 0" class="discount-label">
                                         Descuento aplicado
                                     </div>
                                 </td>
@@ -141,7 +151,7 @@
         <!-- ✅ Totales -->
         <div class="total-box">
             <div class="total-label">TOTAL</div>
-            <div class="total-value">{{ budget?.total | currency:'PEN':'symbol':'1.2-2' }}</div>
+            <div class="total-value">{{ budget?.total | currency:(budget?.moneda || 'PEN'):'symbol':'1.2-2' }}</div>
         </div>
 
     </div>

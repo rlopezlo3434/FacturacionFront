@@ -33,6 +33,7 @@ export class ModalIntakeDialogComponent implements OnInit, AfterViewInit {
     clientId: null,
     mode: 1,
     pickupAddress: '',
+    nombreEncargadoRecojo: '',
     mileageKm: null,
     fuelLevel: 0,
     services: '',
@@ -311,6 +312,7 @@ export class ModalIntakeDialogComponent implements OnInit, AfterViewInit {
       clientId: detail?.client?.id ?? detail?.clientId ?? null,
       mode: detail?.mode ?? 1,
       pickupAddress: detail?.pickupAddress || '',
+      nombreEncargadoRecojo: detail?.nombreEncargadoRecojo || '',
       mileageKm: detail?.mileageKm ?? null,
       services: detail?.services || '',
       observations: detail?.observations || '',
@@ -502,6 +504,9 @@ export class ModalIntakeDialogComponent implements OnInit, AfterViewInit {
 
     if (this.intake.mode === 2) {
       formData.append('pickupAddress', this.intake.pickupAddress || '');
+    }
+    if (this.intake.nombreEncargadoRecojo) {
+      formData.append('nombreEncargadoRecojo', this.intake.nombreEncargadoRecojo);
     }
 
     if (this.intake.observations) {

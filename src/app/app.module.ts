@@ -87,6 +87,8 @@ import { MarcaModeloPipe } from "./pipes/marca-modelo.pipe";
 import { ComprasComponent } from './Pages/menu/compras/compras.component';
 import { ModalCompraDialogComponent } from './Pages/menu/compras/modal-compra-dialog/modal-compra-dialog.component';
 import { ModalDetalleCompraDialogComponent } from './Pages/menu/compras/modal-detalle-compra-dialog/modal-detalle-compra-dialog.component';
+import { ModalBudgetEditDialogComponent } from './Pages/menu/facturacion/presupuestos/modal-budget-edit-dialog/modal-budget-edit-dialog.component';
+import { CodeFilterPipe } from './pipes/code-filter.pipe';
 
 
 registerLocaleData(localeEsPe);
@@ -144,7 +146,8 @@ registerLocaleData(localeEsPe);
     ModalServicePackageDialogComponent,
     ComprasComponent,
     ModalCompraDialogComponent,
-    ModalDetalleCompraDialogComponent
+    ModalDetalleCompraDialogComponent,
+    ModalBudgetEditDialogComponent
 
   ],
   imports: [
@@ -175,7 +178,8 @@ registerLocaleData(localeEsPe);
     UppercaseDirective,
     InvoiceFilterPipe,
     FiltroProveedoresPipe,
-    MarcaModeloPipe
+    MarcaModeloPipe,
+    CodeFilterPipe
 ],
   providers: [provideAnimationsAsync(), { provide: LOCALE_ID, useValue: 'es-PE' }],
   bootstrap: [AppComponent],

@@ -1,25 +1,16 @@
 .fuel-selector {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 4px;
   padding: 10px 12px;
   border: 1px solid #dcdcdc;
   border-radius: 10px;
   background: white;
 }
 
-.fuel-label {
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: #555;
-  width: 14px;
-  text-align: center;
-}
-
 .fuel-bars {
   display: flex;
-  gap: 5px;
-  flex: 1;
+  gap: 3px;
 }
 
 .fuel-bar {
@@ -42,6 +33,19 @@
   &.disabled {
     cursor: not-allowed;
     opacity: 0.6;
+  }
+}
+
+.fuel-ticks {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1px;
+
+  span {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #888;
+    text-align: center;
   }
 }
 
@@ -408,18 +412,22 @@
   touch-action: none;
 }
 
+.canvas-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
 .btn-clear-canvas {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  z-index: 20;
-  padding: 6px 10px;
+  padding: 6px 14px;
   border-radius: 8px;
   border: 1px solid #dcdcdc;
-  background: rgba(255, 255, 255, 0.95);
+  background: white;
   cursor: pointer;
   font-size: 0.82rem;
   font-weight: 600;
+  &:hover { background: #f5f5f5; }
 }
 
 .diagram-readonly-grid {

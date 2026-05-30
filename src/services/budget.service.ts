@@ -45,6 +45,13 @@ export class BudgetService {
     });
   }
 
+  // ✅ Editar presupuesto
+  updateBudget(budgetId: number, payload: any) {
+    return this.http.put(`${environment.apiBase}/VehicleBudget/${budgetId}`, payload, {
+      headers: this.getHeaders()
+    });
+  }
+
   saveItemApprovals(payload: any) {
     return this.http.post(`${environment.apiBase}/VehicleBudget/approve-items`, payload, {
       headers: this.getHeaders()

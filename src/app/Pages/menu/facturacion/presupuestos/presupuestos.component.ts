@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BudgetService } from '../../../../../services/budget.service';
 import { ModalBudgetCreateDialogComponent } from './modal-budget-create-dialog/modal-budget-create-dialog.component';
 import { ModalBudgetDetailDialogComponent } from './modal-budget-detail-dialog/modal-budget-detail-dialog.component';
+import { ModalBudgetEditDialogComponent } from './modal-budget-edit-dialog/modal-budget-edit-dialog.component';
 import { WorkOrderService } from '../../../../../services/work-order.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FacturacionService } from '../../../../../services/facturacion.service';
@@ -60,6 +61,19 @@ export class PresupuestosComponent {
       maxWidth: '80vw',
       disableClose: true,
       data: { intakeId: this.intakeId }
+    });
+
+    dialogRef.afterClosed().subscribe(ok => {
+      if (ok) this.loadBudgets();
+    });
+  }
+
+  openEditBudgetModal(budget: any) {
+    const dialogRef = this.dialog.open(ModalBudgetEditDialogComponent, {
+      width: '1500px',
+      maxWidth: '80vw',
+      disableClose: true,
+      data: { budgetId: budget.id }
     });
 
     dialogRef.afterClosed().subscribe(ok => {

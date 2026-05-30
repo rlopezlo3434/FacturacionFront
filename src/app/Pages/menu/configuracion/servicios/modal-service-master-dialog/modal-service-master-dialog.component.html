@@ -40,11 +40,19 @@
         <input class="input" type="text" [value]="data.code" disabled />
       </div>
 
-      <div class="form-field full">
+      <div class="form-field">
         <label class="label">Servicio de tercero</label>
         <select class="select" [(ngModel)]="service.isThird">
-          <option [ngValue]="true">Activo</option>
-          <option [ngValue]="false">Inactivo</option>
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false">No</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label class="label">¿Es descuento?</label>
+        <select class="select" [(ngModel)]="service.isDiscount">
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false">No</option>
         </select>
       </div>
 

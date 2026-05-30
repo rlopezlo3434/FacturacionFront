@@ -43,7 +43,7 @@
 
       <div class="form-field">
         <label class="label">Moneda</label>
-        <select class="select" [(ngModel)]="compra.moneda">
+        <select class="select" [(ngModel)]="compra.moneda" (change)="onMonedaChange()">
           <option value="SOLES">Soles (PEN)</option>
           <option value="DOLARES">Dólares (USD)</option>
         </select>
@@ -91,13 +91,13 @@
         <input type="number" class="input input-sm" min="1" placeholder="Cant."
           [(ngModel)]="compra.detalles[i].cantidad" />
 
-        <!-- PRECIO COMPRA -->
-        <input type="number" class="input input-sm" min="0" step="0.01" placeholder="Precio"
-          [(ngModel)]="compra.detalles[i].precioCompra" />
+        <!-- COSTO -->
+        <input type="number" class="input input-sm" min="0" step="0.01" placeholder="Costo"
+          [(ngModel)]="compra.detalles[i].costo" />
 
         <!-- SUBTOTAL FILA -->
         <div class="fila-total">
-          {{ (d.cantidad * d.precioCompra) | currency:currencyCode:'symbol':'1.2-2' }}
+          {{ (d.cantidad * d.costo) | currency:currencyCode:'symbol':'1.2-2' }}
         </div>
 
         <!-- ELIMINAR -->
@@ -116,14 +116,6 @@
 
   <!-- TOTALES -->
   <div class="totales-box">
-    <div class="totales-row">
-      <span>Subtotal</span>
-      <span>{{ subtotal | currency:currencyCode:'symbol':'1.2-2' }}</span>
-    </div>
-    <div class="totales-row">
-      <span>IGV (18%)</span>
-      <span>{{ igv | currency:currencyCode:'symbol':'1.2-2' }}</span>
-    </div>
     <div class="totales-row total">
       <span>Total</span>
       <strong>{{ total | currency:currencyCode:'symbol':'1.2-2' }}</strong>

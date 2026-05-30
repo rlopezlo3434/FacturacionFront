@@ -2,6 +2,32 @@
 .dialog-title {
   font-weight: 600;
   font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.moneda-toggle {
+  display: flex;
+  gap: 4px;
+}
+
+.moneda-btn {
+  padding: 4px 14px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  background: white;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #555;
+  &.active {
+    background: #1976d2;
+    border-color: #1976d2;
+    color: white;
+  }
+  &:hover:not(.active) { border-color: #1976d2; color: #1976d2; }
 }
 
 /* CONTENIDO */
@@ -191,6 +217,21 @@
   background: #e8f5e9;
   color: #2e7d32;
   border: 1px solid #c8e6c9;
+}
+
+.type-discount {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffcc80;
+}
+
+.total-negative {
+  color: #c62828;
+}
+
+.discount-amount {
+  font-weight: 600;
+  color: #c62828;
 }
 
 /* BOTON ELIMINAR */

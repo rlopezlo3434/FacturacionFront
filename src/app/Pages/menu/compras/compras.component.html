@@ -52,8 +52,8 @@
               <th>RUC</th>
               <th>FECHA DOC.</th>
               <th>MONEDA</th>
-              <th>SUBTOTAL</th>
-              <th>IGV</th>
+              <!-- <th>SUBTOTAL</th>
+              <th>IGV</th> -->
               <th>TOTAL</th>
               <th>PRODUCTOS</th>
               <th></th>
@@ -70,9 +70,9 @@
               <td>{{ c.proveedorRuc }}</td>
               <td>{{ c.fechaDocumento | date:'dd/MM/yyyy' }}</td>
               <td><span class="chip moneda">{{ c.moneda }}</span></td>
-              <td>{{ c.subtotal | currency:'PEN':'symbol':'1.2-2' }}</td>
-              <td>{{ c.igv | currency:'PEN':'symbol':'1.2-2' }}</td>
-              <td><strong>{{ c.total | currency:'PEN':'symbol':'1.2-2' }}</strong></td>
+              <!-- <td>{{ c.subtotal | currency:(c.moneda === 'DOLARES' ? '$' : 'PEN'):'symbol':'1.2-2' }}</td>
+              <td>{{ c.igv | currency:(c.moneda === 'DOLARES' ? '$' : 'PEN'):'symbol':'1.2-2' }}</td> -->
+              <td><strong>{{ c.total | currency:(c.moneda === 'DOLARES' ? '$' : 'PEN'):'symbol':'1.2-2' }}</strong></td>
               <td>
                 <span class="chip items">{{ c.detalles?.length || 0 }} items</span>
               </td>

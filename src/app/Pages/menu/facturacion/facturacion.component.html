@@ -62,7 +62,24 @@
 
                     <tbody>
 
-                        <tr *ngFor="let it of filteredInvoiceItems" [class.row-disabled]="it.invoiced">
+                        <ng-container *ngFor="let code of uniqueBudgetCodes">
+
+                            <!-- Fila cabecera de presupuesto -->
+                            <tr class="budget-group-header">
+                                <td colspan="8">
+                                    <div class="budget-group-row">
+                                        <mat-icon>receipt_long</mat-icon>
+                                        <strong>{{ code }}</strong>
+                                        <button type="button" class="btn-select-all-code"
+                                            (click)="toggleSelectByCode(code)">
+                                            {{ isCodeFullySelected(code) ? 'Deseleccionar todos' : 'Seleccionar todos' }}
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Items de ese presupuesto -->
+                            <tr *ngFor="let it of filteredInvoiceItems | codeFilter:code" [class.row-disabled]="it.invoiced">
 
                             <!-- checkbox -->
                             <td>
@@ -73,6 +90,8 @@
                             <!-- código -->
                             <td>
                                 <strong>{{ it.intakeCode }}</strong>
+                                <span class="chip-usd" *ngIf="it.moneda === 'USD'">USD $</span>
+                                <span class="chip-pen" *ngIf="!it.moneda || it.moneda === 'PEN'">PEN S/</span>
                             </td>
 
                             <!-- descripción -->
@@ -96,19 +115,21 @@
 
                             <!-- precio -->
                             <td>
-                                {{ it.unitPrice | currency:'PEN':'symbol':'1.2-2' }}
+                                {{ it.unitPrice | currency:(it.moneda || 'PEN'):'symbol':'1.2-2' }}
                             </td>
 
                             <td>
-                                {{ it.discount | currency:'PEN':'symbol':'1.2-2' }}
+                                {{ it.discount | currency:(it.moneda || 'PEN'):'symbol':'1.2-2' }}
                             </td>
 
                             <!-- subtotal -->
                             <td class="price">
-                                {{ it.subTotal | currency:'PEN':'symbol':'1.2-2' }}
+                                {{ it.subTotal | currency:(it.moneda || 'PEN'):'symbol':'1.2-2' }}
                             </td>
 
                         </tr>
+
+                        </ng-container>
 
                     </tbody>
 
@@ -244,10 +265,37 @@
                         <div>Se generará un solo comprobante para todos los items seleccionados</div>
                     </div>
 
+                    <div class="no-sunat-toggle" (click)="noMigrarSunat = !noMigrarSunat; metodoPagoInterno = ''">
+                        <div class="toggle-track" [class.on]="noMigrarSunat">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                        <span>No migrar a SUNAT (serie N001)</span>
+                    </div>
+
+                    <div class="metodo-pago-interno" *ngIf="noMigrarSunat">
+                        <label class="metodo-label">Método de pago</label>
+                        <div class="metodo-btns">
+                            <button type="button" class="metodo-btn"
+                                [class.active]="metodoPagoInterno === 'EFECTIVO'"
+                                (click)="metodoPagoInterno = 'EFECTIVO'">
+                                <mat-icon>payments</mat-icon> Efectivo
+                            </button>
+                            <button type="button" class="metodo-btn"
+                                [class.active]="metodoPagoInterno === 'TRANSFERENCIA'"
+                                (click)="metodoPagoInterno = 'TRANSFERENCIA'">
+                                <mat-icon>account_balance</mat-icon> Transferencia
+                            </button>
+                            <button type="button" class="metodo-btn"
+                                [class.active]="metodoPagoInterno === 'TARJETA'"
+                                (click)="metodoPagoInterno = 'TARJETA'">
+                                <mat-icon>credit_card</mat-icon> Tarjeta
+                            </button>
+                        </div>
+                    </div>
+
                     <button class="btn-primary full" (click)="imprimirVenta()">
                         <mat-icon>receipt</mat-icon>
-
-                        GENERAR COMPROBANTE
+                        {{ noMigrarSunat ? 'GENERAR COMPROBANTE INTERNO' : 'GENERAR COMPROBANTE' }}
                     </button>
 
                 </div>

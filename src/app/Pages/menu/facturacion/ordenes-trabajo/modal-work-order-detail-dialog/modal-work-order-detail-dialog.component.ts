@@ -184,6 +184,18 @@ export class ModalWorkOrderDetailDialogComponent {
     });
   }
 
+  get allCompleted(): boolean {
+    return this.items.length > 0 && this.items.every(it => it.isCompleted);
+  }
+
+  get someCompleted(): boolean {
+    return this.items.some(it => it.isCompleted);
+  }
+
+  toggleAllCompleted(checked: boolean) {
+    this.items.forEach(it => it.isCompleted = checked);
+  }
+
   cancelar() {
     this.dialogRef.close(false);
   }

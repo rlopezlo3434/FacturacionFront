@@ -111,6 +111,11 @@
   font-weight: 600;
   color: #222;
 }
+.item-title.truncate { max-width: 520px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: default; }
+.type-discount { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; display: inline-block; }
+.total-negative { color: #c62828; }
+.chip-usd { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; padding: 3px 8px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; display: inline-block; }
+.chip-pen { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; padding: 3px 8px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; display: inline-block; }
 
 /* CHIPS */
 .chip {

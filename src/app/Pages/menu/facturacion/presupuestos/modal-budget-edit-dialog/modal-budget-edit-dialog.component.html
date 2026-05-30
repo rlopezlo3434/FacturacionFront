@@ -1,0 +1,198 @@
+<h2 mat-dialog-title class="dialog-title">
+    Editar Presupuesto
+    <div class="moneda-toggle">
+        <button type="button" class="moneda-btn" [class.active]="moneda === 'PEN'" (click)="moneda = 'PEN'; onMonedaChange()">
+            S/ Soles
+        </button>
+        <button type="button" class="moneda-btn" [class.active]="moneda === 'USD'" (click)="moneda = 'USD'; onMonedaChange()">
+            $ Dólares
+        </button>
+    </div>
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+    <div *ngIf="loading" style="display:flex; justify-content:center; padding: 32px;">
+        <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+    </div>
+
+    <ng-container *ngIf="!loading">
+
+        <div class="section">
+            <div class="subTitle">Agregar Productos y Servicios</div>
+
+            <div class="form-grid">
+
+                <div class="form-field full">
+                    <label class="label">Buscar Producto</label>
+                    <input class="input" [(ngModel)]="searchProduct" (input)="filterProducts()"
+                        placeholder="Ej: PR0001, Filtro, P240..." />
+
+                    <div class="dropdown" *ngIf="filteredProducts.length > 0">
+                        <div class="dropdown-item" *ngFor="let p of filteredProducts" (click)="addProduct(p)">
+                            <div class="drop-title">{{ p.code }} - {{ p.name }}</div>
+                            <div class="drop-sub">
+                                Stock: {{ p.quantity }} • Precio: {{ p.price | currency:moneda:'symbol':'1.2-2' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-field full">
+                    <label class="label">Buscar Servicio</label>
+                    <input class="input" [(ngModel)]="searchService" (input)="filterServices()"
+                        placeholder="Ej: SV0001, Cambio de aceite..." />
+
+                    <div class="dropdown" *ngIf="filteredServices.length > 0">
+                        <div class="dropdown-item" *ngFor="let s of filteredServices" (click)="addService(s)">
+                            <div class="drop-title">{{ s.code }} - {{ s.name }}</div>
+                            <div class="drop-sub">
+                                Precio base: {{ s.price | currency:moneda:'symbol':'1.2-2' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-field full">
+                    <label class="label">Buscar Paquete de Servicio</label>
+
+                    <input class="input" [(ngModel)]="searchPackage" (input)="filterPackages()"
+                        placeholder="Ej: Mantenimiento menor Toyota..." />
+
+                    <div class="dropdown" *ngIf="filteredPackages.length > 0">
+                        <div class="dropdown-item" *ngFor="let p of filteredPackages" (click)="addPackage(p)">
+                            <div class="drop-title">{{ p.description }}</div>
+                            <div class="drop-sub">{{ p.items.length }} items incluidos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-field full" style="margin-bottom: 12px;">
+                    <label class="label">Notas / Observaciones</label>
+                    <textarea class="textarea" rows="3"
+                        placeholder="Ej: descuento aplicado, diagnóstico, condiciones del cliente..."
+                        [(ngModel)]="notes" appUppercase>
+                    </textarea>
+                </div>
+
+                <div class="form-field full" style="margin-bottom: 12px;">
+                    <label class="label">Extras (Separar por comas)</label>
+                    <textarea class="textarea" rows="2"
+                        placeholder="Ej: alineamiento, balanceo, lavado, separado por ','"
+                        [(ngModel)]="extras" appUppercase>
+                    </textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="subTitle">Detalle del Presupuesto</div>
+
+            <div class="table-container">
+                <div class="table-scroll">
+                    <div class="table-body detail-table">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th style="width:120px;">Cant.</th>
+                                    <th style="width:150px;">Precio Unit.</th>
+                                    <th style="width:140px;">Descuento</th>
+                                    <th style="width:150px;">Total</th>
+                                    <th style="width:60px;"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr *ngFor="let it of items; let i = index">
+                                    <td *ngIf="it.isPackageHeader" colspan="7" class="package-header-cell">
+                                        <div class="package-header-row">
+                                            <div>
+                                                <div class="package-title">{{ it.packageDescription }}</div>
+                                                <div class="package-sub">{{ it.packageItemsCount }} items incluidos</div>
+                                            </div>
+                                            <button class="btn-remove-mini" type="button" (click)="removeItem(i)">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    <ng-container *ngIf="!it.isPackageHeader">
+                                        <td [class.package-child-cell]="it.isPackageChild">
+                                            <span class="chip type-product" *ngIf="it.itemType === 1">Producto</span>
+                                            <span class="chip type-service" *ngIf="it.itemType === 2 && !it.isDiscount">Servicio</span>
+                                            <span class="chip type-discount" *ngIf="it.isDiscount">Descuento</span>
+                                        </td>
+
+                                        <td>
+                                            <div class="item-title truncate" [title]="it.name">{{ it.name }}</div>
+                                            <div class="item-sub" *ngIf="it.itemType === 1 && it.serialCode">
+                                                Serie: {{ it.serialCode }}
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <input class="input-mini" type="number" min="1" [(ngModel)]="it.quantity"
+                                                (ngModelChange)="calcTotals()" />
+                                        </td>
+
+                                        <td>
+                                            <input *ngIf="!it.isDiscount" class="input-mini" type="number" min="0" [(ngModel)]="it.unitPrice"
+                                                (ngModelChange)="calcTotals()" />
+                                            <span *ngIf="it.isDiscount" class="discount-amount">
+                                                {{ it.unitPrice | currency:moneda:'symbol':'1.2-2' }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <input *ngIf="!it.isDiscount" class="input-mini" type="number" min="0" [(ngModel)]="it.discount"
+                                                (ngModelChange)="calcTotals()" placeholder="0.00" />
+                                            <span *ngIf="it.isDiscount">—</span>
+                                            <div *ngIf="!it.isDiscount && it.discount > 0" class="discount-label">
+                                                Descuento aplicado
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <strong [class.total-negative]="it.totalPrice < 0">
+                                                {{ it.totalPrice | currency:moneda:'symbol':'1.2-2' }}
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            <button class="btn-remove-mini" type="button" (click)="removeItem(i)">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+                                        </td>
+                                    </ng-container>
+                                </tr>
+
+                                <tr *ngIf="items.length === 0">
+                                    <td colspan="7" class="empty-row">
+                                        Agrega productos o servicios para generar el presupuesto ✓
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="total-box">
+                <div class="total-label">TOTAL</div>
+                <div class="total-value">{{ total | currency:moneda:'symbol':'1.2-2' }}</div>
+            </div>
+        </div>
+
+    </ng-container>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+    <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+
+    <button class="btn-primary" (click)="guardar()" [disabled]="loading || items.length === 0">
+        Actualizar Presupuesto
+    </button>
+</mat-dialog-actions>

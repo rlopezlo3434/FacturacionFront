@@ -77,7 +77,7 @@ export class FacturacionComponent {
   };
   clientDocumentInput = '';
   clientLookupLoading = false;
-  showOnlyPendingInvoices = false;
+  showOnlyPendingInvoices = true;
 
   documentType = 'FACTURA';
 
@@ -86,6 +86,9 @@ export class FacturacionComponent {
   total = 0;
   serie: string = 'F002';
   invoiceItems: any[] = [];
+
+  noMigrarSunat = false;
+  metodoPagoInterno = '';
 
   applyDetraccion = false;
 
@@ -262,6 +265,23 @@ export class FacturacionComponent {
 
     this.recalculateInvoice();
   }
+  get uniqueBudgetCodes(): string[] {
+    const codes = this.filteredInvoiceItems.map(it => it.intakeCode).filter(Boolean);
+    return [...new Set(codes)];
+  }
+
+  isCodeFullySelected(code: string): boolean {
+    const items = this.filteredInvoiceItems.filter(it => it.intakeCode === code && !it.invoiced);
+    return items.length > 0 && items.every(it => it.selected);
+  }
+
+  toggleSelectByCode(code: string) {
+    const items = this.filteredInvoiceItems.filter(it => it.intakeCode === code && !it.invoiced);
+    const allSelected = items.every(it => it.selected);
+    items.forEach(it => it.selected = !allSelected);
+    this.recalculateInvoice();
+  }
+
   get filteredInvoiceItems(): any[] {
     let items = this.invoiceItems;
 
@@ -627,7 +647,6 @@ export class FacturacionComponent {
       cliente_nombre: nombreCliente,
       serie: this.serie,
       cliente_tipo_documento: tipoDocumento,
-      metodo_pago: 1,
       cond_venta: this.paymentCondition === 'CONTADO' ? 'CONTADO' : 'CREDITO',
       // 👇 NUEVO
       tipo_condicion_pago: this.paymentCondition === 'CREDITO_DIAS'
@@ -649,7 +668,9 @@ export class FacturacionComponent {
         this.applyDetraccion ? this.detraccionPercent : null,
       detraccion_total:
         this.applyDetraccion ? this.detraccionAmount : null,
-      vehiculo_placa: this.vehiculoSeleccionado?.plate ?? null
+      vehiculo_placa: this.vehiculoSeleccionado?.plate ?? null,
+      no_migrar_sunat: this.noMigrarSunat,
+      metodo_pago: this.noMigrarSunat ? this.metodoPagoInterno : null
     };
     console.log(resumenVenta)
     this.facturacionService.registrarVenta(resumenVenta).subscribe(
@@ -728,6 +749,9 @@ export class FacturacionComponent {
 
     this.serie = '';
     this.fechaBoleteoHoy = new Date().toISOString().substring(0, 10);
+
+    this.noMigrarSunat = false;
+    this.metodoPagoInterno = '';
 
     // 🔥 DETRACCIÓN
     this.applyDetraccion = false;
