@@ -166,4 +166,28 @@ export class FacturacionService {
       }
     });
   }
+
+  registrarPreVenta(data: any) {
+    return this.http.post<any>(`${environment.apiBase}/preventa/registrar`, data, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    });
+  }
+
+  emitirPreVenta(id: number, serie: string) {
+    return this.http.post<any>(`${environment.apiBase}/preventa/emitir/${id}?serie=${encodeURIComponent(serie)}`, {}, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    });
+  }
+
+  getPreVentasPendientes() {
+    return this.http.get<any[]>(`${environment.apiBase}/preventa/pendientes`, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    });
+  }
+
+  eliminarPreVenta(id: number) {
+    return this.http.delete<any>(`${environment.apiBase}/preventa/${id}`, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    });
+  }
 }

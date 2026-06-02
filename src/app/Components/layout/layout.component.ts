@@ -23,7 +23,8 @@ export class LayoutComponent {
       name: 'facturacion',
       icon: 'receipt_long',
       children: [
-        { label: 'Generar Venta', route: '/facturacion/venta' },
+        // { label: 'Generar Venta', route: '/facturacion/venta' },
+        { label: 'Facturación (Nueva)', route: '/facturacion/venta-nueva' },
         { label: 'Caja', route: '/facturacion/caja' }
       ],
     },

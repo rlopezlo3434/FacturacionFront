@@ -54,6 +54,7 @@ export class FacturacionComponent {
   cli: any = {};
 
   tarjeta: any[] = [];
+  preVentasPendientes: any[] = [];
 
   constructor(
     private clienteService: ClienteService,
@@ -264,9 +265,11 @@ export class FacturacionComponent {
     this.facturacionService.getSeries().subscribe({
       next: (res: any) => {
         this.series = res.data;
+        this.loadPreVentasPendientes();
       },
       error: (err) => {
         console.error('Error al obtener series:', err);
+        this.loadPreVentasPendientes();
       }
     });
   }
@@ -553,6 +556,124 @@ export class FacturacionComponent {
       item.subtotal = +((precioConIgv / 1.18) * cantidad).toFixed(2);
       item.igv = +(item.subtotal * 0.18).toFixed(2);
       item.total = +(precioConIgv * cantidad).toFixed(2);
+    });
+  }
+
+  loadPreVentasPendientes() {
+    this.facturacionService.getPreVentasPendientes().subscribe({
+      next: (res: any) => {
+        const lista = res?.data || res || [];
+        lista.forEach((pv: any) => {
+          const match = this.series.find(s =>
+            (s.tipo || '').toUpperCase().includes((pv.tipoComprobante || '').toUpperCase())
+          );
+          pv.serieEmision = match?.serie || '';
+        });
+        this.preVentasPendientes = lista;
+      },
+      error: () => { this.preVentasPendientes = []; }
+    });
+  }
+
+  registrarPreVenta() {
+    const servicios = this.itemsSeleccionados.filter(item => item.item === 'Servicio');
+    const sinEmpleados = servicios.some(item => !item.empleados || item.empleados.length === 0);
+    if (sinEmpleados) {
+      this.snackBar.open('Cada servicio debe tener al menos un empleado asignado.', '', {
+        duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+      });
+      return;
+    }
+    if (!this.itemsSeleccionados.length) {
+      this.snackBar.open('Agrega al menos un ítem.', '', {
+        duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
+    const numeroDoc = this.venta.cliente?.documentIdentificationNumber || '';
+    const tipoDocumento = numeroDoc.length === 8 ? '1' : numeroDoc.length === 11 ? '6' : '4';
+
+    const itemsParaEnviar = this.itemsSeleccionados.map(item => ({ ...item, empleados: item.empleados || [] }));
+    const payload = {
+      items: itemsParaEnviar,
+      subtotalGeneral: this.subtotalGeneral.toFixed(2),
+      igvGeneral: this.igvGeneral.toFixed(2),
+      totalGeneral: this.totalGeneral.toFixed(2),
+      observaciones: this.venta.observaciones || '',
+      tipo_de_comprobante: this.venta.serieSeleccionada?.tipoComprobante ?? 2,
+      cliente_numero: numeroDoc,
+      cliente_nombre: (this.venta.cliente?.firstName || '') + ' ' + (this.venta.cliente?.lastName || ''),
+      serie: this.venta.serieSeleccionada?.serie || '',
+      cliente_tipo_documento: tipoDocumento,
+      metodo_pago: this.venta.metodo_pago || '',
+      fecha_emision: this.fechaBoleteoHoy,
+      codigoPromocional: this.codigoPromocional || '',
+      porcentajePromo: this.promoTarjeta
+    };
+
+    this.isLoading = true;
+    this.facturacionService.registrarPreVenta(payload).subscribe({
+      next: (res: any) => {
+        this.isLoading = false;
+        this.snackBar.open(res?.message || 'Pre-venta registrada', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['success-snackbar']
+        });
+        this.itemsSeleccionados = [];
+        this.venta.metodo_pago = '';
+        this.venta.observaciones = '';
+        this.loadPreVentasPendientes();
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        this.snackBar.open(err?.error?.message || 'Error al registrar pre-venta', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  eliminarPreVenta(pv: any) {
+    pv.eliminando = true;
+    this.facturacionService.eliminarPreVenta(pv.id).subscribe({
+      next: (res: any) => {
+        this.snackBar.open(res?.message || 'Pre-venta eliminada', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['success-snackbar']
+        });
+        this.loadPreVentasPendientes();
+      },
+      error: (err: any) => {
+        pv.eliminando = false;
+        this.snackBar.open(err?.error?.message || 'Error al eliminar pre-venta', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  emitirPreVenta(pv: any) {
+    if (!pv.serieEmision) {
+      this.snackBar.open('Selecciona una serie para emitir.', '', {
+        duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+      });
+      return;
+    }
+    pv.emitiendo = true;
+    this.facturacionService.emitirPreVenta(pv.id, pv.serieEmision).subscribe({
+      next: (res: any) => {
+        pv.emitiendo = false;
+        this.snackBar.open(res?.message || 'Comprobante emitido', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['success-snackbar']
+        });
+        this.loadPreVentasPendientes();
+        this.loadVentas();
+      },
+      error: (err: any) => {
+        pv.emitiendo = false;
+        this.snackBar.open(err?.error?.message || 'Error al emitir pre-venta', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+        });
+      }
     });
   }
 

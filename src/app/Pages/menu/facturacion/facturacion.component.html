@@ -151,9 +151,13 @@
                     {{ (montoIngresado - totalGeneral) | currency:'S/.' }}
                 </div>
             </div>
-            <div>
-                <button (click)="imprimirVenta()" [disabled]="isLoading" class="btn btn-primary btn-venta">GENERAR
-                    VENTA</button>
+            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                <button (click)="imprimirVenta()" [disabled]="isLoading" class="btn btn-primary btn-venta">
+                    GENERAR VENTA
+                </button>
+                <button (click)="registrarPreVenta()" [disabled]="isLoading" class="btn btn-preventa btn-venta">
+                    <mat-icon>save_alt</mat-icon> PRE-VENTA
+                </button>
             </div>
 
         </div>
@@ -211,6 +215,40 @@
         </div>
     </div>
     <div class="container2">
+
+        <!-- PRE-VENTAS PENDIENTES -->
+        <div *ngIf="preVentasPendientes.length > 0" style="margin-bottom: 1.5rem;">
+            <div class="titleComprobantes" style="background:#fff8e1; border-color:#f59e0b; color:#92400e;">
+                PRE-VENTAS PENDIENTES ({{ preVentasPendientes.length }})
+            </div>
+            <div class="lista-comprobantes">
+                <div *ngFor="let pv of preVentasPendientes" class="comprobante-card preventa-card">
+                    <div class="comprobante-header">
+                        <div class="tipo" style="color:#b45309;">PRE-VENTA</div>
+                        <div class="fecha">{{ pv.fecha || pv.createdAt }}</div>
+                    </div>
+                    <div class="comprobante-body">
+                        <div class="serie-numero">{{ pv.clienteNombre || 'Sin cliente' }}</div>
+                        <div class="total">S/ {{ pv.total | number:'1.2-2' }}</div>
+                    </div>
+                    <div class="comprobante-footer" style="gap: 0.5rem; flex-wrap: wrap;">
+                        <div style="flex: 1; font-size: 0.9rem; font-weight: 700; color: #92400e;">
+                            {{ pv.tipoComprobante }} &nbsp;·&nbsp; <span style="color:#1d4ed8;">{{ pv.serieEmision || '—' }}</span>
+                        </div>
+                        <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.85rem;"
+                            [disabled]="pv.emitiendo || pv.eliminando" (click)="emitirPreVenta(pv)">
+                            <mat-icon style="font-size: 16px; vertical-align: middle;">send</mat-icon>
+                            {{ pv.emitiendo ? 'Emitiendo...' : 'Emitir' }}
+                        </button>
+                        <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.85rem; background: transparent; color: #c62828; border: 1px solid #c62828; border-radius: 0.5rem; cursor: pointer;"
+                            [disabled]="pv.emitiendo || pv.eliminando" (click)="eliminarPreVenta(pv)">
+                            <mat-icon style="font-size: 16px; vertical-align: middle;">delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="header-container2">
             <div class="titleComprobantes">COMPROBANTES EMITIDOS</div>
             <button class="btn-more-reporte" [matMenuTriggerFor]="menuOpcionesReportes">

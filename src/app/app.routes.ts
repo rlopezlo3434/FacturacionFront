@@ -8,6 +8,7 @@ import { PromocionesComponent } from './Pages/menu/configuracion/promociones/pro
 import { EmpleadosComponent } from './Pages/menu/configuracion/empleados/empleados.component';
 import { ClientesComponent } from './Pages/menu/configuracion/clientes/clientes.component';
 import { FacturacionComponent } from './Pages/menu/facturacion/facturacion.component';
+import { FacturacionNuevaComponent } from './Pages/menu/facturacion/facturacion-nueva/facturacion-nueva.component';
 import { KardexComponent } from './Pages/menu/configuracion/kardex/kardex.component';
 import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
 import { ResumenComponent } from './Pages/menu/dashboard/resumen/resumen.component';
@@ -29,6 +30,7 @@ export const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: 'venta', component: FacturacionComponent },
+      { path: 'venta-nueva', component: FacturacionNuevaComponent },
       { path: 'caja', component: CajaComponent }
     ]
   },

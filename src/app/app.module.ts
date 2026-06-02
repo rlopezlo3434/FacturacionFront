@@ -35,6 +35,8 @@ import { ItemsAdminComponent } from './Pages/menu/configuracion/items/items-admi
 import {MatMenuModule} from '@angular/material/menu'
 //pipes
 import { FiltroEmpleadoPipe } from './pipes/filtro-empleado.pipe';
+import { SerieFilterPipe } from './pipes/serie-filter.pipe';
+import { FacturacionNuevaComponent } from './Pages/menu/facturacion/facturacion-nueva/facturacion-nueva.component';
 import { FiltroItemPipe } from './pipes/filtro-item.pipe';
 import { FiltroClientePipe } from './pipes/filtro-cliente.pipe';
 import { FiltroPromocioPipe } from './pipes/filtro-promocio.pipe';
@@ -70,11 +72,13 @@ import { NgApexchartsModule } from "ng-apexcharts";
     ItemsAdminComponent,
     FiltroEmpleadoPipe,
     FiltroItemPipe,
+    SerieFilterPipe,
     FiltroClientePipe,
     FiltroPromocioPipe,
     ModalNumbersDialogComponent,
     ModalHijosDialogComponent,
     FacturacionComponent,
+    FacturacionNuevaComponent,
     KardexComponent,
     KardexModalComponent,
     SeleccionEmpleadosModalComponent,

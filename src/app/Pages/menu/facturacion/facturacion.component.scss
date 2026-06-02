@@ -322,6 +322,25 @@
     transition: background-color 0.2s;
 }
 
+.btn-preventa {
+    background-color: #f59e0b;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    &:hover { background-color: #d97706; }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.preventa-card {
+    border-left: 4px solid #f59e0b;
+    background: #fffbeb;
+}
+
 .btn-anular {
     background-color: black;
     color: white;

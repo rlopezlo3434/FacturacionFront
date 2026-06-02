@@ -1,0 +1,496 @@
+<div class="fac-shell">
+
+  <!-- ======= NAVBAR ======= -->
+  <div class="fac-navbar">
+    <div class="fac-brand">Facturación</div>
+    <div class="fac-tabs">
+      <button class="fac-tab" [class.active]="tabActiva === 'facturar'" (click)="setTab('facturar')">
+        <mat-icon>receipt</mat-icon> Facturar
+      </button>
+      <button class="fac-tab" [class.active]="tabActiva === 'pendientes'" (click)="setTab('pendientes')">
+        <mat-icon>pending_actions</mat-icon> Pendientes
+        <span class="badge-count" *ngIf="preVentasPendientes.length > 0">{{ preVentasPendientes.length }}</span>
+      </button>
+      <button class="fac-tab" [class.active]="tabActiva === 'historial'" (click)="setTab('historial')">
+        <mat-icon>history</mat-icon> Historial
+      </button>
+    </div>
+    <!-- <div class="fac-user">
+      <div class="fac-user-info">
+        <span class="fac-user-name">{{ venta.cliente?.firstName || 'Usuario' }}</span>
+      </div>
+      <mat-icon class="fac-user-icon">account_circle</mat-icon>
+    </div> -->
+  </div>
+
+  <!-- ======= TAB: FACTURAR ======= -->
+  <div class="fac-body" *ngIf="tabActiva === 'facturar'">
+
+    <!-- IZQUIERDA -->
+    <div class="fac-left">
+
+      <!-- ZONA FIJA SUPERIOR -->
+      <div class="fac-left-top">
+
+        <div class="fac-top-row">
+          <div class="fac-field">
+            <label>Método de Pago</label>
+            <select [(ngModel)]="venta.metodo_pago">
+              <option value="" disabled selected>Seleccionar</option>
+              <option value="Efectivo">Efectivo</option>
+              <option value="Yape">Yape</option>
+              <option value="Plin">Plin</option>
+              <option value="Transferencia">Transferencia</option>
+              <option value="Tarjeta">Tarjeta</option>
+            </select>
+          </div>
+          <div class="fac-field">
+            <label>Tipo de Comprobante</label>
+            <select [(ngModel)]="venta.serieSeleccionada">
+              <option value="" disabled selected>Seleccionar</option>
+              <option *ngFor="let s of series" [ngValue]="s">{{ s.tipo }} - {{ s.serie }}</option>
+            </select>
+          </div>
+          <div class="fac-field">
+            <label>Fecha de Emisión</label>
+            <input type="date" [(ngModel)]="fechaBoleteoHoy" />
+          </div>
+        </div>
+
+        <!-- CLIENTE -->
+        <div class="fac-client-row">
+          <div class="fac-client-display" *ngIf="!agregarCliente && !searchCliente" (click)="agregarCliente = true">
+            <mat-icon>person_add</mat-icon>
+            <span>Agregar Cliente</span>
+          </div>
+          <div class="fac-client-display fac-client-selected" *ngIf="searchCliente && !agregarCliente">
+            <mat-icon>person</mat-icon>
+            <span>{{ venta.cliente?.firstName }} {{ venta.cliente?.lastName }}</span>
+            <span class="client-doc">{{ venta.cliente?.documentIdentificationNumber }}</span>
+            <button class="btn-icon-clear" (click)="eliminarCliente()"><mat-icon>close</mat-icon></button>
+          </div>
+          <div class="fac-client-search" *ngIf="agregarCliente && !searchCliente" style="position:relative;">
+            <mat-icon>search</mat-icon>
+            <input type="text" placeholder="Buscar cliente..." [(ngModel)]="clienteBuscado"
+              (input)="filtrarClientes()" (focus)="mostrarLista2 = true" (blur)="ocultarListaConRetardo2()" />
+            <button class="btn-icon-clear" (click)="agregarCliente = false"><mat-icon>close</mat-icon></button>
+            <div class="fac-dropdown" *ngIf="mostrarLista2 && clientesFiltrados.length > 0">
+              <div class="fac-dropdown-item" *ngFor="let c of clientesFiltrados" (mousedown)="seleccionarCliente(c)">
+                <div class="fac-di-title">{{ c.firstName }} {{ c.lastName }}</div>
+                <div class="fac-di-sub">{{ c.client?.firstName }} {{ c.client?.lastName }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BUSCADOR PRODUCTO -->
+        <div class="fac-search-product" style="position:relative;">
+          <mat-icon>search</mat-icon>
+          <input type="text" placeholder="Buscar producto o servicio..."
+            [(ngModel)]="itemBuscado" (input)="filtrarItems()" (focus)="mostrarLista = true"
+            (blur)="ocultarListaConRetardo()" />
+          <div class="fac-dropdown" *ngIf="mostrarLista && itemsFiltrados.length > 0">
+            <div class="fac-dropdown-item" *ngFor="let it of itemsFiltrados" (mousedown)="seleccionarItem(it)">
+              <div class="fac-di-title">{{ it.description }}</div>
+              <div class="fac-di-sub fac-di-price">S/ {{ it.value | number:'1.2-2' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HEADER LISTA -->
+        <div class="fac-items-header" *ngIf="itemsSeleccionados.length > 0">
+          <span class="fac-items-count">Productos Agregados ({{ itemsSeleccionados.length }})</span>
+          <button class="btn-limpiar" (click)="limpiarTodo()">
+            <mat-icon>delete_sweep</mat-icon> Limpiar Todo
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ZONA SCROLLEABLE: LISTA DE PRODUCTOS -->
+      <div class="fac-items-list">
+        <div class="fac-item-card" *ngFor="let it of itemsSeleccionados">
+          <div class="fac-item-accent"></div>
+          <div class="fac-item-avatar">
+            <mat-icon>{{ it.item === 'Servicio' ? 'build' : 'inventory_2' }}</mat-icon>
+          </div>
+          <div class="fac-item-body">
+            <div class="fac-item-top">
+              <div>
+                <div class="fac-item-name">{{ it.description }}</div>
+                <div class="fac-item-code">{{ it.item }} · {{ it.code }}</div>
+              </div>
+              <div class="fac-item-price-tag">S/ {{ it.value | number:'1.2-2' }}</div>
+            </div>
+            <div class="fac-item-bottom">
+              <div class="fac-qty-ctrl">
+                <label>CANTIDAD</label>
+                <div class="fac-qty-row">
+                  <button (click)="decrementarCantidad(it)">−</button>
+                  <input type="number" [(ngModel)]="it.cantidad" min="1" (change)="actualizarTotales(it)" />
+                  <button (click)="incrementarCantidad(it)">+</button>
+                </div>
+              </div>
+              <div class="fac-unit-price">
+                <label>PRECIO UNIT.</label>
+                <div class="fac-unit-input">
+                  <span>S/</span>
+                  <input type="number" [(ngModel)]="it.value" step="0.01" (change)="actualizarTotales(it)" />
+                </div>
+              </div>
+              <div class="fac-item-actions">
+                <button class="btn-empleado" (click)="abrirSeleccionEmpleados(it)" [title]="'Personal asignado: ' + (it.empleados?.length || 0)">
+                  <mat-icon>person</mat-icon>
+                  <span *ngIf="it.empleados?.length" class="emp-badge">{{ it.empleados.length }}</span>
+                </button>
+                <button class="btn-remove" (click)="eliminarItem(it)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              <div class="fac-item-total">
+                <label>TOTAL ITEM</label>
+                <strong>S/ {{ it.total | number:'1.2-2' }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fac-empty" *ngIf="itemsSeleccionados.length === 0">
+          <mat-icon>add_shopping_cart</mat-icon>
+          <span>Busca un producto o servicio para agregar</span>
+        </div>
+      </div>
+
+      <!-- ZONA FIJA INFERIOR -->
+      <div class="fac-left-bottom">
+        <div class="fac-obs">
+          <label>Observaciones</label>
+          <textarea rows="3" [(ngModel)]="venta.observaciones" placeholder="Agregar observaciones sobre la venta o el cliente..."></textarea>
+        </div>
+        <div class="fac-vuelto" *ngIf="venta.metodo_pago === 'Efectivo'">
+          <div class="fac-field">
+            <label>Monto recibido</label>
+            <input type="number" [(ngModel)]="montoIngresado" />
+          </div>
+          <div class="fac-vuelto-result">
+            <span>Vuelto</span>
+            <strong>S/ {{ (montoIngresado - totalGeneral) | number:'1.2-2' }}</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DERECHA: RESUMEN -->
+    <div class="fac-right">
+      <div class="fac-summary-title">Resumen de Venta</div>
+
+      <!-- TARJETA VIRTUAL -->
+      <div class="fac-summary-block" *ngIf="venta.cliente && tarjeta.length > 0">
+        <label>Tarjeta de Visitas</label>
+        <div class="tarjeta-nueva-wrapper">
+          <div class="tarjeta-nueva">
+            <div class="casilla-nueva" *ngFor="let c of tarjeta"
+              [class.marcada]="c.marcada"
+              [attr.data-fecha]="c.fecha ? (c.fecha | date:'dd/MM/yy') : null"
+              (click)="marcar(c)">
+              <span *ngIf="c.label">{{ c.label }}</span>
+            </div>
+          </div>
+          <div class="tarjeta-nueva-footer">
+            <span class="tarjeta-visitas">{{ visitasMarcadas }} visitas</span>
+            <span class="tarjeta-descuento" *ngIf="descuentoDisponible > 0">
+              <mat-icon style="font-size:14px;width:14px;height:14px;vertical-align:middle;">local_offer</mat-icon>
+              {{ descuentoDisponible }}% disponible
+            </span>
+            <button class="btn-reset-tarjeta" *ngIf="tarjetaCompleta" (click)="resetTarjeta()">
+              Resetear
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESCUENTOS -->
+      <div class="fac-summary-block">
+        <label>Descuentos Disponibles</label>
+        <select [(ngModel)]="promoTarjeta" (change)="onPromoChange()">
+          <option [ngValue]="0">Ninguno (0%)</option>
+          <option *ngFor="let p of promociones" [ngValue]="p.descuentoAplicado">
+            {{ p.descuentoAplicado }}%
+          </option>
+        </select>
+      </div>
+
+      <!-- CÓDIGO PROMO -->
+      <div class="fac-summary-block">
+        <label>Código Promocional</label>
+        <div class="fac-promo-row">
+          <input type="text" placeholder="Ej: VERANO24" [(ngModel)]="codigoPromocional" />
+          <button class="btn-aplicar" (click)="aplicarCodigoPromocional()">APLICAR</button>
+        </div>
+      </div>
+
+      <!-- TOTALES -->
+      <div class="fac-totals">
+        <div class="fac-totals-row">
+          <span>Subtotal (sin IGV)</span>
+          <span>S/ {{ subtotalGeneral | number:'1.2-2' }}</span>
+        </div>
+        <div class="fac-totals-row">
+          <span>IGV (18%)</span>
+          <span>S/ {{ igvGeneral | number:'1.2-2' }}</span>
+        </div>
+        <div class="fac-totals-row" *ngIf="promoTarjeta > 0">
+          <span>Descuento</span>
+          <span class="text-descuento">- S/ {{ descuentoTotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="fac-totals-divider"></div>
+        <div class="fac-totals-grand">
+          <span>TOTAL</span>
+          <strong>S/ {{ totalGeneral | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <!-- RECIENTES -->
+      <div class="fac-recientes" *ngIf="ventas.length > 0">
+        <div class="fac-recientes-header">
+          <span>RECIENTES</span>
+          <span class="badge-hoy">{{ ventas.length }} HOY</span>
+        </div>
+        <div class="fac-reciente-item" *ngFor="let v of ventas | slice:0:3">
+          <span>{{ v.serie }}-{{ v.numero }}</span>
+          <span class="fac-reciente-total">S/ {{ v.total | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <!-- BOTONES -->
+      <div class="fac-action-btns">
+        <button class="btn-emitir" (click)="emitirVenta()" [disabled]="isLoading">
+          <mat-icon>send</mat-icon>
+          {{ isLoading ? 'PROCESANDO...' : 'EMITIR VENTA' }}
+        </button>
+        <div class="fac-secondary-btns">
+          <button class="btn-preventa" (click)="registrarPreVenta()" [disabled]="isLoading">
+            <mat-icon>save_alt</mat-icon> PRE-VENTA
+          </button>
+          <button class="btn-cotizar" [disabled]="true">
+            <mat-icon>print</mat-icon> COTIZAR
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======= TAB: PENDIENTES ======= -->
+  <div class="fac-body pend-body" *ngIf="tabActiva === 'pendientes'">
+
+    <!-- IZQUIERDA: tabla pendientes -->
+    <div class="fac-left">
+      <div class="pend-header">
+        <div>
+          <h2 class="pend-title">Pre-ventas Pendientes</h2>
+          <p class="pend-sub">Gestiona y emite comprobantes para tus ventas en espera.</p>
+        </div>
+      </div>
+
+      <div class="pend-table-wrap" *ngIf="preVentasPendientes.length > 0">
+        <table class="pend-table">
+          <thead>
+            <tr>
+              <th>CLIENTE</th>
+              <th>FECHA</th>
+              <th>TOTAL (S/)</th>
+              <th>TIPO</th>
+              <th>SERIE</th>
+              <th>ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pv of preVentasPendientes">
+              <td>
+                <div class="pend-cliente-avatar">
+                  <div class="pend-avatar">{{ (pv.clienteNombre || 'S')[0].toUpperCase() }}</div>
+                  <div>
+                    <div class="pend-cli-nombre">{{ pv.clienteNombre || 'Sin cliente' }}</div>
+                    <div class="pend-cli-doc">{{ pv.clienteDocumento }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="pend-fecha">{{ pv.fecha }}</td>
+              <td class="pend-total">{{ pv.total | number:'1.2-2' }}</td>
+              <td>
+                <span class="pend-tipo-chip">{{ pv.tipoComprobante }}</span>
+              </td>
+              <td class="pend-serie">{{ pv.serieEmision || '—' }}</td>
+              <td>
+                <div class="pend-acciones">
+                  <button class="btn-emitir-sm" [disabled]="pv.emitiendo || pv.eliminando"
+                    (click)="emitirPreVenta(pv)">
+                    {{ pv.emitiendo ? '...' : 'Emitir' }}
+                  </button>
+                  <button class="btn-del-sm" [disabled]="pv.emitiendo || pv.eliminando"
+                    (click)="eliminarPreVenta(pv)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="fac-empty" *ngIf="preVentasPendientes.length === 0">
+        <mat-icon>check_circle_outline</mat-icon>
+        <span>No hay pre-ventas pendientes</span>
+      </div>
+    </div>
+
+    <!-- DERECHA: resumen pendientes -->
+    <div class="fac-right">
+      <div class="pend-stat-card red">
+        <div class="pend-stat-label">TOTAL PENDIENTE POR COBRAR</div>
+        <div class="pend-stat-value">S/ {{ totalPendiente | number:'1.2-2' }}</div>
+        <div class="pend-stat-sub">{{ preVentasPendientes.length }} Pre-ventas activas</div>
+        <mat-icon class="pend-stat-icon">trending_up</mat-icon>
+      </div>
+
+      <div class="pend-summary-card">
+        <div class="pend-summary-title">Resumen de Estado</div>
+        <div class="pend-summary-row">
+          <span class="dot red"></span>
+          <span>Pendientes</span>
+          <strong>{{ preVentasPendientes.length }}</strong>
+        </div>
+      </div>
+
+      <button class="btn-reload" (click)="loadPreVentasPendientes()">
+        <mat-icon>refresh</mat-icon> Recargar
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ======= TAB: HISTORIAL ======= -->
+  <div class="fac-body hist-body" *ngIf="tabActiva === 'historial'">
+
+    <div class="fac-left" style="overflow-y: auto; padding: 20px 24px;">
+
+      <div class="hist-header">
+        <div>
+          <h2 class="pend-title">Historial de Comprobantes</h2>
+          <p class="pend-sub">Comprobantes emitidos a SUNAT — fecha: {{ fechaHoy }}</p>
+        </div>
+        <div class="hist-actions">
+          <div class="hist-search">
+            <mat-icon>search</mat-icon>
+            <input type="text" placeholder="Buscar por serie, número..." [(ngModel)]="historialBusqueda" />
+          </div>
+          <input type="date" class="hist-date" [(ngModel)]="fechaHoy" (change)="loadVentas()" />
+        </div>
+      </div>
+
+      <div class="hist-table-wrap" *ngIf="ventasFiltradas.length > 0">
+        <table class="pend-table">
+          <thead>
+            <tr>
+              <th>TIPO</th>
+              <th>SERIE - N°</th>
+              <!-- <th>CLIENTE</th>
+              <th>MÉTODO PAGO</th> -->
+              <th>FECHA</th>
+              <th>TOTAL</th>
+              <th>ESTADO</th>
+              <th>ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let v of ventasFiltradas">
+              <td>
+                <span class="pend-tipo-chip">{{ v.tipoComprobante }}</span>
+              </td>
+              <td class="pend-serie">{{ v.serie }}-{{ v.numero }}</td>
+              <!-- <td class="pend-cli-nombre">{{ v.clienteNombre || '—' }}</td>
+              <td>{{ v.metodoPago || '—' }}</td> -->
+              <td class="pend-fecha">{{ v.fecha }}</td>
+              <td class="pend-total">S/ {{ v.total | number:'1.2-2' }}</td>
+              <td>
+                <span class="hist-chip-ok" *ngIf="!v.anulado">Emitido</span>
+                <span class="hist-chip-anulado" *ngIf="v.anulado">Anulado</span>
+              </td>
+              <td>
+                <div class="pend-acciones">
+                  <button class="btn-hist-print" (click)="imprimirPdf(v.linkPdf)" title="Imprimir PDF">
+                    <mat-icon>print</mat-icon>
+                  </button>
+                  <button class="btn-hist-download" (click)="downloadPDF(v.linkPdf)" title="Descargar PDF">
+                    <mat-icon>download</mat-icon>
+                  </button>
+                  <button class="btn-del-sm" *ngIf="!v.anulado" (click)="anularComprobante(v)" title="Anular">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="fac-empty" *ngIf="ventasFiltradas.length === 0">
+        <mat-icon>receipt_long</mat-icon>
+        <span>No hay comprobantes para esta fecha</span>
+      </div>
+
+    </div>
+
+    <!-- PANEL DERECHO HISTORIAL -->
+    <div class="fac-right">
+      <div class="pend-stat-card red">
+        <div class="pend-stat-label">TOTAL DEL DÍA</div>
+        <div class="pend-stat-value">S/ {{ totalDia | number:'1.2-2' }}</div>
+        <div class="pend-stat-sub">{{ ventas.length }} comprobantes emitidos</div>
+        <mat-icon class="pend-stat-icon">receipt</mat-icon>
+      </div>
+      <div class="pend-summary-card">
+        <div class="pend-summary-title">Resumen</div>
+        <div class="pend-summary-row">
+          <span class="dot red"></span>
+          <span>Emitidos</span>
+          <strong>{{ ventas.length - countAnulados }}</strong>
+        </div>
+        <div class="pend-summary-row">
+          <span class="dot" style="background:#9ca3af"></span>
+          <span>Anulados</span>
+          <strong>{{ countAnulados }}</strong>
+        </div>
+      </div>
+      <button class="btn-reload" (click)="loadVentas()">
+        <mat-icon>refresh</mat-icon> Recargar
+      </button>
+
+      <!-- REPORTES -->
+      <div class="report-section">
+        <div class="report-section-title">
+          <mat-icon>summarize</mat-icon>
+          Reportes del día
+        </div>
+        <p class="report-section-sub">Basados en la fecha seleccionada: <strong>{{ fechaHoy }}</strong></p>
+        <button class="btn-report" (click)="reporteDiario()">
+          <mat-icon>table_view</mat-icon>
+          Reporte Diario
+        </button>
+        <button class="btn-report" (click)="reporteMensual()">
+          <mat-icon>table_view</mat-icon>
+          Reporte Mensual
+        </button>
+        <button class="btn-report" (click)="descargarReporteProductividad()">
+          <mat-icon>bar_chart</mat-icon>
+          Reporte Productividad
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
