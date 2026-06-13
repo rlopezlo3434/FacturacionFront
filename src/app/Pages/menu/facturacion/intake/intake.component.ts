@@ -104,7 +104,7 @@ export class IntakeComponent implements OnInit {
         const url = window.URL.createObjectURL(pdfData);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Internamiento_${intake.id}.pdf`;
+        a.download = `Internamiento_${intake.correlativo}.pdf`;
         a.click();
         window.URL.revokeObjectURL(url);
       },
@@ -138,7 +138,7 @@ export class IntakeComponent implements OnInit {
   }
 
   goToBudgets(intake: any) {
-    this.router.navigate(['facturacion/presupuestos/intake', intake.id]);
+    this.router.navigate(['facturacion/presupuestos/intake', intake.correlativo]);
   }
 
 

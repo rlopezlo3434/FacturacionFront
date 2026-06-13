@@ -12,6 +12,7 @@ export class ModalServiceMasterDialogComponent {
 service: any = {
     name: '',
     price: null,
+    priceDolar: null,
     isActive: true,
     isThird: false,
     isDiscount: false
@@ -28,6 +29,7 @@ service: any = {
       this.service = {
         name: data.name,
         price: data.price,
+        priceDolar: data.priceDolar ?? null,
         isActive: data.isActive,
         isThird: data.isThird,
         isDiscount: data.isDiscount ?? false
@@ -40,6 +42,7 @@ service: any = {
     const payload = {
       name: this.service.name,
       price: Number(this.service.price),
+      priceDolar: this.service.priceDolar != null ? Number(this.service.priceDolar) : null,
       isActive: this.service.isActive,
       isThird: this.service.isThird,
       isDiscount: this.service.isDiscount

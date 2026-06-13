@@ -359,3 +359,4 @@
   border: 1px solid #bbdefb;
 }
 .btn-edit-row { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; mat-icon { color: #1976d2; font-size: 20px; } &:hover mat-icon { color: #1565c0; } }
+.btn-delete-row { mat-icon { color: #e53e3e; } &:hover mat-icon { color: #c62828; } }

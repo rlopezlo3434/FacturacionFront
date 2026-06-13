@@ -104,9 +104,14 @@
                 <span *ngIf="!b.isOfficial" style="color:gray;">Histórico</span>
               </td>
               <td>
-                <button class="btn-edit-row" (click)="$event.stopPropagation(); openEditBudgetModal(b)" title="Editar presupuesto">
-                  <mat-icon>edit</mat-icon>
-                </button>
+                <div style="display:flex; gap:4px;">
+                  <button class="btn-edit-row" (click)="$event.stopPropagation(); openEditBudgetModal(b)" title="Editar presupuesto">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button class="btn-edit-row btn-delete-row" (click)="$event.stopPropagation(); deleteBudget(b)" title="Eliminar presupuesto">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
               </td>
               <!-- <td>
                 <button class="btn btn-create" (click)="$event.stopPropagation(); generateWorkOrder()" [disabled]="!hasOfficialApprovedBudget()">

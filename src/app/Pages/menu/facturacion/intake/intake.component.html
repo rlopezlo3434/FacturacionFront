@@ -74,7 +74,7 @@
               *ngFor="let i of internamientos | intakeFilter:filtroTexto | slice:(paginaActual-1)*filasPorPagina:(paginaActual*filasPorPagina)"
               (click)="openDetail(i)">
 
-              <td>N°{{ i.id }}</td>
+              <td>N°{{ i.correlativo }}</td>
               <!-- Vehículo -->
               <td>
                 <div class="cliente-info">

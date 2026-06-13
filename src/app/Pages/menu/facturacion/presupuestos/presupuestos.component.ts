@@ -43,6 +43,7 @@ export class PresupuestosComponent {
   loadBudgets() {
     this.budgetService.getBudgetsByIntake(this.intakeId).subscribe((res: any) => {
       this.budgets = res?.data || [];
+      console.log(res)
     });
   }
 
@@ -65,6 +66,24 @@ export class PresupuestosComponent {
 
     dialogRef.afterClosed().subscribe(ok => {
       if (ok) this.loadBudgets();
+    });
+  }
+
+  deleteBudget(budget: any) {
+    if (!confirm(`¿Eliminar el presupuesto ${budget.code}? Esta acción no se puede deshacer.`)) return;
+
+    this.budgetService.deleteBudget(budget.id).subscribe({
+      next: () => {
+        this.snackBar.open('Presupuesto eliminado correctamente', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['success-snackbar']
+        });
+        this.loadBudgets();
+      },
+      error: (err: any) => {
+        this.snackBar.open(err?.error?.message || 'Error al eliminar el presupuesto', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+        });
+      }
     });
   }
 

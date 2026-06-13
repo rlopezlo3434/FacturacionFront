@@ -61,7 +61,8 @@
             <tr>
               <th>Código</th>
               <th>Servicio</th>
-              <th>Precio</th>
+              <th>Precio S/</th>
+              <th>Precio $</th>
               <th>Estado</th>
               <th>Tercero</th>
               <th>Descuento</th>
@@ -82,6 +83,10 @@
 
               <td>
                 {{ s.price | currency:'PEN':'symbol':'1.2-2' }}
+              </td>
+              <td>
+                <span *ngIf="s.priceDolar != null">{{ s.priceDolar | currency:'USD':'symbol':'1.2-2' }}</span>
+                <span *ngIf="s.priceDolar == null" style="color:gray;">—</span>
               </td>
 
               <td>

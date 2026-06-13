@@ -71,4 +71,10 @@ export class BudgetService {
       headers: this.getHeaders()
     });
   }
+
+  deleteBudget(budgetId: number) {
+    return this.http.delete(`${environment.apiBase}/VehicleBudget/${budgetId}`, {
+      headers: this.getHeaders()
+    });
+  }
 }

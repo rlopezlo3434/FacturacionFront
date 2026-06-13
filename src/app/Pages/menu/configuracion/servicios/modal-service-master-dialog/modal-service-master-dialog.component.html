@@ -17,12 +17,20 @@
           [(ngModel)]="service.name" />
       </div>
 
-      <!-- Precio -->
+      <!-- Precio PEN -->
       <div class="form-field">
-        <label class="label">Precio *</label>
+        <label class="label">Precio S/ (PEN) *</label>
         <input class="input" type="number"
           placeholder="Ej: 120"
           [(ngModel)]="service.price" />
+      </div>
+
+      <!-- Precio USD -->
+      <div class="form-field">
+        <label class="label">Precio $ (USD)</label>
+        <input class="input" type="number"
+          placeholder="Ej: 35"
+          [(ngModel)]="service.priceDolar" />
       </div>
 
       <!-- Estado -->
@@ -67,7 +75,7 @@
 
   <button class="btn-primary"
     (click)="guardar()"
-    [disabled]="!service.name || !service.price">
+    [disabled]="!service.name">
     {{ data ? 'Actualizar' : 'Crear' }}
   </button>
 

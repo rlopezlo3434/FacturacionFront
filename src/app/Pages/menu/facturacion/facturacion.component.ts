@@ -474,6 +474,7 @@ export class FacturacionComponent {
 
         this.venta.cliente = {
           documentIdentificationNumber: numeroDocumento,
+          documentIdentificationType: tipoDocumento,
           firstName: response?.first_name || response?.razon_social || displayName,
           lastName: response?.first_last_name || '',
           names: displayName,
@@ -623,6 +624,30 @@ export class FacturacionComponent {
   imprimirVenta() {
     this.isLoading = true;
 
+    // Construir/completar venta.cliente desde el formulario manual
+    const numDoc = this.clientDocumentInput.trim();
+    if (!this.venta.cliente?.documentIdentificationNumber && numDoc) {
+      // Caso: usuario escribió sin usar la lupa
+      const tipoDoc = numDoc.length === 8 ? 'DNI' : 'Ruc';
+      this.venta.cliente = {
+        documentIdentificationNumber: numDoc,
+        documentIdentificationType: tipoDoc,
+        firstName: this.client.name || '',
+        lastName: '',
+        names: this.client.name || '',
+        address: this.client.address || ''
+      };
+    } else if (this.venta.cliente) {
+      // Caso: usó la lupa pero luego editó nombre o dirección en el formulario
+      if (this.client.name) {
+        this.venta.cliente.firstName = this.client.name;
+        this.venta.cliente.names = this.client.name;
+      }
+      if (this.client.address) {
+        this.venta.cliente.address = this.client.address;
+      }
+    }
+
     const items =
       this.invoiceItems.filter(x => x.selected)
         .map(x => ({
@@ -688,7 +713,9 @@ export class FacturacionComponent {
           this.venta.metodo_pago = '';
           this.venta.serieSeleccionada = '';
           this.venta.observaciones = '';
-          this.fechaBoleteoHoy = new Date().toISOString().substring(0, 10);
+          const hoy = new Date();
+          this.fechaBoleteoHoy = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+
           this.loadVentas();
 
         } else {
@@ -740,20 +767,48 @@ export class FacturacionComponent {
 
   resetFormVenta() {
     this.itemsSeleccionados = [];
-
     this.invoiceItems.forEach(x => x.selected = false);
 
+    // Venta object
     this.venta = {
-      ...this.venta,
+      tipoComprobante: 'BOLETA_ELECTRONICA',
+      cliente: null,
+      detalles: [],
+      promocionSeleccionada: null,
+      total: 0,
+      metodo_pago: '',
+      serieSeleccionada: '',
+      observaciones: ''
     };
 
-    this.serie = '';
-    this.fechaBoleteoHoy = new Date().toISOString().substring(0, 10);
+    // Cliente
+    this.searchCliente = false;
+    this.agregarCliente = false;
+    this.clienteBuscado = '';
+    this.tipoClienteSeleccionado = null;
+    this.cli = { gender: '', documentIdentificationType: '' };
+    this.clienteInfoItem = null;
+    this.client = { name: '', document: '', address: '' };
+    this.clientDocumentInput = '';
 
+    // Vehículo
+    this.vehiculoSeleccionado = null;
+    this.vehiculoSearch = '';
+    this.showVehiculoDropdown = false;
+
+    // Descuentos
+    this.promoTarjeta = 0;
+    this.promociones = [{ descuentoAplicado: 0 }];
+
+    // Otros
+    this.montoIngresado = 0;
+    this.serie = '';
+    const hoy = new Date();
+    this.fechaBoleteoHoy = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
     this.noMigrarSunat = false;
     this.metodoPagoInterno = '';
 
-    // 🔥 DETRACCIÓN
+    // Detracción
     this.applyDetraccion = false;
     this.detraccionTipo = null;
     this.detraccionPercent = 0;
@@ -761,7 +816,6 @@ export class FacturacionComponent {
     this.detraccionSearch = '';
     this.filteredDetracciones = [...this.detracciones];
     this.showDetraccionDropdown = false;
-
   }
 
   obtenerProductividad() {

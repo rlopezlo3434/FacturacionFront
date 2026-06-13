@@ -60,7 +60,7 @@ export class ListarFacturacionComponent {
         const url = window.URL.createObjectURL(pdfData);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Factura_${inv.id}.pdf`;
+        a.download = `${inv.tipoComprobante}-${inv.serie}-${inv.numero}.pdf`;
         a.click();
         window.URL.revokeObjectURL(url);
       },

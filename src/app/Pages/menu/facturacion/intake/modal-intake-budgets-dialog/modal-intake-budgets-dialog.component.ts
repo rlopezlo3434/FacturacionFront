@@ -23,7 +23,7 @@ budgets: any[] = [];
   }
 
   loadBudgets() {
-    const intakeId = this.data?.intake?.id;
+    const intakeId = this.data?.intake?.correlativo;
     this.budgetService.getBudgetsByIntake(intakeId).subscribe((res: any) => {
       this.budgets = res?.data || [];
     });

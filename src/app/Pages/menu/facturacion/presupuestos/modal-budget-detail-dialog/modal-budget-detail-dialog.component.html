@@ -76,7 +76,13 @@
                                 <th>Precio Unit.</th>
                                 <th>Descuento</th>
                                 <th>Total</th>
-                                <th>Aprobar</th>
+                                <th>
+                                  <div style="display:flex; align-items:center; gap:6px;">
+                                    Aprobar
+                                    <mat-checkbox [checked]="allApproved" [indeterminate]="someApproved && !allApproved"
+                                      (change)="toggleAllApproved($event.checked)" title="Aprobar/desaprobar todos"></mat-checkbox>
+                                  </div>
+                                </th>
                             </tr>
                         </thead>
 

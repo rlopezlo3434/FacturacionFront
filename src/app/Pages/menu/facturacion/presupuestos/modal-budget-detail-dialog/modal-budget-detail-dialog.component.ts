@@ -69,6 +69,22 @@ export class ModalBudgetDetailDialogComponent {
     }, 0);
   }
 
+  get allApproved(): boolean {
+    const items = this.groupedBudgetItems.filter(i => !i.isPackageHeader);
+    return items.length > 0 && items.every(i => i.isApproved);
+  }
+
+  get someApproved(): boolean {
+    return this.groupedBudgetItems.filter(i => !i.isPackageHeader).some(i => i.isApproved);
+  }
+
+  toggleAllApproved(checked: boolean) {
+    this.groupedBudgetItems.filter(i => !i.isPackageHeader).forEach(i => {
+      i.isApproved = checked;
+      this.toggleApprove(i);
+    });
+  }
+
   toggleApprove(it: any) {
     if (!it.isApproved) {
       // opcional: resetear descuento si desmarcan
