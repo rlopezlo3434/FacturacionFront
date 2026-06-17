@@ -25,15 +25,15 @@ export class FacturacionService {
   }
 
   getTarjetaCliente(clienteId: number) {
-    return this.http.get<any[]>(`${environment.apiBase}/Client/${clienteId}/tarjeta`, {
+    return this.http.get<any[]>(`${environment.apiBase}/Client/hijo/${clienteId}/tarjeta`, {
       headers: {
         Authorization: `Bearer ${this.token}`
       }
     });
   }
 
-  resetTarjeta(clienteId: number) {
-    return this.http.post<any>(`${environment.apiBase}/Client/reset-tarjeta`, { clienteId }, {
+  resetTarjeta(childrenClientId: number) {
+    return this.http.post<any>(`${environment.apiBase}/Client/hijo/reset-tarjeta`, { childrenClientId }, {
       headers: {
         Authorization: `Bearer ${this.token}`
       }
@@ -56,9 +56,9 @@ export class FacturacionService {
     });
   }
 
-  registrarVisita(clienteId: number) {
-    return this.http.post(`${environment.apiBase}/Client/registrar-visita`, {
-      clienteId
+  registrarVisita(childrenClientId: number) {
+    return this.http.post(`${environment.apiBase}/Client/hijo/registrar-visita`, {
+      childrenClientId
     });
   }
 

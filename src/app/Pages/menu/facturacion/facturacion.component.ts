@@ -382,7 +382,8 @@ export class FacturacionComponent {
           this.venta.metodo_pago = '';
           this.venta.serieSeleccionada = '';
           this.venta.observaciones = '';
-          this.fechaBoleteoHoy = new Date().toISOString().substring(0, 10);
+          const hoy = new Date();
+          this.fechaBoleteoHoy = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
 
         } else {
           this.snackBar.open(res.message, '', {

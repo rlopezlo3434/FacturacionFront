@@ -51,6 +51,7 @@ export class FacturacionNuevaComponent implements OnInit {
   tipoClienteSeleccionado: string | null = null;
   cli: any = {};
   tarjeta: any[] = [];
+  childrenClientId: number | null = null;
   preVentasPendientes: any[] = [];
 
   constructor(
@@ -156,16 +157,18 @@ export class FacturacionNuevaComponent implements OnInit {
 
   seleccionarCliente(cliente: any) {
     this.venta.cliente = cliente.client;
+    this.childrenClientId = cliente.id;
     this.searchCliente = true;
     this.clienteBuscado = '';
     this.mostrarLista2 = false;
     this.agregarCliente = false;
-    this.cargarTarjeta(this.venta.cliente.id);
+    this.cargarTarjeta();
     this.actualizarPromos();
   }
 
-  cargarTarjeta(clienteId: number) {
-    this.facturacionService.getTarjetaCliente(clienteId).subscribe({
+  cargarTarjeta() {
+    if (!this.childrenClientId) return;
+    this.facturacionService.getTarjetaCliente(this.childrenClientId).subscribe({
       next: (res: any) => {
         this.tarjeta = res.casillas;
         this.actualizarPromos();
@@ -175,6 +178,7 @@ export class FacturacionNuevaComponent implements OnInit {
 
   eliminarCliente() {
     this.venta.cliente = null;
+    this.childrenClientId = null;
     this.searchCliente = false;
     this.clienteBuscado = '';
     this.agregarCliente = false;
@@ -320,15 +324,17 @@ export class FacturacionNuevaComponent implements OnInit {
   }
 
   marcar(casilla: any) {
+    if (!this.childrenClientId) return;
     casilla.marcada = !casilla.marcada;
-    this.facturacionService.registrarVisita(this.venta.cliente.id).subscribe(() => {
-      this.cargarTarjeta(this.venta.cliente.id);
+    this.facturacionService.registrarVisita(this.childrenClientId).subscribe(() => {
+      this.cargarTarjeta();
     });
   }
 
   resetTarjeta() {
-    this.facturacionService.resetTarjeta(this.venta.cliente.id).subscribe(() => {
-      this.cargarTarjeta(this.venta.cliente.id);
+    if (!this.childrenClientId) return;
+    this.facturacionService.resetTarjeta(this.childrenClientId).subscribe(() => {
+      this.cargarTarjeta();
     });
   }
 
