@@ -1,4 +1,5 @@
 import { LOCALE_ID, NgModule } from '@angular/core';
+import { QuillModule } from 'ngx-quill';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -151,6 +152,7 @@ registerLocaleData(localeEsPe);
 
   ],
   imports: [
+    QuillModule.forRoot(),
     MatCheckboxModule,
     MatAutocompleteModule,
     BrowserModule,

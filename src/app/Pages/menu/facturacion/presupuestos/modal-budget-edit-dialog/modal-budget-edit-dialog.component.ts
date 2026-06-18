@@ -32,6 +32,13 @@ export class ModalBudgetEditDialogComponent implements OnInit {
   notes: string = '';
   extras: string = '';
   moneda: 'PEN' | 'USD' = 'PEN';
+  quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['clean']
+    ]
+  };
 
   loading = true;
 

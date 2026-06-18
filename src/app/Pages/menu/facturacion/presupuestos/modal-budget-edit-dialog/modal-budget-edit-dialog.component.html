@@ -76,11 +76,13 @@
                 </div>
 
                 <div class="form-field full" style="margin-bottom: 12px;">
-                    <label class="label">Extras (Separar por comas)</label>
-                    <textarea class="textarea" rows="2"
-                        placeholder="Ej: alineamiento, balanceo, lavado, separado por ','"
-                        [(ngModel)]="extras" appUppercase>
-                    </textarea>
+                    <label class="label">Extras</label>
+                    <quill-editor
+                        [(ngModel)]="extras"
+                        [modules]="quillModules"
+                        placeholder="Escribe los extras del presupuesto..."
+                        style="display:block; background:#fff; border-radius:6px;">
+                    </quill-editor>
                 </div>
             </div>
         </div>
