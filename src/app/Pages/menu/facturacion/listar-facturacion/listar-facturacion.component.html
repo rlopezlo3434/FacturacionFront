@@ -2,142 +2,141 @@
 
   <!-- BUSCADOR -->
   <div class="search-menu">
-
-    <div class="icon-menu">
+    <!-- <div class="icon-menu">
       <mat-icon (click)="openMenu()">menu</mat-icon>
-    </div>
-
+    </div> -->
     <div class="input-wrapper">
       <mat-icon class="input-icon">search</mat-icon>
-      <input [(ngModel)]="searchText" type="text" placeholder="Buscar por cliente, número o documento..."
-        class="input" />
+      <input [(ngModel)]="searchText" type="text" placeholder="Buscar por cliente, número o documento..." class="input" />
     </div>
-
   </div>
-
 
   <!-- HEADER -->
   <div class="header-secuence">
-
     <div class="header-text">
       <div class="selected">Facturación</div>
-      <div class="subTitle">Gestión y control de facturas emitidas</div>
+      <div class="subTitle">Gestión y control de comprobantes emitidos</div>
     </div>
-
     <button class="btn btn-create" (click)="descargarReporte()">
-        <mat-icon>description</mat-icon> Reporte
-      </button>
-
+      <mat-icon>description</mat-icon> Reporte
+    </button>
   </div>
-
-
-  <!-- CARDS -->
-  <!-- <div class="container-card">
-
-    <div class="card">
-      <div class="card-title">Facturas del mes</div>
-      <div class="card-value">{{ invoices.length }}</div>
-      <div class="footer-card">+12 esta semana</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Total Facturado</div>
-      <div class="card-value">
-        {{ totalFacturado | currency:'PEN':'symbol':'1.2-2' }}
-      </div>
-      <div class="footer-card">Monto acumulado</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Facturas Pendientes</div>
-      <div class="card-value">{{ facturasPendientes }}</div>
-      <div class="footer-card">Por cobrar</div>
-    </div>
-
-  </div> -->
-
 
   <!-- TABLA -->
   <div class="table-container">
 
-    <div class="table-actions">
-      <div class="selected">Lista de Facturas</div>
+    <!-- FILTROS -->
+    <div class="filters-bar">
+
+      <!-- Filtro tipo -->
+      <div class="tipo-tabs">
+        <button *ngFor="let t of tiposFiltro"
+          class="tab-btn"
+          [class.active]="filtroTipo === t.value"
+          (click)="setFiltroTipo(t.value)">
+          {{ t.label }}
+        </button>
+      </div>
+
+      <!-- Fecha -->
+      <div class="fecha-wrapper">
+        <mat-icon class="fecha-icon">calendar_today</mat-icon>
+        <input type="date" class="input-fecha" [(ngModel)]="fecha" (change)="loadInvoices()" />
+      </div>
+
     </div>
 
+    <!-- Contador -->
+    <div class="results-count">
+      {{ invoicesFiltrados.length }} comprobante{{ invoicesFiltrados.length !== 1 ? 's' : '' }}
+    </div>
 
     <div class="table-scroll">
       <div class="table-body">
-
         <table class="custom-table">
-
           <thead>
             <tr>
-              <th>Factura</th>
+              <th>Tipo</th>
+              <th>Comprobante</th>
               <th>Cliente</th>
               <th>Fecha</th>
               <th>Total</th>
+              <th>Estado</th>
               <th>PDF</th>
-              <!-- <th>CDR</th> -->
               <th>XML</th>
               <th></th>
             </tr>
           </thead>
 
           <tbody>
+            <tr *ngFor="let inv of invoicesPaginados" [class.row-anulado]="inv.anulado">
 
-            <tr *ngFor="let inv of invoices | invoiceFilter: searchText">
+              <td>
+                <span class="chip" [ngClass]="getTipoClass(inv.tipoComprobante)">
+                  {{ getTipoLabel(inv.tipoComprobante) }}
+                </span>
+              </td>
 
               <td>
                 <strong>{{ inv.serie }} - {{ inv.numero }}</strong>
               </td>
 
               <td>
-                {{ inv.clienteNombre }} - {{ inv.clienteNumero }}
+                {{ inv.clienteNombre }}<br>
+                <small style="color:gray">{{ inv.clienteNumero }}</small>
+              </td>
+
+              <td>{{ inv.fecha }}</td>
+
+              <td>{{ inv.total | currency:'PEN':'symbol':'1.2-2' }}</td>
+
+              <td>
+                <span class="chip" [ngClass]="inv.anulado ? 'chip-anulado' : 'chip-vigente'">
+                  {{ inv.anulado ? 'Anulado' : 'Vigente' }}
+                </span>
               </td>
 
               <td>
-                {{ inv.fecha  }}
+                <i class="fa-solid fa-file-pdf" style="color:rgb(230,144,144);cursor:pointer;"
+                  (click)="$event.stopPropagation(); generarFactura(inv)"></i>
               </td>
 
               <td>
-                {{ inv.total | currency:'PEN':'symbol':'1.2-2' }}
+                <i class="fa-solid fa-file-code" style="color:rgb(100,121,180);cursor:pointer;"
+                  (click)="$event.stopPropagation(); descargarXML(inv.linkXml)"></i>
               </td>
 
               <td>
-                <i class="fa-solid fa-file-pdf" style="color: rgb(230, 144, 144); cursor: pointer;" (click)="$event.stopPropagation(); generarFactura(inv) "></i>
-              </td>
-
-              <!-- <td>
-                <i class="fa-solid fa-file-circle-check" style="color: rgb(100, 180, 100)"></i>
-              </td> -->
-
-              <td>
-                <i class="fa-solid fa-file-code" style="color: rgb(100, 121, 180); cursor: pointer;" (click)="$event.stopPropagation(); descargarXML(inv.linkXml) "></i>
+                <button *ngIf="!inv.anulado && esFacturaOBoleta(inv.tipoComprobante)"
+                  class="btn-nc" [disabled]="inv.emitiendoNC"
+                  (click)="$event.stopPropagation(); emitirNotaCredito(inv)">
+                  <mat-icon style="font-size:16px;height:16px;width:16px;">receipt_long</mat-icon>
+                  N/C
+                </button>
               </td>
 
             </tr>
 
+            <tr *ngIf="invoicesPaginados.length === 0">
+              <td colspan="9" style="text-align:center;padding:2rem;color:gray;">
+                No hay comprobantes para mostrar
+              </td>
+            </tr>
           </tbody>
-
         </table>
-
       </div>
     </div>
 
-
     <!-- PAGINACION -->
     <div class="pagination">
-
-      <span>Filas por página</span>
-
-      <button class="paginacion-icon">
+      <span>{{ invoicesFiltrados.length }} resultados</span>
+      <span class="pag-info">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button class="paginacion-icon" [disabled]="paginaActual === 1" (click)="paginaAnterior()">
         <mat-icon>chevron_left</mat-icon>
       </button>
-
-      <button class="paginacion-icon">
+      <button class="paginacion-icon" [disabled]="paginaActual === totalPaginas" (click)="paginaSiguiente()">
         <mat-icon>chevron_right</mat-icon>
       </button>
-
     </div>
 
   </div>

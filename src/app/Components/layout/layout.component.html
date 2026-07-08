@@ -1,34 +1,56 @@
-<!-- <app-header></app-header> -->
-<mat-sidenav-container>
-  <mat-sidenav #sidenav mode="side" opened="true" class="app-sidenav">
-    <div class="title-App">
-      X-treme Motors
+<mat-sidenav-container [class.collapsed]="collapsed">
+
+  <mat-sidenav #sidenav mode="side" opened="true" class="app-sidenav" [class.collapsed]="collapsed">
+
+    <!-- HEADER SIDEBAR -->
+    <div class="sidebar-header">
+      <span class="title-App" *ngIf="!collapsed">X-treme Motors</span>
+      <button class="hamburger-btn" (click)="toggleCollapse()">
+        <mat-icon>{{ collapsed ? 'menu_open' : 'menu' }}</mat-icon>
+      </button>
     </div>
 
+    <!-- MENU -->
     <mat-nav-list>
-      <div *ngFor="let item of menuItems">
-        <div class="menu" (click)="item.route ? navigateTo(item.route) : toggleMenu(item)">
+      <div *ngFor="let item of menuItems" class="menu-item-wrapper">
+
+        <!-- Fila del módulo -->
+        <div class="menu" (click)="onItemClick(item, $event)" [class.active-module]="popoverItem === item">
           <div class="margin-item-left">
             <mat-icon matListIcon>{{ item.icon }}</mat-icon>
-            <span matLine>{{ item.label }}</span>
+            <span *ngIf="!collapsed" matLine>{{ item.label }}</span>
           </div>
-          <mat-icon class="margin-item-right">
-            {{ item.open ? "expand_less" : "expand_more" }}
+          <mat-icon class="margin-item-right" *ngIf="!collapsed">
+            {{ item.open ? 'expand_less' : 'expand_more' }}
           </mat-icon>
         </div>
 
-        <div *ngIf="item.open" style="padding-left: 16px">
+        <!-- Submenú expandido (modo normal) -->
+        <div *ngIf="!collapsed && item.open" class="submenu">
           <div *ngFor="let child of item.children" class="back-hover" [routerLink]="child.route"
             routerLinkActive="active">
             <span>{{ child.label }}</span>
           </div>
         </div>
+
       </div>
     </mat-nav-list>
+
+    <!-- POPOVER flotante (modo colapsado) -->
+    <div *ngIf="collapsed && popoverItem" class="popover-flyout" [style.top.px]="popoverTop">
+      <div class="popover-title">{{ popoverItem.label }}</div>
+      <div *ngFor="let child of popoverItem.children" class="popover-item" [routerLink]="child.route"
+        routerLinkActive="active-pop" (click)="closePopover()">
+        {{ child.label }}
+      </div>
+    </div>
+
   </mat-sidenav>
+
   <mat-sidenav-content>
     <div class="main-content">
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>
+
 </mat-sidenav-container>

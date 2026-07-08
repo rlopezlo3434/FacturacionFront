@@ -83,8 +83,16 @@ export class ClienteService {
     });
   }
 
+  // consultarDocumento(tipo: string, numero: string) {
+  //   return this.http.get<any>(`${environment.apiBase}/Facturacion/documento/${numero}?tipo=${tipo}`, {
+  //     headers: {
+  //       Authorization: `Bearer ${this.token}`
+  //     }
+  //   });
+  // }
+
   consultarDocumento(tipo: string, numero: string) {
-    return this.http.get<any>(`${environment.apiBase}/Facturacion/documento/${numero}?tipo=${tipo}`, {
+    return this.http.get<any>(`${environment.apiBase}/Facturacion/consultar-documento/${numero}?tipo=${tipo}`, {
       headers: {
         Authorization: `Bearer ${this.token}`
       }

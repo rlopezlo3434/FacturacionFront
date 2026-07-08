@@ -174,4 +174,10 @@ export class FacturacionService {
     });
   }
 
+  emitirNotaCredito(ventaId: number) {
+    return this.http.post<any>(`${environment.apiBase}/facturacion/nota-credito/${ventaId}`, {}, {
+      headers: this.getHeaders()
+    });
+  }
+
 }

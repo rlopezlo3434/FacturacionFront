@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, HostListener, ElementRef } from '@angular/core';
 import { SidebarService } from '../../../services/sidebar.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MenuItem } from '../../Models/MenuItem';
@@ -11,23 +11,26 @@ import { Router } from '@angular/router';
 })
 export class LayoutComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
-  usuariosOpen = false;
+
+  collapsed = false;
+  popoverItem: MenuItem | null = null;
+  popoverTop = 0;
+
   menuItems: MenuItem[] = [];
-  constructor(private sidebarService: SidebarService, private router: Router) { }
+
+  constructor(
+    private sidebarService: SidebarService,
+    private router: Router,
+    private el: ElementRef
+  ) {}
 
   ngOnInit() {
     this.sidebarService.toggleSidenav$.subscribe(() => {
-      this.sidenav.toggle();
+      this.collapsed = !this.collapsed;
+      this.popoverItem = null;
     });
 
-
     this.menuItems = [
-      // {
-      //   label: 'Ventas',
-      //   name: 'ventas',
-      //   icon: 'file_copy',
-      //   children: [{ label: 'Lista de Ventas', route: '/home/ventas' }],
-      // },
       {
         label: 'Facturación',
         name: 'facturacion',
@@ -37,7 +40,6 @@ export class LayoutComponent {
           { label: 'Ordenes de Trabajo', route: '/facturacion/orden-trabajo/intake' },
           { label: 'Facturación', route: '/facturacion/venta' },
           { label: 'Facturas', route: '/facturacion/Facturas' },
-          // { label: 'Caja', route: '/facturacion/caja' }
         ],
       },
       {
@@ -52,12 +54,8 @@ export class LayoutComponent {
           { label: 'Vehículos', route: '/configuracion/Vehiculos' },
           { label: 'Servicios', route: '/configuracion/Servicios' },
           { label: 'Productos', route: '/configuracion/Productos' },
-          // { label: 'Gestion de Items', route: '/configuracion/Items' },
           { label: 'Gestion de Empleados', route: '/configuracion/Empleados' },
-          // { label: 'Gestion de Descuentos', route: '/configuracion/Descuentos' },
-          // { label: 'Gestion de Almacén', route: '/configuracion/Almacen' }
         ],
-
       },
       {
         label: 'Compras',
@@ -72,22 +70,53 @@ export class LayoutComponent {
         name: 'almacen',
         icon: 'house_siding',
         children: [
-          { label: 'Kardex', route: '/configuracion/Almacen' }],
-
+          { label: 'Kardex', route: '/configuracion/Almacen' }
+        ],
       },
     ];
-
   }
 
-  toggleUsuarios() {
-    this.usuariosOpen = !this.usuariosOpen;
+  toggleCollapse() {
+    this.collapsed = !this.collapsed;
+    this.popoverItem = null;
   }
 
   toggleMenu(item: MenuItem) {
+    if (this.collapsed) return;
     item.open = !item.open;
   }
 
   navigateTo(route: string) {
     this.router.navigate([route]);
+    this.popoverItem = null;
+  }
+
+  onItemClick(item: MenuItem, event: MouseEvent) {
+    if (this.collapsed) {
+      if (this.popoverItem === item) {
+        this.popoverItem = null;
+        return;
+      }
+      const target = event.currentTarget as HTMLElement;
+      this.popoverTop = target.getBoundingClientRect().top;
+      this.popoverItem = item;
+    } else {
+      if (item.route) {
+        this.navigateTo(item.route);
+      } else {
+        item.open = !item.open;
+      }
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.el.nativeElement.contains(event.target)) {
+      this.popoverItem = null;
+    }
+  }
+
+  closePopover() {
+    this.popoverItem = null;
   }
 }

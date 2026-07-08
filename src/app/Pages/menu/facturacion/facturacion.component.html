@@ -72,62 +72,64 @@
                                         <strong>{{ code }}</strong>
                                         <button type="button" class="btn-select-all-code"
                                             (click)="toggleSelectByCode(code)">
-                                            {{ isCodeFullySelected(code) ? 'Deseleccionar todos' : 'Seleccionar todos' }}
+                                            {{ isCodeFullySelected(code) ? 'Deseleccionar todos' : 'Seleccionar todos'
+                                            }}
                                         </button>
                                     </div>
                                 </td>
                             </tr>
 
                             <!-- Items de ese presupuesto -->
-                            <tr *ngFor="let it of filteredInvoiceItems | codeFilter:code" [class.row-disabled]="it.invoiced">
+                            <tr *ngFor="let it of filteredInvoiceItems | codeFilter:code"
+                                [class.row-disabled]="it.invoiced">
 
-                            <!-- checkbox -->
-                            <td>
-                                <mat-checkbox [(ngModel)]="it.selected" (change)="recalculateInvoice()">
-                                </mat-checkbox>
-                            </td>
+                                <!-- checkbox -->
+                                <td>
+                                    <mat-checkbox [(ngModel)]="it.selected" (change)="recalculateInvoice()">
+                                    </mat-checkbox>
+                                </td>
 
-                            <!-- código -->
-                            <td>
-                                <strong>{{ it.intakeCode }}</strong>
-                                <span class="chip-usd" *ngIf="it.moneda === 'USD'">USD $</span>
-                                <span class="chip-pen" *ngIf="!it.moneda || it.moneda === 'PEN'">PEN S/</span>
-                            </td>
+                                <!-- código -->
+                                <td>
+                                    <strong>{{ it.intakeCode }}</strong>
+                                    <span class="chip-usd" *ngIf="it.moneda === 'USD'">USD $</span>
+                                    <span class="chip-pen" *ngIf="!it.moneda || it.moneda === 'PEN'">PEN S/</span>
+                                </td>
 
-                            <!-- descripción -->
-                            <td>
-                                {{ it.description }}
-                            </td>
+                                <!-- descripción -->
+                                <td>
+                                    {{ it.description }}
+                                </td>
 
-                            <!-- tipo -->
-                            <td>
-                                <span class="chip product" *ngIf="it.itemType === 1">
-                                    PRODUCTO
-                                </span>
+                                <!-- tipo -->
+                                <td>
+                                    <span class="chip product" *ngIf="it.itemType === 1">
+                                        PRODUCTO
+                                    </span>
 
-                                <span class="chip service" *ngIf="it.itemType === 2">
-                                    SERVICIO
-                                </span>
-                            </td>
+                                    <span class="chip service" *ngIf="it.itemType === 2">
+                                        SERVICIO
+                                    </span>
+                                </td>
 
-                            <!-- cantidad -->
-                            <td>{{ it.quantity }}</td>
+                                <!-- cantidad -->
+                                <td>{{ it.quantity }}</td>
 
-                            <!-- precio -->
-                            <td>
-                                {{ it.unitPrice | currency:(it.moneda || 'PEN'):'symbol':'1.2-2' }}
-                            </td>
+                                <!-- precio -->
+                                <td>
+                                    {{ it.unitPrice | currency:(it.moneda || 'PEN'):'symbol':'1.2-2' }}
+                                </td>
 
-                            <td>
-                                {{ it.discount | currency:(it.moneda || 'PEN'):'symbol':'1.2-2' }}
-                            </td>
+                                <td>
+                                    {{ it.discount | currency:(it.moneda || 'PEN'):'symbol':'1.2-2' }}
+                                </td>
 
-                            <!-- subtotal -->
-                            <td class="price">
-                                {{ it.subTotal | currency:(it.moneda || 'PEN'):'symbol':'1.2-2' }}
-                            </td>
+                                <!-- subtotal -->
+                                <td class="price">
+                                    {{ it.subTotal | currency:(it.moneda || 'PEN'):'symbol':'1.2-2' }}
+                                </td>
 
-                        </tr>
+                            </tr>
 
                         </ng-container>
 
@@ -159,9 +161,18 @@
 
                 <div class="client-box">
                     <div class="label">Nombre / Razón Social</div>
-                    <input type="text" class="client-input" style="margin-bottom: 0.7rem;"  placeholder="Nombre o razón social"
-                        [(ngModel)]="client.name" />
-
+                    <div class="client-search" style="position:relative; margin-bottom:0.7rem;">
+                        <input type="text" class="client-input" placeholder="Buscar por nombre o razón social"
+                            [(ngModel)]="clienteNombreInput" (input)="filtrarClientesMaestro()"
+                            (blur)="showClienteDropdown = false" autocomplete="off" />
+                        <div *ngIf="showClienteDropdown" class="cliente-maestro-dropdown">
+                            <div *ngFor="let c of clientesMaestroFiltrados" class="cliente-maestro-item"
+                                (mousedown)="seleccionarClienteMaestro(c)">
+                                <span class="cm-name">{{ c.names }}</span>
+                                <span class="cm-doc">{{ c.documentIdentificationNumber }}</span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="label">Buscar por DNI / RUC</div>
                     <div class="client-search">
                         <input type="text" class="client-input" placeholder="Ingresa DNI o RUC"
@@ -174,8 +185,9 @@
                     </div>
 
                     <div class="label">Dirección</div>
-                    <input type="text" class="client-input" placeholder="Dirección"
-                        [(ngModel)]="client.address" />
+                    <div class="client-search">
+                        <input type="text" class="client-input" placeholder="Dirección" [(ngModel)]="client.address" />
+                    </div>
                 </div>
 
                 <div class="doc-type">
@@ -200,8 +212,7 @@
                 <div class="combo-box">
                     <div class="combo-input-row">
                         <input type="text" class="client-input" placeholder="Buscar por placa..."
-                            [(ngModel)]="vehiculoSearch"
-                            (focus)="showVehiculoDropdown = true"
+                            [(ngModel)]="vehiculoSearch" (focus)="showVehiculoDropdown = true"
                             (input)="showVehiculoDropdown = true" />
                         <button *ngIf="vehiculoSeleccionado" type="button" class="client-search-btn"
                             (click)="limpiarVehiculo()">
@@ -210,8 +221,7 @@
                     </div>
 
                     <div class="dropdown-list" *ngIf="showVehiculoDropdown && vehiculosFiltrados.length > 0">
-                        <div class="dropdown-item" *ngFor="let v of vehiculosFiltrados"
-                            (mousedown)="selectVehiculo(v)">
+                        <div class="dropdown-item" *ngFor="let v of vehiculosFiltrados" (mousedown)="selectVehiculo(v)">
                             <div class="item-code">{{ v.plate }}</div>
                             <div class="item-desc">{{ v.brand?.name }} {{ v.model?.name }} · {{ v.owner?.name }}</div>
                         </div>
@@ -222,7 +232,8 @@
                     <div class="label">Placa</div>
                     <div class="value">{{ vehiculoSeleccionado.plate }}</div>
                     <div class="label">Marca / Modelo</div>
-                    <div class="value">{{ vehiculoSeleccionado.brand?.name }} {{ vehiculoSeleccionado.model?.name }}</div>
+                    <div class="value">{{ vehiculoSeleccionado.brand?.name }} {{ vehiculoSeleccionado.model?.name }}
+                    </div>
                     <div class="label">Propietario</div>
                     <div class="value">{{ vehiculoSeleccionado.owner?.name }}</div>
                 </div>
@@ -275,8 +286,7 @@
                     <div class="metodo-pago-interno" *ngIf="noMigrarSunat">
                         <label class="metodo-label">Método de pago</label>
                         <div class="metodo-btns">
-                            <button type="button" class="metodo-btn"
-                                [class.active]="metodoPagoInterno === 'EFECTIVO'"
+                            <button type="button" class="metodo-btn" [class.active]="metodoPagoInterno === 'EFECTIVO'"
                                 (click)="metodoPagoInterno = 'EFECTIVO'">
                                 <mat-icon>payments</mat-icon> Efectivo
                             </button>
@@ -285,8 +295,7 @@
                                 (click)="metodoPagoInterno = 'TRANSFERENCIA'">
                                 <mat-icon>account_balance</mat-icon> Transferencia
                             </button>
-                            <button type="button" class="metodo-btn"
-                                [class.active]="metodoPagoInterno === 'TARJETA'"
+                            <button type="button" class="metodo-btn" [class.active]="metodoPagoInterno === 'TARJETA'"
                                 (click)="metodoPagoInterno = 'TARJETA'">
                                 <mat-icon>credit_card</mat-icon> Tarjeta
                             </button>

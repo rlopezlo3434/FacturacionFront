@@ -77,6 +77,12 @@ export class FacturacionComponent {
   };
   clientDocumentInput = '';
   clientLookupLoading = false;
+
+  // Búsqueda por nombre del maestro de clientes
+  clientesMaestro: any[] = [];
+  clientesMaestroFiltrados: any[] = [];
+  clienteNombreInput = '';
+  showClienteDropdown = false;
   showOnlyPendingInvoices = true;
 
   documentType = 'FACTURA';
@@ -167,6 +173,7 @@ export class FacturacionComponent {
     // this.loadEmpleados();
     this.loadVentas();
     this.seriesComprobantes();
+    this.loadClientesMaestro();
     this.loadApprovedItems();
     this.loadVehiculos();
     this.venta.tipoComprobante = '1';
@@ -417,6 +424,44 @@ export class FacturacionComponent {
     });
   }
 
+  loadClientesMaestro() {
+    this.clienteService.getClientesByEstablishment().subscribe({
+      next: (data: any[]) => { this.clientesMaestro = data; }
+    });
+  }
+
+  filtrarClientesMaestro() {
+    const q = this.clienteNombreInput.toLowerCase().trim();
+    if (!q) {
+      this.clientesMaestroFiltrados = [];
+      this.showClienteDropdown = false;
+      return;
+    }
+    this.clientesMaestroFiltrados = this.clientesMaestro.filter(c =>
+      c.names?.toLowerCase().includes(q) ||
+      c.documentIdentificationNumber?.toLowerCase().includes(q)
+    );
+    this.showClienteDropdown = this.clientesMaestroFiltrados.length > 0;
+  }
+
+  seleccionarClienteMaestro(c: any) {
+    const esRuc = c.documentIdentificationNumber?.length === 11;
+    this.client.name = c.names ?? '';
+    this.client.document = c.documentIdentificationNumber ?? '';
+    this.client.address = c.addresses?.find((a: any) => a.isPrimary)?.address ?? c.addresses?.[0]?.address ?? '';
+    this.clientDocumentInput = c.documentIdentificationNumber ?? '';
+    this.clienteNombreInput = c.names ?? '';
+    this.venta.cliente = {
+      documentIdentificationNumber: c.documentIdentificationNumber,
+      documentIdentificationType: esRuc ? 'Ruc' : 'DNI',
+      firstName: c.names ?? '',
+      lastName: '',
+      names: c.names ?? '',
+      address: this.client.address
+    };
+    this.showClienteDropdown = false;
+  }
+
   buscarClientePorDocumento() {
     const numeroDocumento = this.clientDocumentInput.trim();
 
@@ -448,11 +493,62 @@ export class FacturacionComponent {
 
     this.clientLookupLoading = true;
 
+    // this.clienteService.consultarDocumento(tipoDocumento, numeroDocumento).subscribe({
+    //   next: (response: any) => {
+    //     this.clientLookupLoading = false;
+
+    //     if (response?.message === 'not found') {
+    //       this.snackBar.open('No se encontraron datos para el documento proporcionado', '', {
+    //         duration: 3000,
+    //         horizontalPosition: 'right',
+    //         verticalPosition: 'top',
+    //         panelClass: ['error-snackbar']
+    //       });
+    //       return;
+    //     }
+
+    //     const fullName = `${response?.first_name ?? ''} ${response?.first_last_name ?? ''}`.trim();
+    //     const displayName = fullName || response?.razon_social || '';
+    //     const address = response?.direccion || '';
+
+    //     this.client = {
+    //       name: displayName,
+    //       document: numeroDocumento,
+    //       address
+    //     };
+
+    //     this.venta.cliente = {
+    //       documentIdentificationNumber: numeroDocumento,
+    //       documentIdentificationType: tipoDocumento,
+    //       firstName: response?.first_name || response?.razon_social || displayName,
+    //       lastName: response?.first_last_name || '',
+    //       names: displayName,
+    //       address
+    //     };
+
+    //     this.snackBar.open('Datos del cliente cargados correctamente', '', {
+    //       duration: 3000,
+    //       horizontalPosition: 'right',
+    //       verticalPosition: 'top',
+    //       panelClass: ['success-snackbar']
+    //     });
+    //   },
+    //   error: () => {
+    //     this.clientLookupLoading = false;
+    //     this.snackBar.open('Error al consultar el documento', '', {
+    //       duration: 3000,
+    //       horizontalPosition: 'right',
+    //       verticalPosition: 'top',
+    //       panelClass: ['error-snackbar']
+    //     });
+    //   }
+    // });
+
     this.clienteService.consultarDocumento(tipoDocumento, numeroDocumento).subscribe({
       next: (response: any) => {
         this.clientLookupLoading = false;
 
-        if (response?.message === 'not found') {
+        if (!response?.success || !response?.result) {
           this.snackBar.open('No se encontraron datos para el documento proporcionado', '', {
             duration: 3000,
             horizontalPosition: 'right',
@@ -462,9 +558,21 @@ export class FacturacionComponent {
           return;
         }
 
-        const fullName = `${response?.first_name ?? ''} ${response?.first_last_name ?? ''}`.trim();
-        const displayName = fullName || response?.razon_social || '';
-        const address = response?.direccion || '';
+        const result = response.result;
+        const esRuc = !!result.ruc;
+
+        let displayName = '';
+        let address = '';
+
+        if (esRuc) {
+          displayName = result.razon_social ?? '';
+          address = [result.direccion, `${result.departamento ?? ''}-${result.provincia ?? ''}-${result.distrito ?? ''}`]
+            .filter(Boolean)
+            .join(' ')
+            .trim();
+        } else {
+          displayName = `${result.nombres ?? ''} ${result.paterno ?? ''} ${result.materno ?? ''}`.replace(/\s+/g, ' ').trim();
+        }
 
         this.client = {
           name: displayName,
@@ -472,11 +580,14 @@ export class FacturacionComponent {
           address
         };
 
+        this.clienteNombreInput = displayName;
+        this.client.address = address;
+
         this.venta.cliente = {
           documentIdentificationNumber: numeroDocumento,
           documentIdentificationType: tipoDocumento,
-          firstName: response?.first_name || response?.razon_social || displayName,
-          lastName: response?.first_last_name || '',
+          firstName: esRuc ? result.razon_social : `${result.nombres ?? ''}`.trim(),
+          lastName: esRuc ? '' : `${result.paterno ?? ''} ${result.materno ?? ''}`.trim(),
           names: displayName,
           address
         };

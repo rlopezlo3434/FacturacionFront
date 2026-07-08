@@ -195,6 +195,77 @@ export class ModalClientesDialogComponent {
     return index;
   }
 
+  // consultarDocumento() {
+  //   const documentTypeSelected = this.catalogDocument.find(x => x.id === this.selectedDocumentTypeId);
+  //   console.log(this.cli);
+  //   this.clienteService.consultarDocumento(documentTypeSelected?.name, this.cli.documentIdentificationNumber)
+  //     .subscribe({
+  //       next: (response: any) => {
+
+  //         // 1️⃣ Validar error del backend
+  //         if (response?.message === 'not found') {
+  //           this.snackBar.open(
+  //             'No se encontraron datos para el documento proporcionado',
+  //             '',
+  //             {
+  //               duration: 3000,
+  //               horizontalPosition: 'right',
+  //               verticalPosition: 'top',
+  //               panelClass: ['error-snackbar']
+  //             }
+  //           );
+  //           return;
+  //         }
+
+  //         const fullName = `${response?.first_name ?? ''} ${response?.first_last_name ?? ''}`.trim();
+
+  //         this.cli.names = fullName || response?.razon_social || '';
+
+  //         if (response?.direccion) {
+
+  //           if (!this.cli.address) {
+  //             this.cli.address = [];
+  //           }
+
+  //           const yaExiste = this.cli.address.some(
+  //             (a: any) => a.address === response.direccion
+  //           );
+
+  //           if (!yaExiste) {
+  //             this.cli.address.push({
+  //               addressName: 'FISCAL',
+  //               address: response.direccion,
+  //               isPrimary: this.cli.address.length === 0
+  //             });
+  //           }
+  //         }
+  //         this.snackBar.open(
+  //           'Datos del documento cargados correctamente',
+  //           '',
+  //           {
+  //             duration: 3000,
+  //             horizontalPosition: 'right',
+  //             verticalPosition: 'top',
+  //             panelClass: ['success-snackbar']
+  //           }
+  //         );
+  //       },
+
+  //       error: (err) => {
+  //         this.snackBar.open(
+  //           'Error al consultar el documento',
+  //           '',
+  //           {
+  //             duration: 3000,
+  //             horizontalPosition: 'right',
+  //             verticalPosition: 'top',
+  //             panelClass: ['error-snackbar']
+  //           }
+  //         );
+  //       }
+  //     });
+  // }
+
   consultarDocumento() {
     const documentTypeSelected = this.catalogDocument.find(x => x.id === this.selectedDocumentTypeId);
     console.log(this.cli);
@@ -202,8 +273,7 @@ export class ModalClientesDialogComponent {
       .subscribe({
         next: (response: any) => {
 
-          // 1️⃣ Validar error del backend
-          if (response?.message === 'not found') {
+          if (!response?.success || !response?.result) {
             this.snackBar.open(
               'No se encontraron datos para el documento proporcionado',
               '',
@@ -217,28 +287,43 @@ export class ModalClientesDialogComponent {
             return;
           }
 
-          const fullName = `${response?.first_name ?? ''} ${response?.first_last_name ?? ''}`.trim();
+          const result = response.result;
+          const esRuc = !!result.ruc;
 
-          this.cli.names = fullName || response?.razon_social || '';
+          let fullName = '';
+          let direccionCompleta = '';
 
-          if (response?.direccion) {
+          if (esRuc) {
+            fullName = result.razon_social ?? '';
+            direccionCompleta = [result.direccion, `${result.departamento ?? ''}-${result.provincia ?? ''}-${result.distrito ?? ''}`]
+              .filter(Boolean)
+              .join(' ')
+              .trim();
+          } else {
+            fullName = `${result.nombres ?? ''} ${result.paterno ?? ''} ${result.materno ?? ''}`.replace(/\s+/g, ' ').trim();
+          }
+
+          this.cli.names = fullName;
+
+          if (direccionCompleta) {
 
             if (!this.cli.address) {
               this.cli.address = [];
             }
 
             const yaExiste = this.cli.address.some(
-              (a: any) => a.address === response.direccion
+              (a: any) => a.address === direccionCompleta
             );
 
             if (!yaExiste) {
               this.cli.address.push({
-                addressName: 'FISCAL', 
-                address: response.direccion,
-                isPrimary: this.cli.address.length === 0 
+                addressName: 'FISCAL',
+                address: direccionCompleta,
+                isPrimary: this.cli.address.length === 0
               });
             }
           }
+
           this.snackBar.open(
             'Datos del documento cargados correctamente',
             '',

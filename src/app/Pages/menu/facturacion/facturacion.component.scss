@@ -1,3 +1,29 @@
+.cliente-maestro-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+    z-index: 999;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.cliente-maestro-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    gap: 8px;
+    &:hover { background: #f5f5f5; }
+    .cm-name { font-weight: 500; font-size: .875rem; }
+    .cm-doc  { font-size: .78rem; color: gray; white-space: nowrap; }
+}
+
 .cliente-info-banner {
     display: flex;
     align-items: center;
