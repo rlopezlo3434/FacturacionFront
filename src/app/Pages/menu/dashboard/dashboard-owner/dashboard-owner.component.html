@@ -13,24 +13,24 @@
     <div class="kpi-card">
       <span class="kpi-title">Ventas MTD (S/)</span>
       <h2>{{ kpis?.ventasMtd | number:'1.0-0' }}</h2>
-      <span class="kpi-variation positive">
-        +{{ kpis?.ventasVariacion | number:'1.1-1' }}% vs mes ant.
+      <span class="kpi-variation" [ngClass]="(kpis?.ventasVariacion ?? 0) >= 0 ? 'positive' : 'negative'">
+        {{ (kpis?.ventasVariacion ?? 0) >= 0 ? '+' : '' }}{{ kpis?.ventasVariacion | number:'1.1-1' }}% vs mes ant.
       </span>
     </div>
 
     <div class="kpi-card">
       <span class="kpi-title"># Servicios MTD</span>
       <h2>{{ kpis?.serviciosMtd }}</h2>
-      <span class="kpi-variation positive">
-        +{{ kpis?.serviciosVariacion | number:'1.1-1' }}% vs mes ant.
+      <span class="kpi-variation" [ngClass]="(kpis?.serviciosVariacion ?? 0) >= 0 ? 'positive' : 'negative'">
+        {{ (kpis?.serviciosVariacion ?? 0) >= 0 ? '+' : '' }}{{ kpis?.serviciosVariacion | number:'1.1-1' }}% vs mes ant.
       </span>
     </div>
 
     <div class="kpi-card">
       <span class="kpi-title">Ticket Promedio</span>
       <h2>S/ {{ kpis?.ticketPromedio | number:'1.1-1' }}</h2>
-      <span class="kpi-variation positive">
-        +{{ kpis?.ticketVariacion | number:'1.1-1' }}% vs mes ant.
+      <span class="kpi-variation" [ngClass]="(kpis?.ticketVariacion ?? 0) >= 0 ? 'positive' : 'negative'">
+        {{ (kpis?.ticketVariacion ?? 0) >= 0 ? '+' : '' }}{{ kpis?.ticketVariacion | number:'1.1-1' }}% vs mes ant.
       </span>
     </div>
 
@@ -45,7 +45,7 @@
   <div class="grid-2">
     <div class="card">
       <h3>Ventas por tienda (MTD)</h3>
-      <apx-chart *ngIf="chartReady4" [series]="ventasPorTiendaSeries" [chart]="barChart" [xaxis]="ventasPorTiendaXAxis"
+      <apx-chart *ngIf="chartReady2" [series]="ventasPorTiendaSeries" [chart]="barChart" [xaxis]="ventasPorTiendaXAxis"
         [plotOptions]="plotOptionsBar" [colors]="barColors">
       </apx-chart>
     </div>

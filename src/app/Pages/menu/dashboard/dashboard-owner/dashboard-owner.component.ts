@@ -148,7 +148,7 @@ export class DashboardOwnerComponent {
         // Si quieres reutilizar para servicios (placeholder)
         this.serviciosPorTiendaSeries = [{
           name: 'Servicios',
-          data: data.map((x: any) => Math.round(x.total / 50)) // estimado
+          data: data.map((x: any) => x.servicios) // estimado
         }];
 
         this.serviciosPorTiendaXAxis = {

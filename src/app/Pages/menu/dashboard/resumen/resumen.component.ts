@@ -100,12 +100,12 @@ export class ResumenComponent {
     datasets: [{
       data: [0, 0],
       backgroundColor: [
-        'rgba(54, 162, 235, 0.35)',
-        'rgba(255, 99, 132, 0.35)'
+        'rgba(0, 143, 251, 0.35)',
+        'rgba(255, 69, 96, 0.35)'
       ],
       borderColor: [
-        'rgb(54, 162, 235)',
-        'rgb(255, 99, 132)'
+        'rgb(0, 143, 251)',
+        'rgb(255, 69, 96)'
       ],
       borderWidth: 1
     }]
@@ -116,12 +116,12 @@ export class ResumenComponent {
     datasets: [{
       data: [0, 0],
       backgroundColor: [
-        'rgba(75, 192, 192, 0.35)',
-        'rgba(255, 159, 64, 0.35)'
+        'rgba(0, 227, 150, 0.35)',
+        'rgba(254, 176, 25, 0.35)'
       ],
       borderColor: [
-        'rgb(75, 192, 192)',
-        'rgb(255, 159, 64)'
+        'rgb(0, 227, 150)',
+        'rgb(254, 176, 25)'
       ],
       borderWidth: 1
     }]
@@ -180,7 +180,7 @@ export class ResumenComponent {
       {
         data: [300, 450, 320, 600],
         label: 'Montos',
-        backgroundColor: '#3498db'
+        backgroundColor: '#008FFB'
       }
     ]
   };
@@ -191,7 +191,7 @@ export class ResumenComponent {
       {
         data: [20, 30, 18, 25],
         label: 'Servicios',
-        backgroundColor: '#2ecc71'
+        backgroundColor: '#00E396'
       }
     ]
   };
@@ -203,23 +203,23 @@ export class ResumenComponent {
   totalMesServicios = 0;
 
   pastelColors = [
-    'rgba(255, 99, 132, 0.4)',
-    'rgba(255, 159, 64, 0.4)',
-    'rgba(255, 205, 86, 0.4)',
-    'rgba(75, 192, 192, 0.4)',
-    'rgba(54, 162, 235, 0.4)',
-    'rgba(153, 102, 255, 0.4)',
-    'rgba(201, 203, 207, 0.4)'
+    'rgba(0, 143, 251, 0.4)',
+    'rgba(0, 227, 150, 0.4)',
+    'rgba(254, 176, 25, 0.4)',
+    'rgba(255, 69, 96, 0.4)',
+    'rgba(119, 93, 208, 0.4)',
+    'rgba(63, 81, 181, 0.4)',
+    'rgba(84, 110, 122, 0.4)'
   ];
 
   pastelBorder = [
-    'rgb(255, 99, 132)',
-    'rgb(255, 159, 64)',
-    'rgb(255, 205, 86)',
-    'rgb(75, 192, 192)',
-    'rgb(54, 162, 235)',
-    'rgb(153, 102, 255)',
-    'rgb(201, 203, 207)'
+    'rgb(0, 143, 251)',
+    'rgb(0, 227, 150)',
+    'rgb(254, 176, 25)',
+    'rgb(255, 69, 96)',
+    'rgb(119, 93, 208)',
+    'rgb(63, 81, 181)',
+    'rgb(84, 110, 122)'
   ];
 
   productividad: any[] = [];
@@ -419,16 +419,16 @@ export class ResumenComponent {
             {
               data: res.mesActual,
               label: 'Mes actual',
-              backgroundColor: 'rgba(54, 162, 235, 0.6)',
-              borderColor: 'rgb(54,162,235)',
+              backgroundColor: 'rgba(0, 143, 251, 0.6)',
+              borderColor: 'rgb(0, 143, 251)',
               borderWidth: 1,
               borderRadius: 6
             },
             {
               data: res.mesAnterior,
               label: 'Mes anterior',
-              backgroundColor: 'rgba(175, 169, 170, 0.6)',
-              borderColor: 'rgba(163, 163, 163, 1)',
+              backgroundColor: 'rgba(84, 110, 122, 0.6)',
+              borderColor: 'rgb(84, 110, 122)',
               borderWidth: 1,
               borderRadius: 6
             }
@@ -451,12 +451,12 @@ export class ResumenComponent {
         datasets: [{
           data: [res.actual ?? 0, res.anterior ?? 0],
           backgroundColor: [
-            'rgba(54, 162, 235, 0.35)',
-            'rgba(255, 99, 132, 0.35)'
+            'rgba(0, 143, 251, 0.35)',
+            'rgba(255, 69, 96, 0.35)'
           ],
           borderColor: [
-            'rgb(54, 162, 235)',
-            'rgb(255, 99, 132)'
+            'rgb(0, 143, 251)',
+            'rgb(255, 69, 96)'
           ],
           borderWidth: 1
         }]
@@ -471,12 +471,12 @@ export class ResumenComponent {
         datasets: [{
           data: [res.actual ?? 0, res.anterior ?? 0],
           backgroundColor: [
-            'rgba(75, 192, 192, 0.35)',
-            'rgba(255, 159, 64, 0.35)'
+            'rgba(0, 227, 150, 0.35)',
+            'rgba(254, 176, 25, 0.35)'
           ],
           borderColor: [
-            'rgb(75, 192, 192)',
-            'rgb(255, 159, 64)'
+            'rgb(0, 227, 150)',
+            'rgb(254, 176, 25)'
           ],
           borderWidth: 1
         }]
