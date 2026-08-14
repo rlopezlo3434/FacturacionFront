@@ -34,6 +34,13 @@ export class ModalBudgetCreateDialogComponent {
   notes: string = '';
   extras: string = '';
   moneda: 'PEN' | 'USD' = 'PEN';
+  quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['clean']
+    ]
+  };
   constructor(
     public dialogRef: MatDialogRef<ModalBudgetCreateDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,

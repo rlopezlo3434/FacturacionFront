@@ -99,7 +99,7 @@
               </td>
 
               <td>
-                <div class="cliente-name">
+                <div class="cliente-name cliente-name-truncate" [title]="ot.client?.names || '—'">
                   {{ ot.client?.names || '—' }}
                 </div>
               </td>

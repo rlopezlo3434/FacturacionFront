@@ -106,6 +106,13 @@
     }
 }
 
+.cliente-name-truncate {
+    max-width: 15vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .cliente-contact{
     align-items: center;
     gap: 0.8rem;

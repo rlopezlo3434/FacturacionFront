@@ -14,6 +14,8 @@ export class ListarFacturacionComponent {
   searchText = '';
   filtroTipo = 'TODOS';
   fecha: string;
+  desde: string;
+  hasta: string | null = null;
 
   paginaActual = 1;
   filasPorPagina = 20;
@@ -37,6 +39,7 @@ export class ListarFacturacionComponent {
   ) {
     const hoy = new Date();
     this.fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+    this.desde = this.fecha;
   }
 
   ngOnInit(): void {
@@ -44,7 +47,7 @@ export class ListarFacturacionComponent {
   }
 
   loadInvoices() {
-    this.facturaService.listarVentas(this.fecha).subscribe({
+    this.facturaService.listarVentas(this.desde, this.hasta ?? undefined).subscribe({
       next: (data: any) => {
         this.invoices = data;
         this.paginaActual = 1;

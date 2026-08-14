@@ -90,10 +90,36 @@
     <div class="subTitle">Registro Fotográfico</div>
 
     <div class="images-grid">
-      <div class="image-box" *ngFor="let img of intake.images">
+      <div class="image-box" *ngFor="let img of intake.images; let i = index" (click)="openGallery(i)">
         <img [src]="apiBaseUrl + img.imageUrl" />
       </div>
     </div>
+  </div>
+
+  <!-- ✅ Galería en grande -->
+  <div class="gallery-overlay" *ngIf="galleryOpen" (click)="closeGallery()">
+    <button class="gallery-close" (click)="closeGallery()" title="Cerrar">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <button class="gallery-nav gallery-prev" (click)="prevImage($event)" *ngIf="intake?.images?.length > 1" title="Anterior">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <div class="gallery-main" (click)="$event.stopPropagation()">
+      <img [src]="apiBaseUrl + intake.images[currentImageIndex].imageUrl" />
+
+      <div class="gallery-actions">
+        <span class="gallery-counter">{{ currentImageIndex + 1 }} / {{ intake.images.length }}</span>
+        <!-- <button class="btn-primary" (click)="downloadImage(intake.images[currentImageIndex])">
+          <mat-icon>download</mat-icon> Descargar
+        </button> -->
+      </div>
+    </div>
+
+    <button class="gallery-nav gallery-next" (click)="nextImage($event)" *ngIf="intake?.images?.length > 1" title="Siguiente">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
   </div>
 
   <div class="section" *ngIf="intake?.imagesDiagram?.length">

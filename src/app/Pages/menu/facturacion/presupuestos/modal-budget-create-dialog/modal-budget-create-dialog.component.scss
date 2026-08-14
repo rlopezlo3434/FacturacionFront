@@ -76,6 +76,26 @@
   color: #444;
 }
 
+/* QUILL EDITOR */
+.quill-field {
+  display: block;
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  overflow: hidden;
+
+  ::ng-deep .ql-toolbar {
+    border: none;
+    border-bottom: 1px solid #dcdcdc;
+  }
+
+  ::ng-deep .ql-container {
+    border: none;
+    min-height: 90px;
+    font-size: 0.95rem;
+  }
+}
+
 /* INPUT */
 .input {
   width: auto;

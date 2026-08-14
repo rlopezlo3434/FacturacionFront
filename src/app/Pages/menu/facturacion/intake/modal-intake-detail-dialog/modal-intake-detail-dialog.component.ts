@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { VehicleIntakeService } from '../../../../../../services/vehicle-intake.service';
 import { environment } from '../../../../../../environments/environment';
 @Component({
@@ -19,14 +20,16 @@ export class ModalIntakeDetailDialogComponent {
   baseImageUrl1 = this.apiBaseUrl + '/Intakes/base/AUTO1.png';
   baseImageUrl2 = this.apiBaseUrl + '/Intakes/base/AUTO2.png';
 
-
+  galleryOpen = false;
+  currentImageIndex = 0;
 
   constructor(
     public dialogRef: MatDialogRef<ModalIntakeDetailDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private intakeService: VehicleIntakeService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private http: HttpClient
   ) { }
 
   ngOnInit(): void {
@@ -50,6 +53,51 @@ export class ModalIntakeDetailDialogComponent {
       },
       error: () => {
         this.snackBar.open('No se pudo cargar el detalle del internamiento', '', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  openGallery(index: number) {
+    this.currentImageIndex = index;
+    this.galleryOpen = true;
+  }
+
+  closeGallery() {
+    this.galleryOpen = false;
+  }
+
+  prevImage(event: Event) {
+    event.stopPropagation();
+    const total = this.intake?.images?.length || 0;
+    this.currentImageIndex = (this.currentImageIndex - 1 + total) % total;
+  }
+
+  nextImage(event: Event) {
+    event.stopPropagation();
+    const total = this.intake?.images?.length || 0;
+    this.currentImageIndex = (this.currentImageIndex + 1) % total;
+  }
+
+  downloadImage(img: any) {
+    const url = this.apiBaseUrl + img.imageUrl;
+    const fileName = img.imageUrl.split('/').pop() || 'imagen.jpg';
+
+    this.http.get(url, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        const objectUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.download = fileName;
+        link.click();
+        window.URL.revokeObjectURL(objectUrl);
+      },
+      error: () => {
+        this.snackBar.open('No se pudo descargar la imagen', '', {
           duration: 3000,
           horizontalPosition: 'right',
           verticalPosition: 'top',

@@ -24,6 +24,26 @@
 
 .label { font-size: 0.85rem; font-weight: 500; margin-bottom: 6px; color: #444; }
 
+/* QUILL EDITOR */
+.quill-field {
+  display: block;
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  overflow: hidden;
+
+  ::ng-deep .ql-toolbar {
+    border: none;
+    border-bottom: 1px solid #dcdcdc;
+  }
+
+  ::ng-deep .ql-container {
+    border: none;
+    min-height: 90px;
+    font-size: 0.95rem;
+  }
+}
+
 .input {
   width: auto; padding: 10px 12px; border-radius: 10px;
   border: 1px solid #dcdcdc; background: white; outline: none; font-size: 0.95rem;

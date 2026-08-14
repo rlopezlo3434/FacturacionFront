@@ -69,10 +69,12 @@
 
                 <div class="form-field full" style="margin-bottom: 12px;">
                     <label class="label">Notas / Observaciones</label>
-                    <textarea class="textarea" rows="3"
+                    <quill-editor
+                        [(ngModel)]="notes"
+                        [modules]="quillModules"
                         placeholder="Ej: descuento aplicado, diagnóstico, condiciones del cliente..."
-                        [(ngModel)]="notes" appUppercase>
-                    </textarea>
+                        class="quill-field">
+                    </quill-editor>
                 </div>
 
                 <div class="form-field full" style="margin-bottom: 12px;">
@@ -81,7 +83,7 @@
                         [(ngModel)]="extras"
                         [modules]="quillModules"
                         placeholder="Escribe los extras del presupuesto..."
-                        style="display:block; background:#fff; border-radius:6px;">
+                        class="quill-field">
                     </quill-editor>
                 </div>
             </div>

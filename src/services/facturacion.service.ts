@@ -98,14 +98,16 @@ export class FacturacionService {
     });
   }
 
-  listarVentas(fecha: string) {
+  listarVentas(desde?: string, hasta?: string) {
+    const params: Record<string, string> = {};
+    if (desde) params['desde'] = desde;
+    if (hasta) params['hasta'] = hasta;
+
     return this.http.get<any[]>(`${environment.apiBase}/facturacion/listar`, {
       headers: {
         Authorization: `Bearer ${this.token}`
       },
-      params: {
-        fecha: fecha
-      }
+      params
     });
   }
 

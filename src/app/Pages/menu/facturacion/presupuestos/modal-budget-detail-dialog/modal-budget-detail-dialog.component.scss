@@ -235,6 +235,33 @@
   box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
 }
 
+.quill-view {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  background: #fff;
+  font-size: 0.95rem;
+  color: #222;
+  line-height: 1.4;
+  max-height: 150px;
+  overflow-y: auto;
+  word-break: break-word;
+
+  p {
+    margin: 0 0 6px;
+  }
+
+  p:empty,
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  ul, ol {
+    padding-left: 1.2rem;
+    margin: 0 0 6px;
+  }
+}
+
 .input-mini {
   width: 100px;
   padding: 6px 8px;

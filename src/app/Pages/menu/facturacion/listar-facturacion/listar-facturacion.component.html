@@ -38,10 +38,25 @@
         </button>
       </div>
 
-      <!-- Fecha -->
-      <div class="fecha-wrapper">
-        <mat-icon class="fecha-icon">calendar_today</mat-icon>
-        <input type="date" class="input-fecha" [(ngModel)]="fecha" (change)="loadInvoices()" />
+      <!-- Rango de fechas -->
+      <div class="rango-fechas">
+        <div class="fecha-wrapper">
+          <mat-icon class="fecha-icon">calendar_today</mat-icon>
+          <div class="fecha-field">
+            <label class="fecha-label">Desde</label>
+            <input type="date" class="input-fecha" [(ngModel)]="desde" (change)="loadInvoices()" />
+          </div>
+        </div>
+
+        <mat-icon class="fecha-separador">arrow_forward</mat-icon>
+
+        <div class="fecha-wrapper">
+          <mat-icon class="fecha-icon">calendar_today</mat-icon>
+          <div class="fecha-field">
+            <label class="fecha-label">Hasta</label>
+            <input type="date" class="input-fecha" [(ngModel)]="hasta" (change)="loadInvoices()" />
+          </div>
+        </div>
       </div>
 
     </div>

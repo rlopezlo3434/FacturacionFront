@@ -107,6 +107,21 @@
   }
 }
 
+.rango-fechas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fafafa;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+
+.fecha-separador {
+  font-size: 16px;
+  color: gray;
+}
+
 .fecha-wrapper {
   display: flex;
   align-items: center;
@@ -114,6 +129,20 @@
 }
 
 .fecha-icon { font-size: 18px; color: gray; }
+
+.fecha-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fecha-label {
+  font-size: .7rem;
+  font-weight: 600;
+  color: gray;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
 
 .input-fecha {
   padding: 5px 8px;
