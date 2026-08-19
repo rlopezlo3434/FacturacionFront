@@ -57,19 +57,26 @@
           </div>
         </div>
 
-        <!-- CLIENTE -->
+        <!-- CLIENTE(S) -->
         <div class="fac-client-row">
-          <div class="fac-client-display" *ngIf="!agregarCliente && !searchCliente" (click)="agregarCliente = true">
+
+          <div class="fac-client-chips" *ngIf="hijosSeleccionados.length > 0">
+            <div class="fac-client-chip" *ngFor="let h of hijosSeleccionados">
+              <mat-icon>person</mat-icon>
+              <div class="chip-info">
+                <span class="chip-nombre">{{ h.firstName }} {{ h.lastName }}</span>
+                <span class="chip-doc">{{ h.client?.firstName }} {{ h.client?.lastName }}</span>
+              </div>
+              <button class="btn-icon-clear" (click)="quitarHijo(h)"><mat-icon>close</mat-icon></button>
+            </div>
+          </div>
+
+          <div class="fac-client-display" *ngIf="!agregarCliente" (click)="agregarCliente = true">
             <mat-icon>person_add</mat-icon>
-            <span>Agregar Cliente</span>
+            <span>{{ hijosSeleccionados.length > 0 ? 'Agregar otro Niño' : 'Agregar Niño' }}</span>
           </div>
-          <div class="fac-client-display fac-client-selected" *ngIf="searchCliente && !agregarCliente">
-            <mat-icon>person</mat-icon>
-            <span>{{ venta.cliente?.firstName }} {{ venta.cliente?.lastName }}</span>
-            <span class="client-doc">{{ venta.cliente?.documentIdentificationNumber }}</span>
-            <button class="btn-icon-clear" (click)="eliminarCliente()"><mat-icon>close</mat-icon></button>
-          </div>
-          <div class="fac-client-search" *ngIf="agregarCliente && !searchCliente" style="position:relative;">
+
+          <div class="fac-client-search" *ngIf="agregarCliente" style="position:relative;">
             <mat-icon>search</mat-icon>
             <input type="text" placeholder="Buscar cliente..." [(ngModel)]="clienteBuscado"
               (input)="filtrarClientes()" (focus)="mostrarLista2 = true" (blur)="ocultarListaConRetardo2()" />
@@ -78,6 +85,32 @@
               <div class="fac-dropdown-item" *ngFor="let c of clientesFiltrados" (mousedown)="seleccionarCliente(c)">
                 <div class="fac-di-title">{{ c.firstName }} {{ c.lastName }}</div>
                 <div class="fac-di-sub">{{ c.client?.firstName }} {{ c.client?.lastName }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CLIENTE A QUIEN SE FACTURA -->
+        <div class="fac-client-row" *ngIf="hijosSeleccionados.length > 0">
+          <label class="fac-facturar-label">Emitir comprobante a nombre de:</label>
+
+          <div class="fac-client-display fac-client-selected" *ngIf="venta.cliente">
+            <mat-icon>badge</mat-icon>
+            <span>{{ venta.cliente.firstName }} {{ venta.cliente.lastName }}</span>
+            <span class="client-doc">{{ venta.cliente.documentIdentificationNumber }}</span>
+            <button class="btn-icon-clear" (click)="quitarClienteFactura()"><mat-icon>close</mat-icon></button>
+          </div>
+
+          <div class="fac-client-search" *ngIf="!venta.cliente" style="position:relative;">
+            <mat-icon>search</mat-icon>
+            <input type="text" placeholder="Buscar cliente a facturar..." [(ngModel)]="buscarClienteFacturar"
+              (input)="filtrarClientesFacturar()" (focus)="mostrarListaFacturar = true"
+              (blur)="ocultarListaFacturarConRetardo()" />
+            <div class="fac-dropdown" *ngIf="mostrarListaFacturar && clientesFacturablesFiltrados.length > 0">
+              <div class="fac-dropdown-item" *ngFor="let c of clientesFacturablesFiltrados"
+                (mousedown)="seleccionarClienteFactura(c)">
+                <div class="fac-di-title">{{ c.firstName }} {{ c.lastName }}</div>
+                <div class="fac-di-sub">{{ c.documentIdentificationNumber }}</div>
               </div>
             </div>
           </div>
@@ -185,25 +218,25 @@
     <div class="fac-right">
       <div class="fac-summary-title">Resumen de Venta</div>
 
-      <!-- TARJETA VIRTUAL -->
-      <div class="fac-summary-block" *ngIf="venta.cliente && tarjeta.length > 0">
-        <label>Tarjeta de Visitas</label>
-        <div class="tarjeta-nueva-wrapper">
+      <!-- TARJETAS VIRTUALES (una por cada hijo seleccionado) -->
+      <div class="fac-summary-block" *ngFor="let h of hijosSeleccionados">
+        <label>Tarjeta de Visitas — {{ h.firstName }} {{ h.lastName }}</label>
+        <div class="tarjeta-nueva-wrapper" *ngIf="h.tarjeta?.length > 0">
           <div class="tarjeta-nueva">
-            <div class="casilla-nueva" *ngFor="let c of tarjeta"
+            <div class="casilla-nueva" *ngFor="let c of h.tarjeta"
               [class.marcada]="c.marcada"
               [attr.data-fecha]="c.fecha ? (c.fecha | date:'dd/MM/yy') : null"
-              (click)="marcar(c)">
+              (click)="marcar(h, c)">
               <span *ngIf="c.label">{{ c.label }}</span>
             </div>
           </div>
           <div class="tarjeta-nueva-footer">
-            <span class="tarjeta-visitas">{{ visitasMarcadas }} visitas</span>
-            <span class="tarjeta-descuento" *ngIf="descuentoDisponible > 0">
+            <span class="tarjeta-visitas">{{ visitasMarcadas(h) }} visitas</span>
+            <span class="tarjeta-descuento" *ngIf="descuentoDisponible(h) > 0">
               <mat-icon style="font-size:14px;width:14px;height:14px;vertical-align:middle;">local_offer</mat-icon>
-              {{ descuentoDisponible }}% disponible
+              {{ descuentoDisponible(h) }}% disponible
             </span>
-            <button class="btn-reset-tarjeta" *ngIf="tarjetaCompleta" (click)="resetTarjeta()">
+            <button class="btn-reset-tarjeta" *ngIf="tarjetaCompleta(h)" (click)="resetTarjeta(h)">
               Resetear
             </button>
           </div>
@@ -429,6 +462,11 @@
                   <button class="btn-del-sm" *ngIf="!v.anulado" (click)="anularComprobante(v)" title="Anular">
                     <mat-icon>cancel</mat-icon>
                   </button>
+                  <button class="btn-nc-sm" *ngIf="!v.anulado" [disabled]="v.generandoNC"
+                    (click)="generarNotaCredito(v)" title="Generar Nota de Crédito">
+                    <mat-icon *ngIf="!v.generandoNC">receipt_long</mat-icon>
+                    <span *ngIf="v.generandoNC">...</span>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -446,8 +484,11 @@
     <!-- PANEL DERECHO HISTORIAL -->
     <div class="fac-right">
       <div class="pend-stat-card red">
+        <button class="btn-toggle-stat" (click)="mostrarTotalDia = !mostrarTotalDia" [title]="mostrarTotalDia ? 'Ocultar total' : 'Mostrar total'">
+          <mat-icon>{{ mostrarTotalDia ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
         <div class="pend-stat-label">TOTAL DEL DÍA</div>
-        <div class="pend-stat-value">S/ {{ totalDia | number:'1.2-2' }}</div>
+        <div class="pend-stat-value">{{ mostrarTotalDia ? ('S/ ' + (totalDia | number:'1.2-2')) : '••••••' }}</div>
         <div class="pend-stat-sub">{{ ventas.length }} comprobantes emitidos</div>
         <mat-icon class="pend-stat-icon">receipt</mat-icon>
       </div>

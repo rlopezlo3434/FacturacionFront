@@ -48,6 +48,7 @@ import { FacturacionComponent } from './Pages/menu/facturacion/facturacion.compo
 import { KardexComponent } from './Pages/menu/configuracion/kardex/kardex.component';
 import { KardexModalComponent } from './Pages/menu/configuracion/kardex/kardex-modal/kardex-modal.component';
 import { SeleccionEmpleadosModalComponent } from './Pages/menu/facturacion/seleccion-empleados-modal/seleccion-empleados-modal.component';
+import { ModalNotaCreditoDialogComponent } from './Pages/menu/facturacion/modal-nota-credito-dialog/modal-nota-credito-dialog.component';
 import { CajaComponent } from './Pages/menu/facturacion/caja/caja.component';
 import { ResumenComponent } from './Pages/menu/dashboard/resumen/resumen.component';
 import { BaseChartDirective } from 'ng2-charts';
@@ -85,6 +86,7 @@ import { NgApexchartsModule } from "ng-apexcharts";
     CajaComponent,
     ResumenComponent,
     DashboardOwnerComponent,
+    ModalNotaCreditoDialogComponent,
   ],
   imports: [
     BaseChartDirective,

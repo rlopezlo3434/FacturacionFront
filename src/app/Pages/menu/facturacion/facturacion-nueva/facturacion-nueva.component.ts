@@ -5,6 +5,8 @@ import { EmpleadosService } from '../../../../../services/empleados.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { SeleccionEmpleadosModalComponent } from '../seleccion-empleados-modal/seleccion-empleados-modal.component';
+import { ModalNotaCreditoDialogComponent } from '../modal-nota-credito-dialog/modal-nota-credito-dialog.component';
+import { ClienteService } from '../../../../../services/cliente.service';
 
 @Component({
   selector: 'app-facturacion-nueva',
@@ -15,6 +17,7 @@ export class FacturacionNuevaComponent implements OnInit {
 
   tabActiva: 'facturar' | 'pendientes' | 'historial' = 'facturar';
   historialBusqueda = '';
+  mostrarTotalDia = false;
 
   venta: any = {
     tipoComprobante: 'BOLETA_ELECTRONICA',
@@ -50,13 +53,18 @@ export class FacturacionNuevaComponent implements OnInit {
   codigoPromocional = '';
   tipoClienteSeleccionado: string | null = null;
   cli: any = {};
-  tarjeta: any[] = [];
-  childrenClientId: number | null = null;
+  hijosSeleccionados: any[] = [];
   preVentasPendientes: any[] = [];
+
+  clientesFacturables: any[] = [];
+  clientesFacturablesFiltrados: any[] = [];
+  buscarClienteFacturar = '';
+  mostrarListaFacturar = false;
 
   constructor(
     private facturacionService: FacturacionService,
     private empleadoService: EmpleadosService,
+    private clienteService: ClienteService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog
   ) {
@@ -75,6 +83,40 @@ export class FacturacionNuevaComponent implements OnInit {
     this.loadEmpleados();
     this.loadVentas();
     this.seriesComprobantes();
+    this.loadClientesFacturables();
+  }
+
+  loadClientesFacturables() {
+    this.clienteService.getClientesByEstablishment().subscribe((res: any) => {
+      this.clientesFacturables = res?.data || res || [];
+    });
+  }
+
+  filtrarClientesFacturar() {
+    const filtro = this.buscarClienteFacturar.toLowerCase();
+    if (!filtro) {
+      this.clientesFacturablesFiltrados = [];
+      return;
+    }
+    this.clientesFacturablesFiltrados = this.clientesFacturables.filter(c =>
+      `${c.firstName} ${c.lastName}`.toLowerCase().includes(filtro) ||
+      (c.documentIdentificationNumber || '').includes(filtro)
+    );
+  }
+
+  seleccionarClienteFactura(cliente: any) {
+    this.venta.cliente = cliente;
+    this.buscarClienteFacturar = '';
+    this.clientesFacturablesFiltrados = [];
+    this.mostrarListaFacturar = false;
+  }
+
+  ocultarListaFacturarConRetardo() {
+    setTimeout(() => (this.mostrarListaFacturar = false), 200);
+  }
+
+  quitarClienteFactura() {
+    this.venta.cliente = null;
   }
 
   setTab(tab: 'facturar' | 'pendientes' | 'historial') {
@@ -156,33 +198,50 @@ export class FacturacionNuevaComponent implements OnInit {
   }
 
   seleccionarCliente(cliente: any) {
-    this.venta.cliente = cliente.client;
-    this.childrenClientId = cliente.id;
+    const yaSeleccionado = this.hijosSeleccionados.some(h => h.id === cliente.id);
+    if (yaSeleccionado) {
+      this.clienteBuscado = '';
+      this.mostrarLista2 = false;
+      return;
+    }
+
+    const hijo = { ...cliente, tarjeta: [] };
+    this.hijosSeleccionados.push(hijo);
+
     this.searchCliente = true;
     this.clienteBuscado = '';
     this.mostrarLista2 = false;
     this.agregarCliente = false;
-    this.cargarTarjeta();
-    this.actualizarPromos();
+    this.cargarTarjeta(hijo);
   }
 
-  cargarTarjeta() {
-    if (!this.childrenClientId) return;
-    this.facturacionService.getTarjetaCliente(this.childrenClientId).subscribe({
+  cargarTarjeta(hijo: any) {
+    if (!hijo?.id) return;
+    this.facturacionService.getTarjetaCliente(hijo.id).subscribe({
       next: (res: any) => {
-        this.tarjeta = res.casillas;
+        hijo.tarjeta = res.casillas;
         this.actualizarPromos();
       }
     });
   }
 
+  quitarHijo(hijo: any) {
+    this.hijosSeleccionados = this.hijosSeleccionados.filter(h => h.id !== hijo.id);
+
+    if (this.hijosSeleccionados.length === 0) {
+      this.eliminarCliente();
+      return;
+    }
+
+    this.actualizarPromos();
+  }
+
   eliminarCliente() {
     this.venta.cliente = null;
-    this.childrenClientId = null;
+    this.hijosSeleccionados = [];
     this.searchCliente = false;
     this.clienteBuscado = '';
     this.agregarCliente = false;
-    this.tarjeta = [];
     this.promociones = [{ descuentoAplicado: 0 }];
     this.promoTarjeta = 0;
   }
@@ -315,7 +374,7 @@ export class FacturacionNuevaComponent implements OnInit {
 
   actualizarPromos() {
     this.promociones = [];
-    const descuento = this.descuentoDisponible;
+    const descuento = Math.max(0, ...this.hijosSeleccionados.map(h => this.descuentoDisponible(h)));
     if (descuento > 0) {
       this.promociones.push({ descuentoAplicado: descuento });
     } else {
@@ -323,31 +382,29 @@ export class FacturacionNuevaComponent implements OnInit {
     }
   }
 
-  marcar(casilla: any) {
-    if (!this.childrenClientId) return;
+  marcar(hijo: any, casilla: any) {
     casilla.marcada = !casilla.marcada;
-    this.facturacionService.registrarVisita(this.childrenClientId).subscribe(() => {
-      this.cargarTarjeta();
+    this.facturacionService.registrarVisita(hijo.id).subscribe(() => {
+      this.cargarTarjeta(hijo);
     });
   }
 
-  resetTarjeta() {
-    if (!this.childrenClientId) return;
-    this.facturacionService.resetTarjeta(this.childrenClientId).subscribe(() => {
-      this.cargarTarjeta();
+  resetTarjeta(hijo: any) {
+    this.facturacionService.resetTarjeta(hijo.id).subscribe(() => {
+      this.cargarTarjeta(hijo);
     });
   }
 
-  get tarjetaCompleta(): boolean {
-    return this.tarjeta?.length > 0 && this.tarjeta.every(c => c.marcada);
+  tarjetaCompleta(hijo: any): boolean {
+    return hijo.tarjeta?.length > 0 && hijo.tarjeta.every((c: any) => c.marcada);
   }
 
-  get visitasMarcadas(): number {
-    return this.tarjeta?.filter(c => c.marcada).length ?? 0;
+  visitasMarcadas(hijo: any): number {
+    return hijo.tarjeta?.filter((c: any) => c.marcada).length ?? 0;
   }
 
-  get descuentoDisponible(): number {
-    switch (this.visitasMarcadas) {
+  descuentoDisponible(hijo: any): number {
+    switch (this.visitasMarcadas(hijo)) {
       case 3: return 5;
       case 6: return 10;
       case 9: return 15;
@@ -395,6 +452,12 @@ export class FacturacionNuevaComponent implements OnInit {
     }
     if (!this.venta.metodo_pago) {
       this.snackBar.open('Selecciona un método de pago.', '', {
+        duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+      });
+      return false;
+    }
+    if (this.hijosSeleccionados.length > 0 && !this.venta.cliente) {
+      this.snackBar.open('Selecciona a qué cliente se emitirá el comprobante.', '', {
         duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
       });
       return false;
@@ -539,6 +602,44 @@ export class FacturacionNuevaComponent implements OnInit {
       error: () => {
         this.snackBar.open('No se pudo anular.', '', {
           duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  generarNotaCredito(v: any) {
+    if (v.generandoNC) return;
+
+    const dialogRef = this.dialog.open(ModalNotaCreditoDialogComponent, {
+      width: '420px',
+      data: { serie: v.serie, numero: v.numero }
+    });
+
+    dialogRef.afterClosed().subscribe((reemplazadoPor: string | undefined) => {
+      if (!reemplazadoPor) return;
+      this.confirmarGeneracionNC(v, reemplazadoPor);
+    });
+  }
+
+  private confirmarGeneracionNC(v: any, reemplazadoPor: string) {
+    v.generandoNC = true;
+    this.facturacionService.generarNotaCredito(v.id, reemplazadoPor).subscribe({
+      next: (res: any) => {
+        v.generandoNC = false;
+        this.snackBar.open(
+          res?.message
+            ? `${res.message} (${res.serie}-${res.numero})`
+            : 'Nota de Crédito generada correctamente',
+          '',
+          { duration: 4000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['success-snackbar'] }
+        );
+        this.loadVentas();
+      },
+      error: (err: any) => {
+        v.generandoNC = false;
+        const mensaje = err?.error?.error || err?.error?.message || 'No se pudo generar la Nota de Crédito.';
+        this.snackBar.open(mensaje, '', {
+          duration: 4000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
         });
       }
     });

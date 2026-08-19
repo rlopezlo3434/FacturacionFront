@@ -1,0 +1,85 @@
+.dialog-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.dialog-content {
+  padding-top: 4px;
+  min-width: 360px;
+}
+
+.dialog-sub {
+  color: #555;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  background: white;
+  outline: none;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  transition: 0.2s ease;
+}
+
+.input:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+}
+
+.error-text {
+  color: #c62828;
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+
+.dialog-actions {
+  padding: 12px 0 0;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-cancelar {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  background: #fff;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-cancelar:hover {
+  border-color: #999;
+}
+
+.btn-primary {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #1976d2;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}

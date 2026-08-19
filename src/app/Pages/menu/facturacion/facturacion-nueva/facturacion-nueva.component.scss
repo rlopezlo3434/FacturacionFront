@@ -152,7 +152,42 @@
 }
 
 /* ===== CLIENT ROW ===== */
-.fac-client-row { position: relative; }
+.fac-client-row { position: relative; display: flex; flex-direction: column; gap: 8px; }
+
+.fac-facturar-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.fac-client-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fac-client-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  color: #111;
+  font-size: 0.85rem;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; color: #9ca3af; }
+
+  .chip-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .chip-nombre { font-weight: 600; }
+  .chip-doc { font-size: 0.75rem; color: #9ca3af; }
+}
 
 .fac-client-display, .fac-client-selected {
   display: flex;
@@ -826,6 +861,25 @@
   mat-icon { font-size: 16px; width: 16px; height: 16px; }
 }
 
+.btn-nc-sm {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ffe0b2;
+  background: #fff8e1;
+  color: #e65100;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  &:hover:not(:disabled) { background: #ffecb3; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+}
+
 /* ===== PENDIENTES RIGHT ===== */
 .pend-stat-card {
   border-radius: 12px;
@@ -850,6 +904,27 @@
   width: 48px;
   height: 48px;
   opacity: 0.2;
+}
+
+.btn-toggle-stat {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  transition: 0.15s ease;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; color: white; }
+
+  &:hover { background: rgba(255, 255, 255, 0.3); }
 }
 
 .pend-summary-card {
@@ -945,6 +1020,23 @@
     color: #374151;
   }
   mat-icon { color: #9ca3af; font-size: 18px; width: 18px; height: 18px; }
+}
+
+.btn-toggle-hist {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: 0.15s ease;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; color: #9ca3af; }
+  &:hover { border-color: #9ca3af; background: #f9fafb; }
 }
 
 .hist-table-wrap {

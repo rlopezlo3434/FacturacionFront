@@ -144,6 +144,30 @@ export class FacturacionService {
     });
   }
 
+  generarNotaCredito(ventaId: number, reemplazadoPor: string) {
+    return this.http.post<any>(`${environment.apiBase}/nota-credito/generar/${ventaId}`, {}, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      },
+      params: {
+        reemplazadoPor
+      }
+    });
+  }
+
+  listarNotasCredito(establishmentId: number, desde: string, hasta: string) {
+    return this.http.get<any[]>(`${environment.apiBase}/nota-credito/listar`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      },
+      params: {
+        establishmentId: String(establishmentId),
+        desde,
+        hasta
+      }
+    });
+  }
+
   imprimirPdf(url: string): Observable<Blob> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.token}`

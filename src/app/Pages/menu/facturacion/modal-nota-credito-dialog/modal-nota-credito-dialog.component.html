@@ -1,0 +1,25 @@
+<h2 mat-dialog-title class="dialog-title">Generar Nota de Crédito</h2>
+
+<mat-dialog-content class="dialog-content">
+    <p class="dialog-sub">
+        Se anulará el comprobante <strong>{{ data?.serie }}-{{ data?.numero }}</strong>.
+        Indica la factura o boleta que lo reemplaza.
+    </p>
+
+    <div class="form-field">
+        <label class="label">Documento que reemplaza</label>
+        <input
+            class="input"
+            type="text"
+            [(ngModel)]="reemplazadoPor"
+            placeholder="Ej: F002-00000015"
+            (keyup.enter)="confirmar()"
+            autofocus />
+        <span class="error-text" *ngIf="error">{{ error }}</span>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+    <button class="btn-cancelar" (click)="cerrar()">Cancelar</button>
+    <button class="btn-primary" (click)="confirmar()">Generar NC</button>
+</mat-dialog-actions>
