@@ -66,6 +66,15 @@
   <div class="section">
     <div class="subTitle">Productos</div>
 
+    <div class="detalle-headers" *ngIf="compra.detalles.length > 0">
+      <span>Producto</span>
+      <span>Cant.</span>
+      <span>P. Costo</span>
+      <span>P. Compra</span>
+      <span>Subtotal</span>
+      <span></span>
+    </div>
+
     <div class="detalle-list">
       <div *ngFor="let d of compra.detalles; let i = index" class="detalle-item">
 
@@ -91,13 +100,17 @@
         <input type="number" class="input input-sm" min="1" placeholder="Cant."
           [(ngModel)]="compra.detalles[i].cantidad" />
 
-        <!-- COSTO -->
-        <input type="number" class="input input-sm" min="0" step="0.01" placeholder="Costo"
+        <!-- PRECIO COSTO -->
+        <input type="number" class="input input-sm" min="0" step="0.01" placeholder="Precio Costo"
           [(ngModel)]="compra.detalles[i].costo" />
+
+        <!-- PRECIO COMPRA -->
+        <input type="number" class="input input-sm" min="0" step="0.01" placeholder="Precio Compra"
+          [(ngModel)]="compra.detalles[i].precioCompra" />
 
         <!-- SUBTOTAL FILA -->
         <div class="fila-total">
-          {{ (d.cantidad * d.costo) | currency:currencyCode:'symbol':'1.2-2' }}
+          {{ (d.cantidad * d.precioCompra) | currency:currencyCode:'symbol':'1.2-2' }}
         </div>
 
         <!-- ELIMINAR -->

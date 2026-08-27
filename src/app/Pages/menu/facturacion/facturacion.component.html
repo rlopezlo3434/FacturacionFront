@@ -295,6 +295,11 @@
                                 (click)="metodoPagoInterno = 'TRANSFERENCIA'">
                                 <mat-icon>account_balance</mat-icon> Transferencia
                             </button>
+                            <button type="button" class="metodo-btn"
+                                [class.active]="metodoPagoInterno === 'TRANSFERENCIA_INTERNA'"
+                                (click)="metodoPagoInterno = 'TRANSFERENCIA_INTERNA'">
+                                <mat-icon>sync_alt</mat-icon> Transferencia Interna
+                            </button>
                             <button type="button" class="metodo-btn" [class.active]="metodoPagoInterno === 'TARJETA'"
                                 (click)="metodoPagoInterno = 'TARJETA'">
                                 <mat-icon>credit_card</mat-icon> Tarjeta

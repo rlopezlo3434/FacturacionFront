@@ -182,4 +182,47 @@ export class FacturacionService {
     });
   }
 
+  // ===== COLA DE DOCUMENTOS PENDIENTES (NC / Anulaciones) =====
+  private notaCreditoBase = `${environment.apiBase}/nota-credito`;
+
+  encolarNotaCredito(ventaId: number, reemplazadoPor?: string) {
+    return this.http.post<any>(`${this.notaCreditoBase}/encolar/${ventaId}`, {}, {
+      headers: this.getHeaders(),
+      params: reemplazadoPor ? { reemplazadoPor } : {}
+    });
+  }
+
+  encolarAnulacion(ventaId: number) {
+    return this.http.post<any>(`${this.notaCreditoBase}/encolar-anulacion/${ventaId}`, {}, {
+      headers: this.getHeaders()
+    });
+  }
+
+  enviarPendientes(establishmentId: number) {
+    return this.http.post<any>(`${this.notaCreditoBase}/enviar-pendientes`, {}, {
+      headers: this.getHeaders(),
+      params: { establishmentId: String(establishmentId) }
+    });
+  }
+
+  reintentarPendiente(documentoId: number) {
+    return this.http.post<any>(`${this.notaCreditoBase}/reintentar/${documentoId}`, {}, {
+      headers: this.getHeaders()
+    });
+  }
+
+  getPendientes(establishmentId: number) {
+    return this.http.get<any[]>(`${this.notaCreditoBase}/pendientes`, {
+      headers: this.getHeaders(),
+      params: { establishmentId: String(establishmentId) }
+    });
+  }
+
+  getPdfNotaCredito(ventaId: number): Observable<Blob> {
+    return this.http.get(`${this.notaCreditoBase}/${ventaId}/pdf`, {
+      headers: this.getHeaders(),
+      responseType: 'blob'
+    });
+  }
+
 }

@@ -120,7 +120,7 @@ export class ModalCompraDialogComponent implements OnInit {
   get currencyCode() { return this.compra.moneda === 'DOLARES' ? 'USD' : 'PEN'; }
 
   get total() {
-    return +this.compra.detalles.reduce((a, d) => a + d.cantidad * d.costo, 0).toFixed(2);
+    return +this.compra.detalles.reduce((a, d) => a + d.cantidad * d.precioCompra, 0).toFixed(2);
   }
   get subtotal() { return +(this.total / 1.18).toFixed(2); }
   get igv() { return +(this.total - this.subtotal).toFixed(2); }
@@ -145,7 +145,8 @@ export class ModalCompraDialogComponent implements OnInit {
       detalles: detallesValidos.map(d => ({
         productId: d.productId,
         cantidad: d.cantidad,
-        precioCompra: d.costo
+        precioCosto: d.costo,
+        precioCompra: d.precioCompra
       }))
     };
 

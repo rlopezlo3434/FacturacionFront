@@ -65,7 +65,8 @@
               <th>CÓDIGO</th>
               <th>PRODUCTO</th>
               <th>CANT.</th>
-              <th>PRECIO C/IGV</th>
+              <th>PRECIO COSTO</th>
+              <th>PRECIO COMPRA</th>
               <th>TOTAL</th>
             </tr>
           </thead>
@@ -74,6 +75,7 @@
               <td><span class="code-chip">{{ d.productCodigo }}</span></td>
               <td>{{ d.productNombre }}</td>
               <td>{{ d.cantidad }}</td>
+              <td>{{ d.precioCosto | currency:currencyCode:'symbol':'1.2-2' }}</td>
               <td>{{ d.precioCompra | currency:currencyCode:'symbol':'1.2-2' }}</td>
               <td><strong>{{ (d.cantidad * d.precioCompra) | currency:currencyCode:'symbol':'1.2-2' }}</strong></td>
             </tr>

@@ -53,6 +53,18 @@
   align-items: center;
 }
 
+.detalle-headers {
+  display: grid;
+  grid-template-columns: 1fr 80px 100px 100px 100px 36px;
+  gap: 8px;
+  padding: 0 2px 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
 .item-selector { position: relative; }
 
 .options-dropdown {

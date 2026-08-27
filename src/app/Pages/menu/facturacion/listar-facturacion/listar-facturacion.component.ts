@@ -3,11 +3,25 @@ import { FacturacionService } from '../../../../../services/facturacion.service'
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SidebarService } from '../../../../../services/sidebar.service';
+import { ModalNotaCreditoDialogComponent } from '../modal-nota-credito-dialog/modal-nota-credito-dialog.component';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-listar-facturacion',
   templateUrl: './listar-facturacion.component.html',
-  styleUrl: './listar-facturacion.component.scss'
+  styleUrl: './listar-facturacion.component.scss',
+  animations: [
+    trigger('collapseExpand', [
+      transition(':enter', [
+        style({ height: 0, opacity: 0, overflow: 'hidden' }),
+        animate('220ms cubic-bezier(0.4, 0, 0.2, 1)', style({ height: '*', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        style({ overflow: 'hidden' }),
+        animate('180ms cubic-bezier(0.4, 0, 0.2, 1)', style({ height: 0, opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class ListarFacturacionComponent {
   invoices: any[] = [];
@@ -31,6 +45,13 @@ export class ListarFacturacionComponent {
     // { label: 'N/D',      value: 'NOTA DE DEBITO' },
   ];
 
+  // ===== DOCUMENTOS PENDIENTES DE ENVÍO =====
+  establishmentId: number | null = null;
+  mostrarPendientes = false;
+  cargandoPendientes = false;
+  enviandoPendientes = false;
+  pendientes: any[] = [];
+
   constructor(
     private facturaService: FacturacionService,
     private dialog: MatDialog,
@@ -40,10 +61,25 @@ export class ListarFacturacionComponent {
     const hoy = new Date();
     this.fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
     this.desde = this.fecha;
+
+    const userString = localStorage.getItem('user');
+    const user = userString ? JSON.parse(userString) : null;
+    this.establishmentId = user?.establishment?.id ?? null;
   }
 
   ngOnInit(): void {
     this.loadInvoices();
+    this.dispararEnvioPendientesDelDia();
+  }
+
+  // Se ejecuta al abrir el sistema: despacha lo que ya cumplió su fecha programada
+  // (boletas del día anterior, facturas pendientes, etc.)
+  dispararEnvioPendientesDelDia() {
+    if (!this.establishmentId) return;
+    this.facturaService.enviarPendientes(this.establishmentId).subscribe({
+      next: () => this.loadInvoices(),
+      error: () => { /* silencioso: no interrumpir el ingreso al sistema */ }
+    });
   }
 
   loadInvoices() {
@@ -158,6 +194,153 @@ export class ListarFacturacionComponent {
         });
       }
     });
+  }
+
+  // ===== NUEVO FLUJO: encolar NC / anulación (procesadas por el job de pendientes) =====
+  generarNotaCredito(inv: any) {
+    if (inv.encolando) return;
+
+    const dialogRef = this.dialog.open(ModalNotaCreditoDialogComponent, {
+      width: '420px',
+      data: { serie: inv.serie, numero: inv.numero }
+    });
+
+    dialogRef.afterClosed().subscribe((result: { confirmed: boolean; reemplazadoPor: string | null } | undefined) => {
+      if (!result?.confirmed) return;
+
+      inv.encolando = true;
+      this.facturaService.encolarNotaCredito(inv.id, result.reemplazadoPor ?? undefined).subscribe({
+        next: (res: any) => {
+          inv.encolando = false;
+          this.snackBar.open(res?.message || 'Nota de crédito encolada para su envío.', '', {
+            duration: 4000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['success-snackbar']
+          });
+          this.loadInvoices();
+          if (this.mostrarPendientes) this.cargarPendientes();
+        },
+        error: (err: any) => {
+          inv.encolando = false;
+          const mensaje = err?.error?.error || err?.error?.message || 'No se pudo encolar la Nota de Crédito.';
+          this.snackBar.open(mensaje, '', {
+            duration: 4000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+          });
+        }
+      });
+    });
+  }
+
+  anularComprobante(inv: any) {
+    if (inv.encolando) return;
+
+    inv.encolando = true;
+    this.facturaService.encolarAnulacion(inv.id).subscribe({
+      next: (res: any) => {
+        inv.encolando = false;
+        this.snackBar.open(res?.message || 'Anulación encolada para su envío.', '', {
+          duration: 4000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['success-snackbar']
+        });
+        this.loadInvoices();
+        if (this.mostrarPendientes) this.cargarPendientes();
+      },
+      error: (err: any) => {
+        inv.encolando = false;
+        const mensaje = err?.error?.error || err?.error?.message || 'No se pudo encolar la anulación.';
+        this.snackBar.open(mensaje, '', {
+          duration: 4000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  // ===== PANEL DE PENDIENTES =====
+  togglePendientes() {
+    this.mostrarPendientes = !this.mostrarPendientes;
+    if (this.mostrarPendientes) this.cargarPendientes();
+  }
+
+  cargarPendientes() {
+    if (!this.establishmentId) return;
+
+    this.cargandoPendientes = true;
+    this.facturaService.getPendientes(this.establishmentId).subscribe({
+      next: (res: any) => {
+        this.cargandoPendientes = false;
+        this.pendientes = res?.data || res || [];
+      },
+      error: () => {
+        this.cargandoPendientes = false;
+        this.snackBar.open('No se pudo cargar los documentos pendientes.', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  enviarPendientesAhora() {
+    if (!this.establishmentId || this.enviandoPendientes) return;
+
+    this.enviandoPendientes = true;
+    this.facturaService.enviarPendientes(this.establishmentId).subscribe({
+      next: (res: any) => {
+        this.enviandoPendientes = false;
+        this.snackBar.open(res?.message || 'Documentos pendientes procesados.', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['success-snackbar']
+        });
+        this.cargarPendientes();
+        this.loadInvoices();
+      },
+      error: (err: any) => {
+        this.enviandoPendientes = false;
+        this.snackBar.open(err?.error?.message || 'Error al enviar pendientes.', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  reintentarPendiente(doc: any) {
+    if (doc.reintentando) return;
+
+    doc.reintentando = true;
+    this.facturaService.reintentarPendiente(doc.id).subscribe({
+      next: (res: any) => {
+        doc.reintentando = false;
+        this.snackBar.open(res?.message || 'Documento reintentado.', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['success-snackbar']
+        });
+        this.cargarPendientes();
+        this.loadInvoices();
+      },
+      error: (err: any) => {
+        doc.reintentando = false;
+        this.snackBar.open(err?.error?.message || 'No se pudo reintentar el documento.', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  verPdfPendiente(doc: any) {
+    const ventaId = doc.ventaOriginalId;
+    this.facturaService.getPdfNotaCredito(ventaId).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      },
+      error: () => {
+        this.snackBar.open('No se pudo obtener el PDF.', '', {
+          duration: 3000, horizontalPosition: 'right', verticalPosition: 'top', panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  getEstadoClass(estado: string): string {
+    switch (estado?.toUpperCase()) {
+      case 'ENVIADO': return 'chip-vigente';
+      case 'ERROR': return 'chip-anulado';
+      default: return 'chip-pendiente';
+    }
   }
 
   generarFactura(inv: any) {

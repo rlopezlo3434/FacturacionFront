@@ -82,6 +82,7 @@ import { InvoiceFilterPipe } from "./pipes/invoice-filter.pipe";
 import { ProveedoresComponent } from './Pages/menu/configuracion/proveedores/proveedores.component';
 import { ModalProveedorDialogComponent } from './Pages/menu/configuracion/proveedores/modal-proveedor-dialog/modal-proveedor-dialog.component';
 import { ListarFacturacionComponent } from './Pages/menu/facturacion/listar-facturacion/listar-facturacion.component';
+import { ModalNotaCreditoDialogComponent } from './Pages/menu/facturacion/modal-nota-credito-dialog/modal-nota-credito-dialog.component';
 import { PaqueteServicioComponent } from './Pages/menu/configuracion/paquete-servicio/paquete-servicio.component';
 import { ModalServicePackageDialogComponent } from './Pages/menu/configuracion/paquete-servicio/modal-service-package-dialog/modal-service-package-dialog.component';
 import { MarcaModeloPipe } from "./pipes/marca-modelo.pipe";
@@ -143,6 +144,7 @@ registerLocaleData(localeEsPe);
     ProveedoresComponent,
     ModalProveedorDialogComponent,
     ListarFacturacionComponent,
+    ModalNotaCreditoDialogComponent,
     PaqueteServicioComponent,
     ModalServicePackageDialogComponent,
     ComprasComponent,

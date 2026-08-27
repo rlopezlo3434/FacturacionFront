@@ -1,0 +1,26 @@
+<h2 mat-dialog-title class="dialog-title">Generar Nota de Crédito</h2>
+
+<mat-dialog-content class="dialog-content">
+    <p class="dialog-sub">
+        Se encolará la anulación de <strong>{{ data?.serie }}-{{ data?.numero }}</strong>.
+        Si este comprobante fue reemplazado por otro, indícalo abajo; si no, deja el campo vacío
+        y se encolará como una anulación simple. Se enviará a SUNAT según su fecha programada.
+    </p>
+
+    <div class="form-field">
+        <label class="label">Documento que reemplaza (opcional)</label>
+        <input
+            class="input"
+            type="text"
+            [(ngModel)]="reemplazadoPor"
+            placeholder="Ej: F002-00000015 (déjalo vacío si no aplica)"
+            (keyup.enter)="confirmar()"
+            autofocus />
+        <span class="error-text" *ngIf="error">{{ error }}</span>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions" align="end">
+    <button class="btn-cancelar" (click)="cerrar()">Cancelar</button>
+    <button class="btn-primary" (click)="confirmar()">Encolar NC</button>
+</mat-dialog-actions>

@@ -207,6 +207,12 @@
   box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.10);
 }
 
+.input-mini:disabled {
+  background: #f3f3f3;
+  color: #999;
+  cursor: not-allowed;
+}
+
 /* ITEM TITLE */
 .item-title {
   font-weight: 600;

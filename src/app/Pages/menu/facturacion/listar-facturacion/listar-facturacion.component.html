@@ -1,32 +1,108 @@
-<div>
-
-  <!-- BUSCADOR -->
-  <div class="search-menu">
-    <!-- <div class="icon-menu">
-      <mat-icon (click)="openMenu()">menu</mat-icon>
-    </div> -->
-    <div class="input-wrapper">
-      <mat-icon class="input-icon">search</mat-icon>
-      <input [(ngModel)]="searchText" type="text" placeholder="Buscar por cliente, número o documento..." class="input" />
-    </div>
-  </div>
+<div class="fac-list-page">
 
   <!-- HEADER -->
-  <div class="header-secuence">
-    <div class="header-text">
-      <div class="selected">Facturación</div>
-      <div class="subTitle">Gestión y control de comprobantes emitidos</div>
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-icon">
+        <mat-icon>receipt_long</mat-icon>
+      </div>
+      <div class="header-text">
+        <div class="selected">Facturación</div>
+        <div class="subTitle">Gestión y control de comprobantes emitidos</div>
+      </div>
     </div>
-    <button class="btn btn-create" (click)="descargarReporte()">
-      <mat-icon>description</mat-icon> Reporte
-    </button>
+
+    <div class="page-header-actions">
+      <button class="btn btn-pendientes" [class.active]="mostrarPendientes" (click)="togglePendientes()">
+        <mat-icon>pending_actions</mat-icon>
+        {{ mostrarPendientes ? 'Ocultar pendientes' : 'Documentos pendientes' }}
+        <mat-icon class="chevron">expand_more</mat-icon>
+      </button>
+      <button class="btn btn-create" (click)="descargarReporte()">
+        <mat-icon>description</mat-icon> Reporte
+      </button>
+    </div>
   </div>
 
-  <!-- TABLA -->
+  <!-- PANEL DE DOCUMENTOS PENDIENTES DE ENVÍO -->
+  <div class="table-container pendientes-panel" *ngIf="mostrarPendientes" @collapseExpand>
+    <div class="filters-bar">
+      <div class="header-text">
+        <div class="selected panel-title">
+          <mat-icon>schedule_send</mat-icon>
+          Documentos Pendientes de Envío
+        </div>
+        <div class="subTitle">Notas de crédito y anulaciones en cola antes de enviarse a SUNAT</div>
+      </div>
+      <button class="btn btn-create" [disabled]="enviandoPendientes" (click)="enviarPendientesAhora()">
+        <mat-icon>send</mat-icon>
+        {{ enviandoPendientes ? 'Enviando...' : 'Enviar pendientes ahora' }}
+      </button>
+    </div>
+
+    <div class="table-scroll">
+      <div class="table-body">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Venta</th>
+              <th>Fecha Programada</th>
+              <th>Intentos</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let doc of pendientes">
+              <td>{{ doc.tipo || doc.tipoDocumento }}</td>
+              <td>{{ doc.ventaSerie }}-{{ doc.ventaNumero }}</td>
+              <td>{{ doc.fechaProgramada | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ doc.intentos }}</td>
+              <td>
+                <span class="chip" [ngClass]="getEstadoClass(doc.estado)">
+                  <span class="chip-dot"></span>{{ doc.estado }}
+                </span>
+              </td>
+              <td>
+                <div class="pend-acciones">
+                  <button *ngIf="doc.estado === 'ERROR'" class="btn-nc" [disabled]="doc.reintentando"
+                    (click)="reintentarPendiente(doc)" title="Reintentar">
+                    <mat-icon style="font-size:16px;height:16px;width:16px;">refresh</mat-icon>
+                  </button>
+                  <button class="btn-nc"
+                    (click)="verPdfPendiente(doc)" title="Ver PDF">
+                    <mat-icon style="font-size:16px;height:16px;width:16px;">picture_as_pdf</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="!cargandoPendientes && pendientes.length === 0">
+              <td colspan="6" class="empty-row">
+                <mat-icon>inbox</mat-icon>
+                No hay documentos pendientes
+              </td>
+            </tr>
+            <tr *ngIf="cargandoPendientes">
+              <td colspan="6" class="empty-row">Cargando...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA PRINCIPAL -->
   <div class="table-container">
 
     <!-- FILTROS -->
     <div class="filters-bar">
+
+      <div class="search-inline">
+        <mat-icon class="input-icon">search</mat-icon>
+        <input [(ngModel)]="searchText" type="text" placeholder="Buscar por cliente, número o documento..." class="input" />
+      </div>
 
       <!-- Filtro tipo -->
       <div class="tipo-tabs">
@@ -97,43 +173,53 @@
               </td>
 
               <td>
-                {{ inv.clienteNombre }}<br>
-                <small style="color:gray">{{ inv.clienteNumero }}</small>
+                <div class="cell-cliente">{{ inv.clienteNombre }}</div>
+                <div class="cell-doc">{{ inv.clienteNumero }}</div>
               </td>
 
               <td>{{ inv.fecha }}</td>
 
-              <td>{{ inv.total | currency:'PEN':'symbol':'1.2-2' }}</td>
+              <td class="cell-total">{{ inv.total | currency:'PEN':'symbol':'1.2-2' }}</td>
 
               <td>
                 <span class="chip" [ngClass]="inv.anulado ? 'chip-anulado' : 'chip-vigente'">
-                  {{ inv.anulado ? 'Anulado' : 'Vigente' }}
+                  <span class="chip-dot"></span>{{ inv.anulado ? 'Anulado' : 'Vigente' }}
                 </span>
               </td>
 
               <td>
-                <i class="fa-solid fa-file-pdf" style="color:rgb(230,144,144);cursor:pointer;"
-                  (click)="$event.stopPropagation(); generarFactura(inv)"></i>
-              </td>
-
-              <td>
-                <i class="fa-solid fa-file-code" style="color:rgb(100,121,180);cursor:pointer;"
-                  (click)="$event.stopPropagation(); descargarXML(inv.linkXml)"></i>
-              </td>
-
-              <td>
-                <button *ngIf="!inv.anulado && esFacturaOBoleta(inv.tipoComprobante)"
-                  class="btn-nc" [disabled]="inv.emitiendoNC"
-                  (click)="$event.stopPropagation(); emitirNotaCredito(inv)">
-                  <mat-icon style="font-size:16px;height:16px;width:16px;">receipt_long</mat-icon>
-                  N/C
+                <button class="icon-btn icon-btn-pdf" title="Ver PDF"
+                  (click)="$event.stopPropagation(); generarFactura(inv)">
+                  <i class="fa-solid fa-file-pdf"></i>
                 </button>
+              </td>
+
+              <td>
+                <button class="icon-btn icon-btn-xml" title="Descargar XML"
+                  (click)="$event.stopPropagation(); descargarXML(inv.linkXml)">
+                  <i class="fa-solid fa-file-code"></i>
+                </button>
+              </td>
+
+              <td>
+                <div class="pend-acciones" *ngIf="!inv.anulado && esFacturaOBoleta(inv.tipoComprobante)">
+                  <button class="btn-nc" [disabled]="inv.encolando"
+                    (click)="$event.stopPropagation(); generarNotaCredito(inv)" title="Generar Nota de Crédito">
+                    <mat-icon style="font-size:16px;height:16px;width:16px;">receipt_long</mat-icon>
+                    N/C
+                  </button>
+                  <button class="btn-anular" [disabled]="inv.encolando"
+                    (click)="$event.stopPropagation(); anularComprobante(inv)" title="Anular comprobante">
+                    <mat-icon style="font-size:16px;height:16px;width:16px;">cancel</mat-icon>
+                  </button>
+                </div>
               </td>
 
             </tr>
 
             <tr *ngIf="invoicesPaginados.length === 0">
-              <td colspan="9" style="text-align:center;padding:2rem;color:gray;">
+              <td colspan="9" class="empty-row">
+                <mat-icon>receipt_long</mat-icon>
                 No hay comprobantes para mostrar
               </td>
             </tr>
@@ -144,14 +230,16 @@
 
     <!-- PAGINACION -->
     <div class="pagination">
-      <span>{{ invoicesFiltrados.length }} resultados</span>
-      <span class="pag-info">Página {{ paginaActual }} de {{ totalPaginas }}</span>
-      <button class="paginacion-icon" [disabled]="paginaActual === 1" (click)="paginaAnterior()">
-        <mat-icon>chevron_left</mat-icon>
-      </button>
-      <button class="paginacion-icon" [disabled]="paginaActual === totalPaginas" (click)="paginaSiguiente()">
-        <mat-icon>chevron_right</mat-icon>
-      </button>
+      <span class="pag-total">{{ invoicesFiltrados.length }} resultados</span>
+      <div class="pag-controls">
+        <button class="paginacion-icon" [disabled]="paginaActual === 1" (click)="paginaAnterior()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span class="pag-info">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+        <button class="paginacion-icon" [disabled]="paginaActual === totalPaginas" (click)="paginaSiguiente()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
     </div>
 
   </div>

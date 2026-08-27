@@ -138,15 +138,12 @@
 
                                         <td>
                                             <input class="input-mini" type="number" min="1" [(ngModel)]="it.quantity"
-                                                (ngModelChange)="calcTotals()" />
+                                                [disabled]="it.isDiscount" (ngModelChange)="calcTotals()" />
                                         </td>
 
                                         <td>
-                                            <input *ngIf="!it.isDiscount" class="input-mini" type="number" min="0" [(ngModel)]="it.unitPrice"
+                                            <input class="input-mini" type="number" [(ngModel)]="it.unitPrice"
                                                 (ngModelChange)="calcTotals()" />
-                                            <span *ngIf="it.isDiscount" class="discount-amount">
-                                                {{ it.unitPrice | currency:moneda:'symbol':'1.2-2' }}
-                                            </span>
                                         </td>
 
                                         <td>

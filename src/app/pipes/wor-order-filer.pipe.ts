@@ -15,7 +15,9 @@ export class WorOrderFilerPipe implements PipeTransform {
     return list.filter(x =>
       (x.code || '').toLowerCase().includes(t) ||
       (x.vehicle?.plate || '').toLowerCase().includes(t) ||
-      (x.client?.names || '').toLowerCase().includes(t)
+      (x.client?.names || '').toLowerCase().includes(t) ||
+      (x.vehicle?.brand?.name || '').toLowerCase().includes(t) ||
+      (x.vehicle?.model?.name || '').toLowerCase().includes(t)
     );
   }
 
